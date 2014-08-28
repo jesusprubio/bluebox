@@ -12,7 +12,7 @@ NOTE: We've said we were working in the v.2 but, finally, I decided that this on
 Features
 --------
 - Auto VoIP/UC penetration test (coming soon)
-- Report generation (conming soon)
+- Report generation (coming soon)
 - RFC compliant
 - SIP TLS and IPv6 support
 - SIP over websockets (and WSS) support (RFC 7118)
