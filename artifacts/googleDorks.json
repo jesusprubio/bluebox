@@ -1,0 +1,34 @@
+[
+{
+	"name" : "Cisco CallManager",
+	"dorks" : [
+		"inurl:\"ccmuser/logon.asp\"",
+		"intitle:\"Cisco CallManager User Options Log On\" \"Please enter your User ID and Password in the spaces provided below and click the Log On button to co"
+	]
+},
+{
+	"name" : "FreePBX",
+	"dorks" : [
+		"intext:\"FreePBX Administration\" + \"Welcome\" inurl:Admin"
+	]
+},
+{
+	"name" : "Polycom Soundpoint Phones",
+	"dorks" : [
+		"intitle:\"SoundPoint IP Configuration\"",
+		"inurl:”coreConf.htm”"
+	]
+},
+{
+	"name" : "Net2Phone CommCenter",
+	"dorks" : [
+		"intitle:\"Net2Phone Init Page\""
+	]
+},
+{
+	"name" : "Phone list",
+	"dorks" : [
+		"allinurl:telefonos filetype:xls"
+	]
+}
+]
