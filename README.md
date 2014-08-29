@@ -1,4 +1,4 @@
-![Bluebox-ng](http://jesusprubio.github.io/blueboxLogo.jpg)
+![Bluebox-ng](https://lh4.googleusercontent.com/9nts2lJRDRpgcmUmidlYWavE-tVAcnvJsChRCwTCDe7jTdotkielGTdxfVeBQUNmT3MI1Vz49is=w2094-h1216)
 
 Bluebox-ng
 ==========
@@ -45,7 +45,7 @@ Use
 - Console client: ```bluebox-ng```
 - As a library:
 ```javascript
-var Bluebox = require('../'),
+var Bluebox = require('bluebox-ng'),
 
     options       = {},
     bluebox       = new Bluebox(options),
