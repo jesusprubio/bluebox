@@ -1,4 +1,4 @@
-![Bluebox-ng](https://lh4.googleusercontent.com/9nts2lJRDRpgcmUmidlYWavE-tVAcnvJsChRCwTCDe7jTdotkielGTdxfVeBQUNmT3MI1Vz49is=w2094-h1216)
+![Bluebox-ng](https://lh4.googleusercontent.com/0f0UsF21J_5h0A3Fziop3R5CorNuEdgg9RK_w6ZFDx23feUKluAv7q2BqinmIzM5WBGS=w1646-h1200)
 
 Bluebox-ng
 ==========
