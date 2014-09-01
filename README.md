@@ -118,7 +118,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Powered by
-----------
-[![Quobis](http://www.quobis.com/templates/quobis/img/fondo/logo.png)](http://www.quobis.com/)
