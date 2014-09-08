@@ -2,7 +2,7 @@
 
 Bluebox-ng
 ==========
-Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make Node.js still more awesome. ;)
+Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. My 2 cents to improve security practices in these environments and to make Node.js still more awesome. ;)
 
 - **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
 - **IRC(Freenode)**: #breakingVoIP
