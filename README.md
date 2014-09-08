@@ -11,6 +11,7 @@ Features
 --------
 - Auto VoIP/UC penetration test
 - Report generation
+- Performance
 - RFC compliant
 - SIP TLS and IPv6 support
 - SIP over websockets (and WSS) support (RFC 7118)
