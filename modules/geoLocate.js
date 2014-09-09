@@ -17,15 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var geoip = require('geoip-lite'),
-    
+var geoip = require('node-freegeoip'),
+
     printer = require('../utils/printer');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'geoLocate',
             description : 'Geolozalization (Maxmind DB)',
@@ -37,10 +37,10 @@ module.exports = (function () {
                 }
             }
         },
-        
+
         run : function (options, callback) {
-            callback(null, geoip.lookup(options.target));
+            geoip.getLocation(options.target, callback);
         }
     };
-    
+
 }());
