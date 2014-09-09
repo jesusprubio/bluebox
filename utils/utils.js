@@ -17,7 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var lodash = require('lodash');
+var lodash = require('lodash'),
+
+    // Statics
+    SIP_REQS = [
+            'REGISTER', 'INVITE', 'OPTIONS', 'MESSAGE', 'BYE', 'CANCEL', 'ACK',
+            'Trying', 'Ringing', 'OK', 'SUBSCRIBE' , 'NOTIFY', 'PUBLISH', 'random'
+        ],
+    // http://www.openssl.org/docs/ssl/ssl.html#DEALING_WITH_PROTOCOL_METHODS
+    TLS_TYPES = [ 'TLSv1', 'SSLv2', 'SSLv3' ];
 
 
 // Public functions
@@ -68,13 +76,15 @@ module.exports.randomPort2 = function() {
 };
 
 module.exports.randSipReq = function () {
-    // TODO: Repeated in "blueTypes", refactor
-    var types = [
-            'REGISTER', 'INVITE', 'OPTIONS', 'MESSAGE', 'BYE', 'CANCEL', 'ACK',
-            'Trying', 'Ringing', 'OK', 'SUBSCRIBE' , 'NOTIFY', 'PUBLISH', 'random'
-        ];
+    return SIP_REQS[lodash.random(11)];
+};
 
-    return types[lodash.random(11)];
+module.exports.getSipReqs = function () {
+    return SIP_REQS;
+};
+
+module.exports.getTlsTypes = function () {
+    return TLS_TYPES;
 };
 
 module.exports.getCombinations = function (chars) {

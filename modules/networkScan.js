@@ -23,9 +23,9 @@ var dns      = require('native-dns'),
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'networkScan',
             description : 'Host/port network scanner (Evilscanner, only full TCP for now)',
@@ -35,9 +35,9 @@ module.exports = (function () {
                     defaultValue : '127.0.0.1',
                     type         : 'targetsEvil'
                 },
-                ports : { 
+                ports : {
                     description  : 'Port (or list of) to scan on chosen IPs',
-                    defaultValue : '21,22,23,80,443,4443,4444,5038,5060-5070,8080',
+                    defaultValue : '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,27017',
                     type         : 'ports'
                 },
                 limit : {
@@ -59,10 +59,10 @@ module.exports = (function () {
                     description  : 'Banner grabbing (not fully implemented)',
                     defaultValue : 'no',
                     type         : 'yesNo'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var config = {
                     target      : options.targets,
@@ -75,7 +75,7 @@ module.exports = (function () {
                 },
                 result = [],
                 scanner;
-            
+
             scanner = new evilscan(config);
 
             scanner.on('result', function (data) {

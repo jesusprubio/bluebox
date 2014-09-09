@@ -23,25 +23,22 @@ var async  = require('async'),
     SipFakeStack = require('../utils/sipFakeStack'),
     sipParser    = require('../utils/sipParser'),
     printer      = require('../utils/printer'),
-    utils        = require('../utils/utils'),
-    
-    // Statics
-    CVEURL = 'http://www.cvedetails.com/product-search.php?vendor_id=0&search=';
+    utils        = require('../utils/utils');
 
 
 // Private helpers
 
 function getFingerPrint (msg) {
     var fingerprint, ser, ver;
-    
+
     fingerprint = sipParser.server(msg) || sipParser.userAgent(msg) ||
                   sipParser.organization(msg);
-    
+
     if (fingerprint) {
         ser = sipParser.service(fingerprint);
         ver = sipParser.version(fingerprint);
     }
-    
+
     return {
         service: ser,
         version: ver
@@ -51,9 +48,9 @@ function getFingerPrint (msg) {
 
 // Module core
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name : 'sipScan',
             description : 'SIP host/port scanner',
@@ -61,15 +58,15 @@ module.exports = (function () {
                 targets : {
                     description  : 'IP address to explore',
                     defaultValue : '127.0.0.1',
-                    type         : 'targets'
+                    type         : 'anyValue'
                 },
                 ports : {
                     description  : 'Ports to test in each server',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'ports'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
@@ -81,10 +78,10 @@ module.exports = (function () {
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 meth : {
-                    description  : 'Type of SIP packets to do the requests ("random" available)',                    
+                    description  : 'Type of SIP packets to do the requests ("random" available)',
                     defaultValue : 'OPTIONS',
                     type         : 'sipRequests'
                 },
@@ -102,7 +99,7 @@ module.exports = (function () {
                     description  : 'Domain to explore ("ip" to use the target)',
                     defaultValue : 'ip',
                     type         : 'domainIp'
-                },                
+                },
                 delay : {
                     description  : 'Delay between requests in ms. ("async" to concurrent)',
                     defaultValue : 0,
@@ -115,7 +112,7 @@ module.exports = (function () {
                 }
             }
         },
-                
+
         run : function (options, callback) {
             var hostPortPairs = utils.createTargetPairs(options.targets, options.ports),
                 result        = [],
@@ -123,7 +120,7 @@ module.exports = (function () {
                 indexCount    = 0, // User with delay to know in which index we are
                 hasAuth       = false,
                 finalDelay; // by default we use delay
-            
+
             if (options.delay === 'async') {
                 limit = 10; // low value to avoid problems (too much opened sockets, etc.)
                 finalDelay = 0;
@@ -149,25 +146,25 @@ module.exports = (function () {
                         },
                         fakeStack = new SipFakeStack(stackConfig),
                         msgConfig, finalMeth, finalSrcHost, finalSrcPort;
-                    
+
                     if (options.meth === 'random') {
                         finalMeth = utils.randSipReq();
                     } else {
                         finalMeth = options.meth;
                     }
-                    
+
                     msgConfig = {
                         meth : finalMeth
                     };
-                    
+
                     indexCount += 1;
                     fakeStack.send(msgConfig, function (err, res) {
                         var parsedService, parsedCode, partialResult, finalRes;
-                        
+
                         // We don't want to stop the full chain (if error)
                         if (!err) {
                             finalRes = res.msg;
-                            
+
                             parsedService = getFingerPrint(finalRes);
                             if (['401', '407'].indexOf(sipParser.code(finalRes)) !== -1) {
                                 hasAuth = true;
@@ -178,7 +175,6 @@ module.exports = (function () {
                                 auth       : hasAuth,
                                 service    : parsedService.service,
                                 version    : parsedService.version,
-                                cveDetails : CVEURL + parsedService.service,
                                 data       : finalRes
                             };
 
@@ -190,19 +186,19 @@ module.exports = (function () {
                             printer.infoHigh('Host not found: ' + stackConfig.server +
                                              ':' + stackConfig.port);
                         }
-                        
+
                         // Last element
                         if (indexCount === hostPortPairs.length ) {
                             asyncCb();
                         } else {
                             setTimeout(asyncCb, finalDelay);
-                        }                        
+                        }
                     });
                 }, function (err) {
                     callback(err, result);
                 }
             );
         }
-	};
-	
+    };
+
 }());

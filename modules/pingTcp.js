@@ -21,9 +21,9 @@ var ping = require('tcp-ping');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'pingTcp',
             description : 'Ping client (TCP protocol)',
@@ -35,7 +35,7 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port to scan on chosen IPs',
-                    defaultValue : '80',
+                    defaultValue : 80,
                     type         : 'port'
                 },
                 timeout : {
@@ -50,17 +50,17 @@ module.exports = (function () {
                 }
             }
         },
-        
+
         run : function (options, callback) {
-            var reqCfg = { 
+            var reqCfg = {
                 adress   : options.target,
                 port     : options.port,
                 timeout  : options.timeout,
                 attempts : options.attempts
             };
-            
+
             ping.ping(reqCfg, callback);
-        }  
+        }
     };
-    
+
 }());

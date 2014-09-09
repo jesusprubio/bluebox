@@ -25,9 +25,9 @@ var async  = require('async'),
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name : 'sipBruteExt',
             description : 'SIP extension brute-forcer.',
@@ -39,11 +39,11 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port to use',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'port'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
@@ -55,15 +55,15 @@ module.exports = (function () {
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 extensions : {
                     description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
                     defaultValue : 'range:100-110',
                     type         : 'userPass'
-                },                
+                },
                 meth : {
-                    description  : 'Type of SIP packets to do the requests',                    
+                    description  : 'Type of SIP packets to do the requests',
                     defaultValue : 'REGISTER',
                     type         : 'sipRequests'
                 },
@@ -81,7 +81,7 @@ module.exports = (function () {
                     description  : 'Domain to explore ("ip" to use the target)',
                     defaultValue : 'ip',
                     type         : 'domainIp'
-                },                
+                },
                 delay : {
                     description  : 'Delay between requests in ms.',
                     defaultValue : 0,
@@ -91,10 +91,10 @@ module.exports = (function () {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var result      = [],
                 limit       = 1,
@@ -112,16 +112,16 @@ module.exports = (function () {
                     domain    : options.domain    || null
                 },
                 fakeStack, msgConfig;
-            
+
             // Impossible extension at init, to check if vulnerable
             fakeStack = new SipFakeStack(stackConfig);
-            msgConfig = { 
+            msgConfig = {
                 meth    : options.meth,
                 fromExt : 'olakasetu',
                 // To force inf INVITE, OPTIONS, etc. (better results)
                 toExt   : 'olakasetu'
             };
-            
+
             fakeStack.send(msgConfig, function (err, res) {
                 var hasAuth       = true,
                     partialResult = {},
@@ -129,7 +129,7 @@ module.exports = (function () {
 
                 // We want to stop the full chain
                 if (err) {
-                    callback(err);                    
+                    callback(err);
                 } else {
                     finalRes = res.msg;
                     resCode = sipParser.code(finalRes);
@@ -145,7 +145,7 @@ module.exports = (function () {
                             options.extensions,
                             function (extension, asyncCb) {
                                 // We use a new stack in each request to simulate different users
-                                msgConfig = { 
+                                msgConfig = {
                                     meth    : options.meth,
                                     fromExt : extension,
                                     toExt   : extension
@@ -214,6 +214,6 @@ module.exports = (function () {
                 }
             });
         }
-	};
-	
+    };
+
 }());

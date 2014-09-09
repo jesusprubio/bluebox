@@ -19,14 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var JsFtp  = require('jsftp'),
     async  = require('async'),
-    
+
     printer = require('../utils/printer'),
     utils   = require('../utils/utils');
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'ftpBrute',
             description : 'Try to brute-force valid credentials for the FTP protocol',
@@ -38,7 +38,7 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '21',
+                    defaultValue : 21,
                     type         : 'port'
                 },
                 users : {
@@ -60,16 +60,16 @@ module.exports = (function () {
                     description  : 'Delay between requests in ms.',
                     defaultValue : 0,
                     type         : 'positiveInt'
-                }              
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;    
-                        
+                tmpUser;
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 var jsFtp = new JsFtp({
@@ -86,7 +86,7 @@ module.exports = (function () {
                 }
 
                 indexCount += 1;
-                
+
                 jsFtp.auth(loginPair.user, loginPair.pass, function (err, data) {
                     // TODO: Destroy/close client, not supported by the module
                     if (err) {
@@ -108,6 +108,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

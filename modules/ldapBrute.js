@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var ldap   = require('ldapjs'),
     async  = require('async'),
-    
+
     printer = require('../utils/printer'),
     utils   = require('../utils/utils');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'httpBrute',
             description : 'Try to brute-force valid credentials for a LDAP/Active Directory server',
@@ -39,7 +39,7 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '389',
+                    defaultValue : 389,
                     type         : 'port'
                 },
                 users : {
@@ -69,13 +69,13 @@ module.exports = (function () {
                 }
             }
         },
-                
+
         run : function (options, callback) {
             var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;    
-            
+                tmpUser;
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 var lpath = loginPair.user.split(',').slice(1),
@@ -88,11 +88,11 @@ module.exports = (function () {
                         setTimeout(asyncCb, options.delay);
                     }
                 }
-                
-                indexCount += 1;                
+
+                indexCount += 1;
                 client = ldap.createClient({
                     url: 'ldap://' + options.target + ':' +
-                    options.port + '/' + lpath
+                    options.port.toString() + '/' + lpath
                 });
                 client.bind(loginPair.user, loginPair.pass, function (err, data) {
                     // TODO: Destroy/close client, not supported by the module
@@ -115,6 +115,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

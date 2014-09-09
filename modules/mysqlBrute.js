@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var mysql  = require('mysql'),
     async  = require('async'),
-    
+
     printer = require('../utils/printer'),
     utils   = require('../utils/utils');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'mysqlBrute',
             description : 'Try to brute-force valid credentials for a MySQL database',
@@ -39,14 +39,14 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '3306',
+                    defaultValue : 3306,
                     type         : 'port'
                 },
                 ssl : {
                     description  : 'Determine if the modules uses SSL',
                     defaultValue : 'no',
                     type         : 'yesNo'
-                },                
+                },
                 users : {
                     description  : 'User (or file with them) to test',
                     defaultValue : 'anonymous',
@@ -66,16 +66,16 @@ module.exports = (function () {
                     description  : 'Delay between requests in ms.',
                     defaultValue : 0,
                     type         : 'positiveInt'
-                }              
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;    
-                        
+                tmpUser;
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 var config = {
@@ -94,7 +94,7 @@ module.exports = (function () {
                         setTimeout(asyncCb, options.delay);
                     }
                 }
-                
+
                 if (options.ssl) {
                     config.ssl = { rejectUnauthorized: false };
                 }
@@ -121,6 +121,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

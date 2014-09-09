@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var request = require('request'),
     async   = require('async'),
-    
+
     printer = require('../utils/printer'),
-    utils   = require('../utils/utils');    
+    utils   = require('../utils/utils');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'httpBrute',
             description : 'Try to brute-force valid credentials for the HTTP protocol',
@@ -35,7 +35,7 @@ module.exports = (function () {
                 uri : {
                     description  : 'URI to brute-force',
                     defaultValue : 'http://127.0.0.1',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 users : {
                     description  : 'User (or file with them) to test',
@@ -64,13 +64,13 @@ module.exports = (function () {
                 }
             }
         },
-                
+
         run : function (options, callback) {
             var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;    
-                                                
+                tmpUser;
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 var authCfg = {
@@ -101,10 +101,10 @@ module.exports = (function () {
                         setTimeout(asyncCb, options.delay);
                     }
                 }
-                
+
                 indexCount += 1;
                 request.get(cfg, function (err, res, body) {
-                    // TODO: Destroy/close client, not supported by the module                    
+                    // TODO: Destroy/close client, not supported by the module
                     if (!err && res.statusCode === 200) {
                         result.push(loginPair);
                         printer.highlight('Valid credentials found: ' +
@@ -118,12 +118,12 @@ module.exports = (function () {
                             delayCb();
                     } else {
                         asyncCb(err);
-                    }                
+                    }
                 });
             }, function (err) {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

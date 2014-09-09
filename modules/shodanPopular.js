@@ -23,9 +23,9 @@ var ShodanClient = require('shodan-client');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'shodanPopular',
             description : 'Quick access to popular SHODAN related queries',
@@ -33,7 +33,7 @@ module.exports = (function () {
                 tag : {
                     description  : 'Specific tag to search about. Use "all" to avoid filtering',
                     defaultValue : 'voip',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 timeout : {
                     description  : 'Time to wait for a response, in ms.',
@@ -42,19 +42,19 @@ module.exports = (function () {
                 }
             }
         },
-        
+
         run : function (options, callback) {
             var reqOptions  = {
                 timeout : options.timeout
             },
                 shodanClient = new ShodanClient(reqOptions);
-            
+
             if (options.tag === 'all') {
                 shodanClient.popular(callback);
             } else {
                 shodanClient.popularTag(options.tag, callback);
-            }  
-        }    
+            }
+        }
     };
-    
+
 }());

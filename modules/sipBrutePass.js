@@ -26,9 +26,9 @@ var async  = require('async'),
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'sipBrutePass',
             description : 'SIP credentials brute-force',
@@ -40,11 +40,11 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'port'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
@@ -56,7 +56,7 @@ module.exports = (function () {
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 extensions : {
                     description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
@@ -74,7 +74,7 @@ module.exports = (function () {
                     type         : 'yesNo'
                 },
                 meth : {
-                    description  : 'Type of SIP packets to do the requests',                    
+                    description  : 'Type of SIP packets to do the requests',
                     defaultValue : 'REGISTER',
                     type         : 'sipRequests'
                 },
@@ -105,13 +105,13 @@ module.exports = (function () {
                 },
             }
         },
-                
+
         run : function (options, callback) {
             var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
                 tmpUser;
-                        
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 // We use a new stack in each request to simulate different users
@@ -127,8 +127,8 @@ module.exports = (function () {
                     domain    : options.domain    || null
                 },
                 fakeStack, msgConfig;
-            
-                msgConfig = { 
+
+                msgConfig = {
                     meth    : options.meth,
                     fromExt : loginPair.user,
                     pass    : loginPair.pass
@@ -145,7 +145,7 @@ module.exports = (function () {
                                 pass      : loginPair.pass,
                                 data      : res.data
                             });
-                            // We only add valid extensions to final result                    
+                            // We only add valid extensions to final result
                             printer.highlight('Valid credentials found: ' +
                                                loginPair.user + ' | ' + loginPair.pass);
                         } else {
@@ -169,6 +169,6 @@ module.exports = (function () {
                 }
             );
         }
-	};
-	
+    };
+
 }());

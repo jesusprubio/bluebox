@@ -27,9 +27,9 @@ var async  = require('async'),
 
 // Module core
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name : 'sipDos',
             description : 'DoS protection mechanisms stress test (it waits for a response)',
@@ -41,11 +41,11 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port to use',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'port'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
@@ -57,10 +57,10 @@ module.exports = (function () {
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 meth : {
-                    description  : 'Type of SIP packets to do the requests ("random" available)',                    
+                    description  : 'Type of SIP packets to do the requests ("random" available)',
                     defaultValue : 'OPTIONS',
                     type         : 'sipRequests'
                 },
@@ -93,17 +93,17 @@ module.exports = (function () {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var fakeIndex     = [],
                 limit         = 1,
                 indexCount    = 0, // User with delay to know in which index we are
                 lastAnswer    = null,
                 finalDelay; // by default we use delay
-            
+
             if (options.delay === 'async') {
                 limit = 100; // low value to avoid problems (too much opened sockets, etc.)
                 finalDelay = 0;
@@ -111,7 +111,7 @@ module.exports = (function () {
                 limit = 1;
                 finalDelay = options.delay;
             }
-            
+
             // Dirty trick to control async
             fakeIndex = new Array(options.numReq).join(1).split('');
             async.eachLimit(
@@ -132,9 +132,9 @@ module.exports = (function () {
                         },
                         fakeStack = new SipFakeStack(stackConfig),
                         msgConfig, finalMeth;
-                    
+
                     indexCount += 1;
-                    
+
                     if (options.meth === 'random') {
                         finalMeth = utils.randSipReq();
                     } else {
@@ -144,22 +144,22 @@ module.exports = (function () {
 
                     fakeStack.send(msgConfig, function (err, res) {
                         var finalRes;
-                        
+
                         // We don't want to stop the full chain (if error)
                         if (!err) {
-                            lastAnswer = res.msg;  
+                            lastAnswer = res.msg;
                             printer.highlight('Response (index ' + indexCount +'): ');
                         } else {
                             lastAnswer = null;
                             printer.infoHigh('Response not received (index ' + indexCount +')');
                         }
-                        
+
                         // Last element
                         if (indexCount === options.numReq) {
                             asyncCb();
                         } else {
                             setTimeout(asyncCb, finalDelay);
-                        }                        
+                        }
                     });
                 }, function (err) {
                     callback(err, {
@@ -169,6 +169,6 @@ module.exports = (function () {
                 }
             );
         }
-	};
-	
+    };
+
 }());

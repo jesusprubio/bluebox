@@ -26,7 +26,7 @@ var async        = require('async'),
 // Constructor
 
 function Bluebox (options) {
-    this.shodanKey = options.shodanKey;
+    this.shodanKey = options.shodanKey || null;
 
     this.modulesInfo  = requireDir(module, './modules');
 }

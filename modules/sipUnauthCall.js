@@ -26,12 +26,12 @@ var async  = require('async'),
 
 
 module.exports = (function () {
-    
+
     var user = '100',
         pass = '100';
-    
+
     return {
-        
+
         info : {
             name : 'sipUnauthCall',
             description : 'To check if a server allows unauthenticated calls',
@@ -43,11 +43,11 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port to use',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'port'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
@@ -59,13 +59,13 @@ module.exports = (function () {
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 fromExt : {
                     description  : 'Extension which makes the call',
                     defaultValue : 'range:100-110',
                     type         : 'userPass'
-                },                
+                },
                 toExt : {
                     description  : 'Extension which receives the call',
                     defaultValue : 'range:100-110',
@@ -95,10 +95,10 @@ module.exports = (function () {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var extPairs    = [],
                 result      = [],
@@ -123,12 +123,12 @@ module.exports = (function () {
                     });
                 });
             });
-            
+
             async.eachSeries(
                 extPairs,
                 function (extPair, asyncCb) {
                     // We use a new stack in each request to simulate different users
-                    var msgConfig = { 
+                    var msgConfig = {
                             meth    : 'INVITE',
                             fromExt : extPair.fromExt,
                             toExt   : extPair.toExt
@@ -164,7 +164,7 @@ module.exports = (function () {
                                     toExt   : extPair.toExt,
                                     info    : finalInfo,
                                     data    : res.msg
-                                };                                
+                                };
                                 result.push(partialResult);
                                 printer.highlight('Accepted: ' + extPair.fromExt + ' => ' + extPair.toExt );
                             } else {
@@ -187,6 +187,6 @@ module.exports = (function () {
                 }
             );
         }
-	};
-    
+    };
+
 }());

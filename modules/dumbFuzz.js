@@ -25,9 +25,9 @@ var async  = require('async'),
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name : 'dumbFuzz',
             description : 'Really stupid app layer fuzzer (underlying support: UDP, TCP, TLS, [secure] websockects)',
@@ -39,23 +39,23 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port to use',
-                    defaultValue : '5060',
+                    defaultValue : 5060,
                     type         : 'port'
                 },
                 transport : {
-                    description  : 'Underlying protocol',                    
+                    description  : 'Underlying protocol',
                     defaultValue : 'UDP',
                     type         : 'protocols'
                 },
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 wsProto : {
                     description  : 'Websockets protocol (only when websockets)',
                     defaultValue : 'sip',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
@@ -65,17 +65,17 @@ module.exports = (function () {
                 string : {
                     description  : 'String or char to send',
                     defaultValue : 'A',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 minLen : {
                     description  : 'Min. lenght of the string to fuzz',
                     defaultValue : 1,
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 maxLen : {
                     description  : 'Max. lenght of the string to fuzz',
                     defaultValue : 1000,
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 delay : {
                     description  : 'Delay between requests in ms. (use "async" to concurrent)',
@@ -86,10 +86,10 @@ module.exports = (function () {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var fakeIndex   = [],
                 fuzzStrings = [],
@@ -108,7 +108,7 @@ module.exports = (function () {
                     tlsType   : options.tlsType
                 }),
                 finalDelay, lastSent, totalCount; // by default we use delay
-                        
+
             if (options.delay === 'async') {
                 limit = 100; // low value to avoid problems (too much opened sockets, etc.)
                 finalDelay = 0;
@@ -116,19 +116,19 @@ module.exports = (function () {
                 limit = 1;
                 finalDelay = options.delay;
             }
-            
+
             for (var i = minLen; i <= maxLen; i++) {
                 initString += options.string;
                 fuzzStrings.push(initString);
             }
             totalCount = fuzzStrings.length;
-            
+
             printer.infoHigh('\nStarting ...\n');
-            
+
             async.eachLimit(
                 fuzzStrings,
                 limit,
-                function (fuzzString, asyncCb) {    
+                function (fuzzString, asyncCb) {
                     megaSocket.on('error', function (err) {
                         // The error is used to pass the last one (supposed to break the code)
                         asyncCb({
@@ -141,13 +141,13 @@ module.exports = (function () {
                         // TODO: Add param, string or buffer
                         lastAnswer = msg.data.toString();
                         printer.highlight('Response (index ' + indexCount +'): ');
-            
+
                         // Last element
                         if (indexCount === totalCount ) {
                             asyncCb();
                         } else {
                             setTimeout(asyncCb, finalDelay);
-                        }                        
+                        }
                     });
 
                     // The message which is being sent
@@ -164,7 +164,7 @@ module.exports = (function () {
                             lastSent  : err.data
                         });
                     } else {
-                        callback(null,  { 
+                        callback(null,  {
                             answering  : true,
                             lastAnswer : lastAnswer
                         });
@@ -174,6 +174,6 @@ module.exports = (function () {
                 }
             );
         }
-	};
-	
+    };
+
 }());

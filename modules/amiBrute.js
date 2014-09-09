@@ -38,7 +38,7 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '5038',
+                    defaultValue : 5038,
                     type         : 'port'
                 },
                 users : {
@@ -102,7 +102,7 @@ module.exports = (function () {
                     ami.disconnect();
                 }, options.timeout);
                 ami = new require('asterisk-manager')(
-                    options.port, options.target,
+                    options.port.toString(), options.target,
                     loginPair.user, loginPair.pass,
                     true // determines whether events are emited
                 );

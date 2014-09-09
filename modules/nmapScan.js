@@ -21,9 +21,9 @@ var libnmap = require('node-libnmap');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'networkScan',
             description : 'Host/port network scanner (Evilscanner, only full TCP for now)',
@@ -33,26 +33,26 @@ module.exports = (function () {
                     defaultValue : '192.168.0.0/24',
                     type         : 'nmapTargets'
                 },
-                ports : { 
+                ports : {
                     description  : 'Port (or list of) to scan on chosen IPs',
-                    defaultValue : '21,22,23,80,443,4443,4444,5038,5060-5070,8080',
+                    defaultValue : '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,27017',
                     type         : 'nmapPorts'
                 },
-                binPath : { 
+                binPath : {
                     description  : 'Path of the nmap binary',
                     defaultValue : '/usr/local/bin/nmap',
-                    type         : 'anyString'
-                }                
+                    type         : 'anyValue'
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var opts = {
                 range : [options.targets], // array mandatory here
                 ports : options.ports, // a string here
                 nmap  : options.binPath
             };
-                        
+
             // TODO: Not working, "uncaughtException" in the client to the rescue
             try {
                 // TODO: Something failing here, only the first ones are scanned
@@ -62,7 +62,7 @@ module.exports = (function () {
             } catch (err) {
                 callback(err);
             }
-        } 
+        }
     };
 
 }());

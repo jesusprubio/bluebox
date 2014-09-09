@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var Bluebox = require('../'),
+var Bluebox = require('bluebox-ng'),
 
     options       = {},
     bluebox       = new Bluebox(options),

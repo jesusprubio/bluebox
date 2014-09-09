@@ -21,9 +21,9 @@ var ShodanClient = require('shodan-client');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'shodanSearch',
             description : 'Find potential targets in SHODAN computer search engine',
@@ -31,13 +31,13 @@ module.exports = (function () {
                 query : {
                     description  : 'Query to search about, could include port, country, product, etc.',
                     defaultValue : 'openssh',
-                    type         : 'anyString'
+                    type         : 'anyValue'
                 },
                 pages : {
                     description  : 'Number of pages (of results) to return (only 1 allowed with free accounts)',
                     defaultValue : 1,
                     type         : 'positiveInt'
-                },            
+                },
                 timeout : {
                     description  : 'Time to wait for a response, in ms.',
                     defaultValue : 15000,
@@ -45,7 +45,7 @@ module.exports = (function () {
                 }
             }
         },
-        
+
         run : function (options, callback) {
             var reqOptions  = {
                     key     : options.shodanKey,
@@ -57,7 +57,7 @@ module.exports = (function () {
     //                facets : 'port:100',
                     page    : parseInt(options.pages)
                 };
-            
+
             if (options.shodanKey) {
                 shodanClient.search(searchOptions, callback);
             }
@@ -66,7 +66,7 @@ module.exports = (function () {
                     type : 'A SHODAN key is needed to run this module.'
                 });
             }
-        }   
+        }
     };
-    
+
 }());

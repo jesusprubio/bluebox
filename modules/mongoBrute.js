@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var mongo  = require('mongodb'),
     async  = require('async'),
-    
+
     printer = require('../utils/printer'),
     utils   = require('../utils/utils');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'bruteMongo',
             description : 'MongoDB credentials brute-force',
@@ -39,7 +39,7 @@ module.exports = (function () {
                 },
                 port : {
                     description  : 'Port of the server',
-                    defaultValue : '27017',
+                    defaultValue : 27017,
                     type         : 'port'
                 },
                 users : {
@@ -66,17 +66,17 @@ module.exports = (function () {
                     description  : 'Time to wait for the first response, in ms.',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }              
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var client      = mongo.MongoClient,
                 loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
                 result      = [],
                 indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;    
-            
+                tmpUser;
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {
                 indexCount += 1;
@@ -125,6 +125,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());
