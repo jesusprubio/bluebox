@@ -54,13 +54,13 @@ function normalize6 (add6) {
 
 function SteroidsSocket (options) {
     var finalTarget;
-    
+
     if (options.target && net.isIPv6(options.target)) {
         finalTarget = normalize6(options.target);
     } else {
         finalTarget = options.target;
     }
-    
+
     this.target        = finalTarget;
     this.port          = options.port          || 80;
     this.transport     = options.transport     || 'TCP';
@@ -70,9 +70,9 @@ function SteroidsSocket (options) {
     this.tlsType       = options.tlsType       || 'SSLv3';
     this.wsProto       = options.wsProto       || 'sip';
     this.wsPath        = options.wsPath        || null;
-    
+
     // We init the socket in the send function to be able
-    // to detect timeouts using UDP (no "connected" or similar event)
+    // to detect timeouts using UDP (no "received" or similar event)
 }
 
 // Extend the EventEmitter
@@ -83,12 +83,12 @@ util.inherits(SteroidsSocket, EventEmitter);
 
 SteroidsSocket.prototype.send = function (msg) {
     var self      = this,
-        connected = false,
+        received = false,
         wsError   = false,
         protocols, megaSocket;
-    
+
     function timeoutCb () {
-        if (!connected) {
+        if (!received) {
             self.emit('error', {
                 type : 'socket: timeout',
                 data : 'Connection problem: No response'
@@ -97,12 +97,12 @@ SteroidsSocket.prototype.send = function (msg) {
         // Websockets Node module doen't support any close function, we're using the client
         // https://github.com/Worlize/WebSocket-Node/blob/master/lib/WebSocketClient.js
         // So we need this var to "emulate" it and avoid returning multiple errors
-        wsError = true;        
-        
+        wsError = true;
+
         // We're closing the socket manually, so we need this to avoid errors
         self.close();
     }
-    
+
     if (!this.target) {
         self.emit('error', {
             type : 'params',
@@ -118,30 +118,30 @@ SteroidsSocket.prototype.send = function (msg) {
                 }
 
                 self.megaSocket.on('error', function (err) {
-                    connected = true; // to avoid the launch of our timeout error
+                    received = true; // to avoid the launch of our timeout error
                     self.emit('error', {
                         type : 'socket',
                         data : err
                     });
                 });
-                
+
                 self.megaSocket.on('closed', function () {
                     self.emit('closed');
                 });
-                
+
                 self.megaSocket.on('message', function (msg, rinfo) {
-                    connected = true;
+                    received = true;
                     self.emit('message', {
                         type  : 'received',
                         data  : msg,
                         rinfo : rinfo
                     });
                 });
-                                
+
                 // We need a server in UDP to implement sipBruteExtAst module
                 self.megaSocket.bind(self.lport, function () { // "connect" listener
                     var buff = new Buffer(msg);
-                    
+
                     setTimeout(timeoutCb, self.timeout);
                     self.megaSocket.send(
                         buff,
@@ -155,10 +155,10 @@ SteroidsSocket.prototype.send = function (msg) {
             // Only client support from here
             'TCP' : function (isSecure) {
                 function listenCb () {
-                    connected = true;
                     self.megaSocket.write(msg);
+                    // TODO: ANOTHER TIMEOUT AND EVENT (NO RESPONSE) SHOUD BE ALSO GENERATED
                 }
-                
+
                 setTimeout(timeoutCb, self.timeout);
 
                 if (!isSecure) {
@@ -185,28 +185,29 @@ SteroidsSocket.prototype.send = function (msg) {
                             secureProtocol     : self.tlsType + '_method'
                         },
                         listenCb // 'connect listener'
-                    );                
+                    );
                 }
                 self.megaSocket.on('error', function (err) {
-                    connected = true; // to avoid the launch of our timeout error
+                    received = true; // to avoid the launch of our timeout error
                     self.emit('error', {
                         type : 'socket',
                         data : err.toString()
                     });
-                });                
-                
+                });
+
                 self.megaSocket.on('end', function () {
                     self.emit({
                         type : 'socket closed'
                     });
                 });
-                                
+
                 self.megaSocket.on('data', function (data) {
+                    received = true;
                     self.emit('message', {
                         type  : 'received',
                         data  : data
                     });
-                });              
+                });
             },
             'TLS' : function () {
                 protocols.TCP(true);
@@ -214,7 +215,7 @@ SteroidsSocket.prototype.send = function (msg) {
             'WS' : function () {
                 var addr = self.transport.toLowerCase() +
                     '://' + self.target + ':' + self.port;
-                
+
                 if (self.wsPath) {
                     addr += '/' + self.wsPath;
                 }
@@ -223,11 +224,11 @@ SteroidsSocket.prototype.send = function (msg) {
                         rejectUnauthorized : false
                     }
                 });
-                
+
                 setTimeout(timeoutCb, self.timeout);
-                
+
                 self.megaSocket.on('connectFailed', function (err) {
-                    connected = true; // to avoid the launch of our timeout error
+                    received = true; // to avoid the launch of our timeout error
                     if (!wsError) {
                         self.emit('error', {
                             type : 'socket: connectFailed',
@@ -237,8 +238,6 @@ SteroidsSocket.prototype.send = function (msg) {
                 });
 
                 self.megaSocket.on('connect', function (connection) {
-                    connected = true;
-                    
                     connection.on('error', function (err) {
                         // To avoid returning multiple errors, see the comments
                         // in "callback" function
@@ -249,22 +248,23 @@ SteroidsSocket.prototype.send = function (msg) {
                             });
                         }
                     });
-                    
+
                     connection.on('close', function () {
                         self.emit('closed');
                     });
-                    
+
                     connection.on('message', function (message) {
+                        received = true;
                         self.emit('message', {
                             type  : 'received',
-                            data  : message.utf8Data, 
+                            data  : message.utf8Data,
                         });
                     });
 
                     connection.sendUTF(msg);
                 });
 
-                self.megaSocket.connect(addr, 'sip');            
+                self.megaSocket.connect(addr, 'sip');
             },
             'WSS' : function () {
                 protocols.WS();

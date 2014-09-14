@@ -21,9 +21,9 @@ var shui = require('shui');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'whois',
             description : 'WHOIS protocol client',
@@ -35,12 +35,12 @@ module.exports = (function () {
                 }
             }
         },
-                
+
         run : function (options, callback) {
             shui(options.domain, function (result) {
                 callback(null, result);
             });
         }
     };
-    
+
 }());

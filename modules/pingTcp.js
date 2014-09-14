@@ -53,7 +53,7 @@ module.exports = (function () {
 
         run : function (options, callback) {
             var reqCfg = {
-                adress   : options.target,
+                address   : options.target,
                 port     : options.port,
                 timeout  : options.timeout,
                 attempts : options.attempts

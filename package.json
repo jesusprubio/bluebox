@@ -59,13 +59,13 @@
     "tftp-client": "0.2.x",
     "mysql": "2.4.x",
     "ldapjs": "0.7.x",
-    "snmp-native": "1.0.x"
+    "snmp-native": "1.0.x",
+    "grunt": "0.4.x"
   },
   "engines": {
     "node": "0.10.x"
   },
   "devDependencies": {
-    "grunt": "0.4.x",
     "grunt-nsp-package": "0.0.5"
   }
 }

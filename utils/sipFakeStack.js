@@ -26,7 +26,7 @@ var os             = require('os'),
     net            = require('net'),
     crypto         = require('crypto'),
     lodash         = require('lodash'),
-    
+
     utils          = require('./utils'),
     SteroidsSocket = require('./steroidsSocket'),
     sipParser      = require('../utils/sipParser');
@@ -36,15 +36,15 @@ var os             = require('os'),
 
 function getDigest (cfg) {
     var ha1, ha2, response;
-    
+
     ha1 = crypto.createHash('md5').update(cfg.fromExt + ':' + cfg.realm + ':' + cfg.pass).digest('hex');
-    ha2 = crypto.createHash('md5').update(cfg.meth + ':' + cfg.authUri).digest('hex');    
+    ha2 = crypto.createHash('md5').update(cfg.meth + ':' + cfg.authUri).digest('hex');
 //    console.log(cfg);
 //    console.log('HA1: ' + cfg.fromExt + ':' + cfg.realm + ':' + cfg.pass)
 //    console.log('HA1MD5:'+ ha1);
 //    console.log('HA2: ' + cfg.meth + ':' + cfg.authUri);
 //    console.log('HA2MD5:'+ ha2);
-                
+
     response =crypto.createHash('md5').update(
         ha1 + ':' + cfg.nonce + ':' + ha2).digest('hex');
 //    console.log('response: ' + ha1 + ':' + cfg.nonce + ':' + ha2);
@@ -89,19 +89,19 @@ function createMessage (options) {
         server = '[' + server + ']';
         srcHost = options.srcHost || utils.randomIP6();
         srcHost = '[' + srcHost + ']';
-        if (net.isIPv6(domain)) {   
+        if (net.isIPv6(domain)) {
             domain = '[' + domain + ']';
         }
     }
     if (meth === 'REGISTER') { toExt = fromExt; }
-    
+
     uriVia    = srcHost + ':' + srcPort;
     uri       = 'sip:' + fromExt + '@' + domain;
     toUri     = 'sip:' + toExt + '@' + domain;
 //    toUriVia  = 'sip:' + toExt + '@' + domain;
     targetUri = 'sip:' + domain;
-    
-    // SIP frame is filled here 
+
+    // SIP frame is filled here
     switch (meth) {
         case 'REGISTER':
         case 'PUBLISH':
@@ -267,7 +267,7 @@ function createMessage (options) {
             authUri : authUri,
             nonce   : nonce
         };
-        
+
         response = getDigest(digestCfg);
         sipMessage += ' Digest username=\"' + fromExt + '\", realm=\"' + realm + '\",';
         sipMessage += 'nonce=\"' + nonce + '\", uri=\"' + authUri + '\", response=\"' +
@@ -316,7 +316,7 @@ function createMessage (options) {
             }
             sipMessage += 'Content-Length: 0\r\n\r\n';
     }
-    
+
     return sipMessage;
 }
 
@@ -324,7 +324,7 @@ function createMessage (options) {
 // Constructor
 
 function SipFakeStack (config) {
-    
+
     if (!config.server) {
         throw '(SipFakeStack) You need at least to specify a valid IPv4/6 target';
     }
@@ -339,7 +339,7 @@ function SipFakeStack (config) {
     this.wsPath    = config.wsPath      || null;
     this.tlsType   = config.tlsType     || 'SSLv3';
     this.domain    = config.domain      || null;
-    
+
     if (net.isIPv6(config.server) && !config.srcHost) {
         this.srcHost = utils.randomIP6();
     } else if (!config.srcHost) {
@@ -353,13 +353,14 @@ function SipFakeStack (config) {
 SipFakeStack.prototype.send = function (config, callback) {
     var self = this,
         msgOptions = config;
-    
+
     // Reusing options object
     msgOptions.lport = this.lport;
     msgOptions.server = this.server;
     msgOptions.srcHost = this.srcHost;
     msgOptions.domain = this.domain;
-    
+    msgOptions.transport = this.transport;
+
     this.megaSocket = new SteroidsSocket({
         target    : this.server,
         port      : this.port,
@@ -370,7 +371,7 @@ SipFakeStack.prototype.send = function (config, callback) {
         wsPath    : this.wsPath,
         tlsType   : this.tlsType
     });
-    
+
     this.megaSocket.on('error', function (err) {
         callback(err);
     });
@@ -382,7 +383,7 @@ SipFakeStack.prototype.send = function (config, callback) {
             msg   : msg.data.toString()
         });
     });
-    
+
     this.megaSocket.send(createMessage(msgOptions));
 };
 
@@ -419,23 +420,23 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
         wsPath    : this.wsPath,
         tlsType   : this.tlsType
     });
-    
+
     this.megaSocket.on('error', function (err) {
         if (firstTime) {
             callback(err);
         }
     });
 
-    this.megaSocket.on('message', function (msg) {        
+    this.megaSocket.on('message', function (msg) {
         var response, resCode, parsedAuth;
-        
+
         // TODO: We need to be more polite at the end of this function
         // (send ACKs, etc.) to avoid retryings
         self.megaSocket.close();
 
         if (!(msg && msg.data)) {
             callback({
-                type : 'Empty message, firstTime: ' + firstTime 
+                type : 'Empty message, firstTime: ' + firstTime
             });
         } else {
             // SIP can be a binary or text protocol, but text widely used
@@ -454,9 +455,9 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
                     } else {
                         // Upgrading SIP fields
                         parsedAuth = sipParser.realmNonce(response);
-                        
+
                         if (parsedAuth) {
-                            msgOptions.isProxy = parsedAuth.isProxy;                        
+                            msgOptions.isProxy = parsedAuth.isProxy;
                             msgOptions.realm = parsedAuth.realm;
                             msgOptions.nonce = parsedAuth.nonce;
                             msgOptions.pass = config.pass;
@@ -494,9 +495,45 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
             }
         }
     });
-    
+
     this.megaSocket.send(createMessage(msgOptions));
 };
 
+SipFakeStack.prototype.sendS = function (config, type, callback) {
+    var self = this,
+        msgOptions = config;
+
+    // Reusing options object
+    msgOptions.lport = this.lport;
+    msgOptions.server = this.server;
+    msgOptions.srcHost = this.srcHost;
+    msgOptions.domain = this.domain;
+    msgOptions.transport = this.transport;
+
+    this.megaSocket = new SteroidsSocket({
+        target    : this.server,
+        port      : this.port,
+        transport : this.transport,
+        lport     : this.lport,
+        timeout   : this.timeout ,
+        wsProto   : 'sip',
+        wsPath    : this.wsPath,
+        tlsType   : this.tlsType
+    });
+
+    this.megaSocket.on('error', function (err) {
+        callback(err);
+    });
+
+    this.megaSocket.on('message', function (msg) {
+        self.megaSocket.close();
+        // SIP can be a binary or text protocol, but text widely used
+        callback(null, {
+            msg   : msg.data.toString()
+        });
+    });
+
+    this.megaSocket.send(createMessage(msgOptions));
+};
 
 module.exports = SipFakeStack;

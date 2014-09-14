@@ -61,7 +61,7 @@ module.exports = (function () {
                 },
                 meth : {
                     description  : 'Type of SIP packets to do the requests ("random" available)',
-                    defaultValue : 'OPTIONS',
+                    defaultValue : 'INVITE',
                     type         : 'sipRequests'
                 },
                 numReq : {

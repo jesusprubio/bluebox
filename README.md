@@ -73,6 +73,7 @@ Developer guide
 - To add a module you only have to add one file with the code which implements the new features. I suggest to copy the most similar one and start to write code from there. If you needed a new parser/printer feel free to also change the code in the "utils" folder.
 - To contribute we use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
 - Only include external tools written in Node.js. I know we're using Nmap, it's an exception because we still not have a serious replacement for it.
+- Never call a module from another, use a Grunt task to automate things (ie: "auto" module).
 - Styleguide:
  - Always use camelCase, never underscores
  - Use soft-tabs with a four space indent

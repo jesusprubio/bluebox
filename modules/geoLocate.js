@@ -28,7 +28,7 @@ module.exports = (function () {
 
         info : {
             name        : 'geoLocate',
-            description : 'Geolozalization (Maxmind DB)',
+            description : 'Geolozalization (freegeoip.net)',
             options     : {
                 target : {
                     description  : 'Host to explore',

@@ -286,12 +286,14 @@ module.exports.targets = function (value) {
 };
 
 module.exports.ports = function (value) {
-    if (value.split(',').length > 1) {
+    var finalValue = value.toString();
+
+    if (finalValue.split(',').length > 1) {
         return portList(value);
-    } else if (value.split('-').length === 2) {
-        return portRange(value);
+    } else if (finalValue.split('-').length === 2) {
+        return portRange(finalValue);
     } else {
-        return [port(value)];
+        return [port(finalValue)];
     }
 };
 
@@ -304,7 +306,7 @@ module.exports.userPass = function (value) {
     return userPass(value);
 };
 
-module.exports.anyString = function (value) {
+module.exports.anyValue = function (value) {
     return value;
 };
 
@@ -321,10 +323,7 @@ module.exports.protocols = function (value) {
 };
 
 module.exports.sipRequests = function (value) {
-    var types = [
-            'REGISTER', 'INVITE', 'OPTIONS', 'MESSAGE', 'BYE', 'CANCEL', 'ACK',
-            'Trying', 'Ringing', 'OK', 'SUBSCRIBE' , 'NOTIFY', 'PUBLISH', 'random'
-        ];
+    var types = utils.getSipReqs();
 
     if (types.indexOf(value) !== -1) {
         return value;
@@ -333,30 +332,30 @@ module.exports.sipRequests = function (value) {
     }
 };
 
-// Evilscan options
-module.exports.statusEvil = function (value) {
-    // [T]imeout, [R]efused, [O]pen, [U]nreachable
-    var statuses = utils.getCombinations(['T', 'R', 'O', 'U']);
-
-    if (statuses.indexOf(value) !== -1) {
-        return value;
-    } else {
-        throw new Error(statuses.toString());
-    }
-};
-
-module.exports.targetsEvil = function (value) {
-    if (value.split('/').length === 2 ||
-        value.split('-').length === 2 || net.isIPv4(value)) {
-        return value;
-    } else {
-        throw new Error('Evilscan only supports this formats: cidr|ipv4|host');
-    }
-};
+//// Evilscan options
+//module.exports.statusEvil = function (value) {
+//    // [T]imeout, [R]efused, [O]pen, [U]nreachable
+//    var statuses = utils.getCombinations(['T', 'R', 'O', 'U']);
+//
+//    if (statuses.indexOf(value) !== -1) {
+//        return value;
+//    } else {
+//        throw new Error(statuses.toString());
+//    }
+//};
+//
+//module.exports.targetsEvil = function (value) {
+//    if (value.split('/').length === 2 ||
+//        value.split('-').length === 2 || net.isIPv4(value)) {
+//        return value;
+//    } else {
+//        throw new Error('Evilscan only supports this formats: cidr|ipv4|host');
+//    }
+//};
 
 module.exports.tlsType = function (value) {
     // http://www.openssl.org/docs/ssl/ssl.html#DEALING_WITH_PROTOCOL_METHODS
-    var types = [ 'TLSv1', 'SSLv2', 'SSLv3' ];
+    var types = utils.getTlsTypes();
 
     if (types.indexOf(value) !== -1) {
         return value;

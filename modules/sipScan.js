@@ -58,7 +58,7 @@ module.exports = (function () {
                 targets : {
                     description  : 'IP address to explore',
                     defaultValue : '127.0.0.1',
-                    type         : 'anyValue'
+                    type         : 'targets'
                 },
                 ports : {
                     description  : 'Ports to test in each server',
@@ -107,7 +107,7 @@ module.exports = (function () {
                 },
                 timeout : {
                     description  : 'Time to wait for a response (ms.)',
-                    defaultValue : 5000,
+                    defaultValue : 3000,
                     type         : 'positiveInt'
                 }
             }
@@ -159,7 +159,15 @@ module.exports = (function () {
 
                     indexCount += 1;
                     fakeStack.send(msgConfig, function (err, res) {
-                        var parsedService, parsedCode, partialResult, finalRes;
+                        var msgString, parsedService, partialResult, finalRes;
+
+                        msgString = stackConfig.server + ':' + stackConfig.port + ' / ' +
+                            stackConfig.transport;
+
+                        if (stackConfig.transport === 'TLS') {
+                            msgString += ' (' + stackConfig.tlsType + ')';
+                        }
+                        msgString += ' - ' + msgConfig.meth;
 
                         // We don't want to stop the full chain (if error)
                         if (!err) {
@@ -172,19 +180,21 @@ module.exports = (function () {
                             partialResult = {
                                 host       : stackConfig.server,
                                 port       : stackConfig.port,
+                                transport  : stackConfig.transport,
+                                meth       : msgConfig.meth,
                                 auth       : hasAuth,
                                 service    : parsedService.service,
                                 version    : parsedService.version,
+                                domain     : stackConfig.domain,
+                                srcHost    : stackConfig.srcHost,
+                                srcPort    : stackConfig.lport,
                                 data       : finalRes
                             };
 
                             result.push(partialResult);
-                            printer.highlight('Host found: ' + stackConfig.server +
-                                              ':' + stackConfig.port);
-                            printer.highlight(finalRes);
+                            printer.highlight('Response received: ' + msgString);
                         } else {
-                            printer.infoHigh('Host not found: ' + stackConfig.server +
-                                             ':' + stackConfig.port);
+                            printer.infoHigh('Response NOT received: ' + msgString);
                         }
 
                         // Last element

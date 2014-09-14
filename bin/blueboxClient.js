@@ -190,10 +190,10 @@ function createPrompt () {
 // Loading SHODAN key (if any)
 if (globalCfg.shodanKey) {
     shodanKey = globalCfg.shodanKey;
-    printer.infoHigh('Using SHODAN key: ');
+    printer.infoHigh('\nUsing SHODAN key: ');
     printer.highlight(shodanKey);
 } else {
-    printer.infoHigh('- To get SHODAN support you need to add your API key to ' +
+    printer.infoHigh('\n- To get SHODAN support you need to add your API key to ' +
                      'your "config.json" file (in the root folder):');
     printer.regular('http://www.shodanhq.com/api_doc');
 }
