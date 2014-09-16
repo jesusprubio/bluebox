@@ -18,13 +18,15 @@ Features
 - SIP over websockets (and WSS) support (RFC 7118)
 - SHODAN, exploitsearch.net and Google Dorks
 - SIP common security tools (scan, extension/password bruteforce, etc.)
-- Authentication and extension brute-forcing through different types of requests
+- Authentication and extension brute-forcing through different types of SIP requests
+- SIP Torture (RFC 4475) partial support
+- SIP SQLi check
 - SIP denial of service (DoS) testing
+- DNS brute-force
+- Web management panels discovery (comming soon)
 - Other common protocols brute-force: Asterisk AMI, MySQL, MongoDB, SSH, (S)FTP, HTTP(S), TFTP, LDAP, SNMP
 - Some common network tools: whois, ping (also TCP), traceroute, etc.
-- SRV and NAPTR discovery
 - Dumb fuzzing
-- Web management panels discovery
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
 - Geolocation

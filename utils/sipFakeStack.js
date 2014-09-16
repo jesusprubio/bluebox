@@ -81,8 +81,16 @@ function createMessage (options) {
         pass         = options.pass         || null,
         ipVersion    = '4',
         targetUri    = 'sip:' + domain,
+        userAgent    = options.userAgent    || 'bluebox-scanner',
+        maxForwards  = options.maxForwards  || '70',
+        sipAccept    = options.sipAccept    || 'application/sdp',
+        sipDate      = options.sipDate      || null,
+        sipVersion   = options.sipVersion   || '2.0',
+        badSeparator = options.badSeparator || false,
+        badFields    = options.badFields    || false,
 
-        sipMessage, uriVia, uri, toUri, toUriVia, targetUri, authUri, response, sdp, digestCfg;
+        contentType, contentLen, sipMessage, uriVia, uri, toUri, toUriVia,
+        authUri, response, sdp, digestCfg;
 
     if (net.isIPv6(options.server)) {
         ipVersion = '6';
@@ -102,26 +110,22 @@ function createMessage (options) {
     targetUri = 'sip:' + domain;
 
     // SIP frame is filled here
-    switch (meth) {
-        case 'REGISTER':
-        case 'PUBLISH':
-            sipMessage = meth + ' ' + targetUri + ' SIP/2.0\r\n';
-            break;
-        case 'INVITE':
-        case 'OPTIONS':
-        case 'MESSAGE':
-        case 'CANCEL':
-        case 'ACK':
-        case 'BYE':
-        case 'SUBSCRIBE':
-        case 'NOTIFY':
-            sipMessage = '' + meth + ' ' + toUri + ' SIP/2.0\r\n';
-            break;
-        case 'OK':
-            sipMessage = 'SIP/2.0 200 OK\r\n';
-            break;
-        case 'Ringing':
-            sipMessage = 'SIP/2.0 180 Ringing\r\n';
+    if (!badFields) {
+        switch (meth) {
+            case 'REGISTER':
+            case 'PUBLISH':
+                sipMessage = meth + ' ' + targetUri + ' SIP/' + sipVersion + '\r\n';
+                break;
+            case 'OK':
+                sipMessage = 'SIP/' + sipVersion + ' 200 OK\r\n';
+                break;
+            case 'Ringing':
+                sipMessage = 'SIP/' + sipVersion + ' 180 Ringing\r\n';
+            default:
+                sipMessage = meth + ' ' + toUri + ' SIP/' + sipVersion + '\r\n';
+        }
+    } else {
+        sipMessage = '';
     }
     // Via
     switch (transport) {
@@ -129,8 +133,13 @@ function createMessage (options) {
         case 'WSS':
             uriVia = '' + (utils.randomString(12)) + '.invalid';
     }
-    sipMessage += 'Via: SIP/2.0/' + transport.toUpperCase() + ' ' + uriVia +
-                ';branch=z9hG4bK' + branchPad + '\r\n';
+    sipMessage += 'Via: SIP/' + sipVersion + '/' + transport.toUpperCase() + ' ' + uriVia +
+                ';branch=z9hG4bK' + branchPad;
+    if (badSeparator) {
+        sipMessage += ';;,;,,';
+    }
+    sipMessage += '\r\n';
+
     // From
     sipMessage += 'From: ' + fromExt + ' <' + uri + '>;tag=' + fromTag + '\r\n';
     // To
@@ -163,7 +172,7 @@ function createMessage (options) {
             sipMessage += 'CSeq: ' + cseq + ' ' + meth + '\r\n';
     }
     // Max-forwards
-    sipMessage += 'Max-Forwards: 70\r\n';
+    sipMessage += 'Max-Forwards: ' + maxForwards + '\r\n';
     // Allow
     switch (meth) {
         case 'REGISTER':
@@ -181,7 +190,16 @@ function createMessage (options) {
             sipMessage += 'Supported: path, outbound, gruu\r\n';
     }
     // User-Agent
-    sipMessage += 'User-Agent: bluebox-scanner\r\n';
+    sipMessage += 'User-Agent: ' + userAgent;
+    if (badSeparator) {
+        sipMessage += ';;,;,,';
+    }
+    sipMessage += '\r\n';
+    // Date
+    if (sipDate) {
+        sipMessage += 'Date: ' + sipDate + '\r\n';
+    }
+
     // Presence
     switch (meth) {
         case 'SUBSCRIBE':
@@ -203,8 +221,8 @@ function createMessage (options) {
             case 'SUBSCRIBE':
                 sipMessage += 'Contact: <sip:' + fromExt + '@' + uriVia +
                     ';transport=ws;expires=' + expires + '>';
-                sipMessage += ';reg-id=' + regId + ';sip.instance=\"<' +
-                    gruuInstance + '>\"\r\n';
+                sipMessage += ';reg-id=' + regId + ';sip.instance="<' +
+                    gruuInstance + '>"\r\n';
                 break;
             case 'INVITE':
             case 'MESSAGE':
@@ -269,54 +287,67 @@ function createMessage (options) {
         };
 
         response = getDigest(digestCfg);
-        sipMessage += ' Digest username=\"' + fromExt + '\", realm=\"' + realm + '\",';
-        sipMessage += 'nonce=\"' + nonce + '\", uri=\"' + authUri + '\", response=\"' +
-                        response + '\", algorithm=MD5\r\n';
+        sipMessage += ' Digest username="' + fromExt + '", realm="' + realm + '"';
+        if (options.sqli) {
+            sipMessage += 'UNION SELECT FROM subscriber WHERE username=' + fromExt +
+                          ' and realm="' + domain + '"';
+        }
+        sipMessage += ',nonce="' + nonce + '", uri="' + authUri + '", response="' +
+                        response + '", algorithm=MD5\r\n';
     }
     // Content-type and content
     switch (meth) {
         case 'INVITE':
         case 'OK':
             sdp = 'v=0\r\n';
-            sdp += 'o=' + fromExt + ' ' + sessionId + ' ' + sessionId + ' IN IP'
-                    + ipVersion + ' ' + srcHost + '\r\n';
+            sdp += 'o=' + fromExt + ' ' + sessionId + ' ' + sessionId + ' IN IP' +
+                ipVersion + ' ' + srcHost + '\r\n';
             sdp += 's=-\r\n';
             sdp += 'c=IN IP' + ipVersion + ' ' + srcHost + '\r\n';
             sdp += 't=0 0\r\n';
             sdp += 'm=audio ' + sessionPort + ' RTP/AVP 0\r\n';
             sdp += 'a=rtpmap:0 PCMU/8000\r\n';
-            sipMessage += 'Content-Type: application/sdp\r\n';
-            sipMessage += 'Content-Length: ' + sdp.length + '\r\n\r\n';
+            contentType = options.contentType || 'application/sdp';
+            sipMessage += 'Content-Type: ' + contentType + '\r\n';
+
+            contentLen = options.contentLen || sdp.length;
+            sipMessage += 'Content-Length: ' + contentLen + '\r\n\r\n';
             sipMessage += sdp;
             break;
         case 'MESSAGE':
             sdp = 'OLA K ASE! ;)\r\n';
-            sipMessage += 'Content-Type: text/plain\r\n';
-            sipMessage += 'Content-Length: ' + sdp.length + '\r\n\r\n';
+            contentType = options.contentType || 'text/plain';
+            sipMessage += 'Content-Type: ' + contentType + '\r\n';
+            contentLen = options.contentLen || sdp.length;
+            sipMessage += 'Content-Length: ' + contentLen + '\r\n\r\n';
             sipMessage += sdp;
             break;
         case 'NOTIFY':
         case 'PUBLISH':
-            sdp = '<presence xmlns=\"urn:ietf:params:xml:ns:pidf\" ';
-            sdp += 'entity=\"sip:' + toExt + '@' + domain + '\">\r\n';
-            sdp += '<tuple id=\"' + tupleId + '\">\r\n';
+            sdp = '<presence xmlns="urn:ietf:params:xml:ns:pidf" ';
+            sdp += 'entity="sip:' + toExt + '@' + domain + '">\r\n';
+            sdp += '<tuple id="' + tupleId + '">\r\n';
             sdp += '<status>\r\n';
             sdp += '<basic>open</basic>\r\n';
             sdp += '</status>\r\n';
-            sdp += '<contact priority=\"0.8\">' + toExt + '@' + domain + '</contact>\r\n';
+            sdp += '<contact priority="0.8">' + toExt + '@' + domain + '</contact>\r\n';
             sdp += '</tuple>\r\n';
             sdp += '</presence>\r\n';
-            sipMessage += 'Content-Type: application/pidf+xml\r\n';
-            sipMessage += 'Content-Length: ' + sdp.length + '\r\n\r\n';
+            contentType = options.contentType || 'application/pidf+xml';
+            sipMessage += 'Content-Type: ' + contentType + '\r\n';
+            contentLen = options.contentLen || sdp.length;
+            sipMessage += 'Content-Length: ' + contentLen + '\r\n\r\n';
             sipMessage += sdp;
             break;
         default:
             if (meth === 'OPTIONS') {
-                sipMessage += 'Accept: application/sdp\r\n';
+                sipMessage += 'Accept: ' + sipAccept + '\r\n';
             }
-            sipMessage += 'Content-Length: 0\r\n\r\n';
+            contentLen = options.contentLen || '0';
+            sipMessage += 'Content-Length: ' + contentLen + '\r\n\r\n';
     }
 
+//    console.log(sipMessage);
     return sipMessage;
 }
 
@@ -333,7 +364,7 @@ function SipFakeStack (config) {
     this.port      = config.port        || 5060;
     this.transport = config.transport   || 'UDP';
     // TODO: ADD IPv6 SUPPORT
-    this.srcHost   = config.srcHost,
+    this.srcHost   = config.srcHost;
     this.lport     = config.lport       || utils.randomPort();
     this.timeout   = config.timeout     || 8000;
     this.wsPath    = config.wsPath      || null;
@@ -380,7 +411,7 @@ SipFakeStack.prototype.send = function (config, callback) {
         self.megaSocket.close();
         // SIP can be a binary or text protocol, but text widely used
         callback(null, {
-            msg   : msg.data.toString()
+            msg : msg.data.toString()
         });
     });
 
@@ -422,9 +453,10 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
     });
 
     this.megaSocket.on('error', function (err) {
-        if (firstTime) {
-            callback(err);
+        if (!firstTime) {
+            err.second = true;
         }
+        callback(err);
     });
 
     this.megaSocket.on('message', function (msg) {
@@ -462,6 +494,7 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
                             msgOptions.nonce = parsedAuth.nonce;
                             msgOptions.pass = config.pass;
                             msgOptions.cseq = cseq + 1;
+
                             self.megaSocket.send(createMessage(msgOptions));
                         } else {
                             callback(null, {
@@ -494,43 +527,6 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
                 });
             }
         }
-    });
-
-    this.megaSocket.send(createMessage(msgOptions));
-};
-
-SipFakeStack.prototype.sendS = function (config, type, callback) {
-    var self = this,
-        msgOptions = config;
-
-    // Reusing options object
-    msgOptions.lport = this.lport;
-    msgOptions.server = this.server;
-    msgOptions.srcHost = this.srcHost;
-    msgOptions.domain = this.domain;
-    msgOptions.transport = this.transport;
-
-    this.megaSocket = new SteroidsSocket({
-        target    : this.server,
-        port      : this.port,
-        transport : this.transport,
-        lport     : this.lport,
-        timeout   : this.timeout ,
-        wsProto   : 'sip',
-        wsPath    : this.wsPath,
-        tlsType   : this.tlsType
-    });
-
-    this.megaSocket.on('error', function (err) {
-        callback(err);
-    });
-
-    this.megaSocket.on('message', function (msg) {
-        self.megaSocket.close();
-        // SIP can be a binary or text protocol, but text widely used
-        callback(null, {
-            msg   : msg.data.toString()
-        });
     });
 
     this.megaSocket.send(createMessage(msgOptions));

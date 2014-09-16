@@ -17,9 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var async  = require('async'),
-
-    SipFakeStack = require('../utils/sipFakeStack'),
+var SipFakeStack = require('../utils/sipFakeStack'),
     sipParser    = require('../utils/sipParser'),
     printer      = require('../utils/printer'),
     utils        = require('../utils/utils');
@@ -30,8 +28,8 @@ module.exports = (function () {
     return {
 
         info : {
-            name        : 'sipBrutePass',
-            description : 'SIP credentials brute-force',
+            name        : 'sipSQLi',
+            description : 'To check if the server blocks SIP SQLi attacks',
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
@@ -58,26 +56,6 @@ module.exports = (function () {
                     defaultValue : 'ws',
                     type         : 'anyValue'
                 },
-                extensions : {
-                    description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
-                    defaultValue : 'range:100-110',
-                    type         : 'userPass'
-                },
-                passwords : {
-                    description  : 'Password (or file with them) to test',
-                    defaultValue : 'guest',
-                    type         : 'userPass'
-                },
-                userAsPass : {
-                    description  : 'Test the same user as password for each one.',
-                    defaultValue : 'yes',
-                    type         : 'yesNo'
-                },
-                meth : {
-                    description  : 'Type of SIP packets to do the requests',
-                    defaultValue : 'REGISTER',
-                    type         : 'sipRequests'
-                },
                 srcHost : {
                     description  : 'Source host to include in the  SIP request',
                     defaultValue : 'random',
@@ -93,11 +71,6 @@ module.exports = (function () {
                     defaultValue : 'ip',
                     type         : 'domainIp'
                 },
-                delay : {
-                    description  : 'Delay between requests in ms.',
-                    defaultValue : 0,
-                    type         : 'positiveInt'
-                },
                 timeout : {
                     description  : 'Time to wait for the first response, in ms.',
                     defaultValue : 5000,
@@ -107,16 +80,9 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-
-            var loginPairs  = utils.createLoginPairs(options.extensions, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
-
-            // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                // We use a new stack in each request to simulate different users
-                var stackConfig = {
+            var result      = {},
+                fakeRealm = options.domain || options.target,
+                stackConfig = {
                     server    : options.target    || null,
                     port      : options.port      || '5060',
                     transport : options.transport || 'UDP',
@@ -127,46 +93,43 @@ module.exports = (function () {
                     lport     : options.srcPort   || null,
                     domain    : options.domain    || null
                 },
-                fakeStack, msgConfig;
-
+                fakeStack = new SipFakeStack(stackConfig),
                 msgConfig = {
-                    meth    : options.meth,
-                    fromExt : loginPair.user,
-                    pass    : loginPair.pass
+                    meth    : 'INVITE',
+                    fromExt : '100',
+                    pass    : 'ola',
+                    sqli    : true
                 };
 
-                indexCount += 1;
-                fakeStack = new SipFakeStack(stackConfig);
-
                 fakeStack.authenticate(msgConfig, function (err, res) {
-                    if (!err) {
-                        if (res.valid) {
-                            result.push({
-                                extension : loginPair.user,
-                                pass      : loginPair.pass,
-                                data      : res.data
+                    if (err) {
+                        if (err.second) {
+                            callback(null, {
+                                vulnerable : 'no',
+                                data       : 'Blocked'
                             });
-                            // We only add valid extensions to final result
-                            printer.highlight('Valid credentials found: ' +
-                                               loginPair.user + ' | ' + loginPair.pass);
                         } else {
-                            // but we print info about tested ones
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                loginPair.user + ' | ' + loginPair.pass);
-                        }
-
-                        // Last element
-                        if (indexCount === loginPairs.length) {
-                            asyncCb();
-                        } else {
-                            setTimeout(asyncCb, options.delay);
+                            callback(err);
                         }
                     } else {
-                        // We want to stop the full chain
-                        asyncCb(err);
-                    }});
-                }, function (err) {
-                    callback(err, result);
+                        if (/User without authentication/.test(res.message)) {
+                            callback(null, {
+                                vulnerable : 'unknown, no auth'
+                            });
+                        } else {
+                            if (['407', '401'].indexOf(sipParser.code(res.data)) === -1) {
+                                callback(null, {
+                                    vulnerable : 'no',
+                                    data       : res.data
+                                });
+                            } else {
+                                callback(null, {
+                                    vulnerable : 'maybe',
+                                    data       : res.data
+                                });
+                            }
+                        }
+                    }
                 }
             );
         }

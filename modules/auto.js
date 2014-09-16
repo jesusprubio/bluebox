@@ -20,21 +20,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var async  = require('async'),
     lodash = require('lodash'),
 
-    sipScan = require('./sipScan'),
-    sipParser    = require('../utils/sipParser'),
-    printer      = require('../utils/printer'),
-    utils        = require('../utils/utils'),
+    sipScan       = require('./sipScan'),
+    geoLocate     = require('./geoLocate'),
+    whois         = require('./whois'),
+    traceroute    = require('./traceroute'),
+    ping          = require('./ping'),
+    pingTcp       = require('./pingTcp'),
+    exploitSearch = require('./exploitSearch'),
+    shodanHost    = require('./shodanHost'),
+    nmapScan      = require('./nmapScan'),
+    dnsReverse    = require('./dnsReverse'),
+    sipSqli       = require('./sipSqli'),
+    sipTorture    = require('./sipTorture'),
+    sipBruteExt   = require('./sipBruteExt'),
+    sipBrutePass  = require('./sipBrutePass'),
+    sipDos        = require('./sipDos'),
+    sipParser     = require('../utils/sipParser'),
+    printer       = require('../utils/printer'),
+    utils         = require('../utils/utils'),
 
     // Statics
-    CVEURL       = 'http://www.cvedetails.com/product-search.php?vendor_id=0&search=',
     // All which we support brute-forcing
-    VOIP_PORTS   = '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,27017';
+    // Statics
+    CVE_URL           = 'http://www.cvedetails.com/product-search.php?vendor_id=0&search=',
+    ROBTEX_IP_URL     = 'https://www.robtex.com/en/advisory/ip/',
+    ROBTEX_DOMAIN_URL = 'http://www.robtex.com/en/advisory/dns/',
+    VOIP_PORTS        = '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,27017';
 
 
 // Private helpers
 
+function genTargets (ips, customServices, sipTypes) {
+    var targets = [];
+
+    // Getting all combinations
+    lodash.each(ips, function (target) {
+        lodash.each(customServices, function (sipService) {
+            // All requeqs which the server could answer at
+            lodash.each(sipTypes, function (meth) {
+                if (sipService.transport === 'TLS') {
+                    lodash.each(utils.getTlsTypes(), function (tlsVersion) {
+                        targets.push({
+                            ip        : target,
+                            port      : sipService.port,
+                            transport : sipService.transport,
+                            meth      : meth,
+                            tlsType   : tlsVersion
+                        });
+                    });
+                } else if (sipService.transport === 'WS' ||
+                           sipService.transport === 'WSS') {
+                    lodash.each(['', 'ws'], function (wsPath) {
+                        targets.push({
+                            ip        : target,
+                            port      : sipService.port,
+                            transport : sipService.transport,
+                            meth      : meth,
+                            wsPath    : wsPath
+                        });
+                    });
+                } else {
+                    targets.push({
+                        ip        : target,
+                        port      : sipService.port,
+                        transport : sipService.transport,
+                        meth      : meth,
+                    });
+                }
+            });
+        });
+    });
+
+    return targets;
+}
+
 
 // Module core
+
 module.exports = (function () {
 
     return {
@@ -46,7 +108,9 @@ module.exports = (function () {
                 // TODO: Add domain
                 targets : {
                     description  : 'IP address to explore',
-                    defaultValue : '127.0.0.1',
+//                    defaultValue : '172.16.190.0/24',
+//                    defaultValue : '172.16.190.128-130',
+                    defaultValue : '172.16.190.128',
                     type         : 'targets'
                 },
                 srcHost : {
@@ -63,11 +127,6 @@ module.exports = (function () {
                     description  : 'Domain to explore ("ip" to use the target)',
                     defaultValue : 'ip',
                     type         : 'domainIp'
-                },
-                delay : {
-                    description  : 'Delay between requests in ms. ("async" to concurrent)',
-                    defaultValue : 0,
-                    type         : 'positiveInt'
                 },
                 timeout : {
                     description  : 'Time to wait for a response (ms.)',
@@ -86,7 +145,7 @@ module.exports = (function () {
                 },
                 discoverServices : {
                     description  : 'Try to discover other common services present in VoIP' +
-                                   'servers ("AMI", "SSH", MySQL, HTTP, etc.)',
+                                   ' servers (Asterisk Manager, SSH, MySQL, HTTP, etc.)',
                     defaultValue : 'yes',
                     type         : 'yesNo'
                 },
@@ -95,8 +154,8 @@ module.exports = (function () {
                     defaultValue : 'no',
                     type         : 'yesNo'
                 },
-                report : {
-                    description  : 'Generate a Markdown report once the work is done',
+                pdfReport : {
+                    description  : 'Generate a the report also in .pdf format (default in Markdown)',
                     defaultValue : 'yes',
                     type         : 'yesNo'
                 }
@@ -104,116 +163,335 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var result        = [], // finalReport
-                finalTargets  = [],
-                sipReqTypes   = utils.getSipReqs(),
+            var report        = {}, // finalReport: Object of Objects (hosts)
+                // TODO: Move to a config file -> PROFILESS
                 sipServices = [
                     {
-                        port : '5060-5070',
+                        port : '5060',
                         transport : 'UDP'
                     },
                     {
-                        port : '5060-5070',
+                        port : '5060',
                         transport : 'TCP'
                     },
                     {
-                        port : '5061-5070',
+                        port : '5061',
                         transport : 'TLS'
                     },
                     {
-                        port : '80,8080',
+                        port : '80',
                         transport : 'WS'
                     },
                     {
-                        port : '443,4443',
+                        port : '8080',
+                        transport : 'WS'
+                    },
+                    {
+                        port : '443',
+                        transport : 'WSS'
+                    },
+                    {
+                        port : '4443',
                         transport : 'WSS'
                     }
-                ];
+                ],
+                initialTargets = [];
 
+            function makeScan (finalTarget, asyncCallback) {
+                var sipScanCfg = {
+                        targets   : [finalTarget.ip],
+                        ports     : [finalTarget.port],
+                        transport : finalTarget.transport,
+                        wsPath    : finalTarget.wsPath || null,
+                        meth      : finalTarget.meth,
+                        tlsType   : finalTarget.tlsType || null,
+                        srcHost   : options.srcHost || null,
+                        srcPort   : options.srcPort || null,
+                        domain    : options.domain || null,
+                        delay     : 'async',
+                        timeout   : options.timeout
+                    };
 
-            // Getting all combinations
-            lodash.each(options.targets, function (target) {
-                lodash.each(sipServices, function (sipService) {
-                    lodash.each(sipReqTypes, function (meth) {
-                        if (sipService.transport === 'TLS') {
-                            lodash.each(utils.getTlsTypes(), function (tlsVersion) {
-                                finalTargets.push({
-                                    ip        : target,
-                                    port      : sipService.port,
-                                    transport : sipService.transport,
-                                    meth      : meth,
-                                    tlsType   : tlsVersion
-                                });
-                            });
-                        } else if(sipService.transport === 'WS' || sipService.transport === 'WS') {
-                            lodash.each(['', 'ws'], function (wsPath) {
-                                finalTargets.push({
-                                    ip        : target,
-                                    port      : sipService.port,
-                                    transport : sipService.transport,
-                                    meth      : meth,
-                                    wsPath    : wsPath
-                                });
-                            });
-                        } else {
-                            finalTargets.push({
-                                ip        : target,
-                                port      : sipService.port,
-                                transport : sipService.transport,
-                                meth      : meth,
-                            });
+                sipScan.run(sipScanCfg, function (err, res) {
+                    // We only want online servers which anser our requests
+                    if (!err && res && res.length !== 0) {
+                        // This host still wasn't included in the report
+                        // TODO: Check that all transports/ports answer with the same agent
+                        if (!report[finalTarget.ip]) {
+                            report[finalTarget.ip] = {
+                                service   : res[0].service,
+                                version   : res[0].version,
+                                auth      : res[0].auth,
+                                responses : []
+                            };
                         }
-                    });
+
+                        delete res[0].host;
+
+                        // TODO: Uncomment!!!!
+                        report[finalTarget.ip].responses.push(res[0]);
+                    }
+                    asyncCallback();
                 });
-            });
+            }
+
+            initialTargets = genTargets(
+                                options.targets,
+                                sipServices,
+                                ['OPTIONS', 'REGISTER', 'INVITE', 'MESSAGE',
+                                 'BYE', 'NOTIFY', 'PUBLISH', 'SUBSCRIBE']);
 
 
-            console.log('NUMBER OF TARGETS: ' + finalTargets.length);
+            printer.bold('\nSCANNING ' + options.targets.length + ' TARGETS ... (' +
+                         initialTargets.length + ' tries) \n');
 
+            async.series([
+                // TODO: Only if domain
+//                whois.run({ domain : 'google.com' }, function (err, res) {
+//                    if (res) {
+//                        report[domain].whois = res;
+//                    }
+//                    async1Cb();
+//                });
+                // Robtex DOMAIN: https://www.robtex.com/en/advisory/dns/es/igalia/
 
-            //            async.series que llame a funciones que hagan esto, creo que hay k pasarle
-            // el result actualizado con lo que se consiguió en ese paso al siguiente, comprobar
-//        async.eachSeries(
-//            geolocate, shodanhost, WHOIS, TRACEROUTE, ping, pingtcp to 80,5060,5061,
-// Luego, con version las vulns con exploitsearch
-            // Luego TODO SIP
-            //  - SIPBRUTE EXT PARA LOS DESCUBIERTOS, si hay varios solo en uno de momento y poner comentario
-            //  - SIP BRUTE PASS para las ips descubiertas, si no hubo ninguna probar con una lista estándar de usuarios. ME JODIA MUCHO PARARME EN ESTE PASO.
-
-            // En paralelo (estamos haciendo todo en serie podemos paralelizar así): Luego scanemos con nmap los comunes para las ips descubiertas (quitamos los ya descubiertos).
-            //LO de bruteforcear en paralelo con el bruteforcig de sip no, solo el escaneo.
-            // Para los servicios descubiertos (cada uno en su puerto por defecto) bruteforceamos
-            // Luego hacemos el informe con markdon a partir del json y luego el pdf a partir del markdown
-
-            // TODO: Performance!!
-            async.eachSeries(
-                finalTargets,
-                function (finalTarget, asyncCb) {
-                    var sipScanCfg = {
-                            targets   : finalTarget.ip,
-                            ports     : finalTarget.port,
-                            transport : finalTarget.transport,
-                            wsPath    : finalTarget.wsPath || null,
-                            meth      : finalTarget.meth,
-                            tlsType   : finalTarget.tlsType || null,
-                            srcHost   : options.srcHost || null,
-                            srcPort   : options.srcPort || null,
-                            domain    : options.domain || null,
-                            delay     : options.delay,
-                            timeout   : options.timeout
-                        };
-
-                    sipScan.run(sipScanCfg, function (err, res) {
-                        if (err) {
-                            console.log('ERROR:');
-                            console.log(err);
-                        } else {
-                            console.log('RESULT:');
-                            console.log(res);
+                // ---------- Initial scan ----------
+                function (async0Cb) {
+                    async.eachLimit(
+                        initialTargets,
+                        1, // TODO: Performance!
+                        makeScan,
+                        function (err) {
+                            async0Cb(err); // error not thrown inside, but just in case
                         }
+                    );
+                },
+//                // ---------- Get different info about the discovered targets ----------
+//                function (async0Cb) {
+//                    async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
+//                        report[ipAddress].cveDetails = CVE_URL + report[ipAddress].service;
+//                        if (!utils.isReservedIp(ipAddress)) {
+//                            report[ipAddress].robtex = ROBTEX_IP_URL + ipAddress.split('.').join('/') + '/';
+//                        } else {
+//                            report[ipAddress].robtex = 'Reserved';
+//                        }
+//                        // TODO: Refactor! Move out here
+//                        async.parallel([
+//                            function (async1Cb) {
+//                                if (!utils.isReservedIp(ipAddress)) {
+//                                    geoLocate.run({ target : ipAddress }, function (err, res) {
+//                                        if (res) {
+//                                            report[ipAddress].geolocation = res;
+//                                        }
+//                                        async1Cb();
+//                                    });
+//                                } else {
+//                                    report[ipAddress].geolocation = 'Reserved';
+//                                    async1Cb();
+//                                }
+//                            },
+//                            function (async1Cb) {
+//                                if (!utils.isReservedIp(ipAddress)) {
+//                                    dnsReverse.run({ target : ipAddress }, function (err, res) {
+//                                        if (res) {
+//                                            report[ipAddress].dnsReverse = res;
+//                                        }
+//                                        async1Cb();
+//                                    });
+//                                } else {
+//                                    report[ipAddress].dnsReverse = 'Reserved';
+//                                    async1Cb();
+//                                }
+//                            },
+//                            function (async1Cb) {
+//                                ping.run({ target : ipAddress }, function (err, res) {
+//                                    if (res) {
+//                                        report[ipAddress].ping = res;
+//                                    }
+//                                    async1Cb();
+//                                });
+//                            },
+//                            function (async1Cb) {
+//                                pingTcp.run({
+//                                    target   : ipAddress,
+//                                    port     : '5060',
+//                                    timeout  : 3000,
+//                                    attempts : 1
+//                                }, function (err, res) {
+//                                    if (res) {
+//                                        report[ipAddress].pingTcp = res;
+//                                    }
+//                                    async1Cb();
+//                                });
+//                            },
+//                            function (async1Cb) {
+//                                if (!utils.isReservedIp(ipAddress)) {
+//                                    traceroute.run({ target : ipAddress }, function (err, res) {
+//                                        if (res) {
+//                                            report[ipAddress].traceroute = res;
+//                                        }
+//                                        async1Cb();
+//                                    });
+//                                } else {
+//                                    report[ipAddress].traceroute = 'Reserved';
+//                                    async1Cb();
+//                                }
+//                            },
+//                            function (async1Cb) {
+//                                exploitSearch.run({
+//                                    query        : report[ipAddress].service + ' ' +
+//                                                   report[ipAddress].version,
+//                                    timeout      : 5000,
+//                                    onlyExploits : false
+//                                }, function (err, res) {
+//                                    if (res) {
+//                                        report[ipAddress].vulns = res;
+//                                    }
+//                                    async1Cb();
+//                                });
+//                            },
+//                            function (async1Cb) {
+//                                if (!utils.isReservedIp(ipAddress)) {
+//                                    shodanHost.run({
+//                                        ip      : ipAddress,
+//                                        timeout : 5000
+//                                    }, function (err, res) {
+//                                        if (res) {
+//                                            report[ipAddress].indexShodan = res;
+//                                        }
+//                                        async1Cb();
+//                                    });
+//                                } else {
+//                                    report[ipAddress].dnsReverse = 'Reserved';
+//                                    async1Cb();
+//                                }
+//
+//                            }
+//                        ],
+//                        // optional callback
+//                        function(err, results){
+//                            async0Cb();
+//                        });
+//                    });
+//                },
+                // heavy tasks, we avoid to parallelize from here
+                //  ---------- Check if the server answer to the rest of the types ----------
+                // (not used in the initial scan)
+                function (async0Cb) {
+                    // For all dicovered hosts
+                    // TODO: Uncomment
+                    async0Cb();
+//                    async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
+//                        async.eachLimit(
+//                            genTargets([ipAddress], sipServices, ['CANCEL', 'ACK', 'Trying', 'Ringing', 'OK']),
+//                            1, // TODO: Performance!
+//                            makeScan,
+//                            function (err) {
+//                                async1Cb(); // error never thrown inside
+//                            }
+//                        );
+//                    }, function (err) {
+//                        async0Cb();
+//                    });
+                },
+
+                // From here we, speaking about SIP stuff, we  only use the first responding
+                // setup (port, transport, etc.)
+
+                // TODO: ADD SIPUNAUTH
+
+                // SLOW ATTACKS (EXTENSION Y PASS) AQUÍ, con un poco de suerte no nos bloquearon aun
+
+
+                // ---------- SQLi check ----------
+                // http://www.cs.columbia.edu/~dgen/papers/conferences/conference-02.pdf
+                function (async0Cb) {
+                    async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
+                        if (report[ipAddress].auth) {
+                            var fakeRealm = report[ipAddress].responses[0].domain || ipAddress,
+                                sipSqliCfg = {
+                                    target    : ipAddress,
+                                    port      : report[ipAddress].responses[0].port,
+                                    transport : report[ipAddress].responses[0].transport,
+                                    wsPath    : report[ipAddress].responses[0].path || null,
+                                    tlsType   : report[ipAddress].responses[0].tlsType || null,
+                                    srcHost   : report[ipAddress].responses[0].srcHost || null,
+                                    srcPort   : report[ipAddress].responses[0].srcPort || null,
+                                    domain    : report[ipAddress].responses[0].domain || null,
+                                    timeout   : options.timeout
+                                };
+
+                            sipSqli.run(sipSqliCfg, function (err, res) {
+                                report[ipAddress].sqli = err || res;
+                                async1Cb();
+                            });
+                        } else {
+                            async1Cb();
+                        }
+                    }, function (err) {
+                        async0Cb();
                     });
+                },
+                // ---------- Crafted packets check (SIP Torture) ----------
+                function (async0Cb) {
+                    async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
+                        var fakeRealm     = report[ipAddress].responses[0].domain || ipAddress,
+                            sipTortureCfg = {
+                                target    : ipAddress,
+                                port      : report[ipAddress].responses[0].port,
+                                transport : report[ipAddress].responses[0].transport,
+                                wsPath    : report[ipAddress].responses[0].path || null,
+                                tlsType   : report[ipAddress].responses[0].tlsType || null,
+                                srcHost   : report[ipAddress].responses[0].srcHost || null,
+                                srcPort   : report[ipAddress].responses[0].srcPort || null,
+                                domain    : report[ipAddress].responses[0].domain || null,
+                                timeout   : options.timeout
+                            };
+
+                        sipTorture.run(sipTortureCfg, function (err, res) {
+                            report[ipAddress].torture = err || res;
+                            async1Cb();
+                        });
+                    }, function (err) {
+                        async0Cb();
+                    });
+                },
+                // ---------- Nmap scanning ----------
+                function (async0Cb) {
+                    // For all dicovered hosts
+                    async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
+                        nmapScan.run({
+                            targets : ipAddress,
+                            ports   : [21, 22, 23, 80, 69, 389, 443, 3306, 5038, 27017],
+                            binPath : '/usr/local/bin/nmap'
+                        }, function (err, res) {
+                            if (res) {
+                                report[ipAddress].nmap = res;
+                            }
+                            async1Cb();
+                        });
+                    }, function (err) {
+                        async0Cb();
+                    });
+                },
+                // ---------- DoS check ( 100 aleat, BORRAR ESTO) ----------
+
+                // ALL BRUTE-FORCE FROM HERE
+                function (async0Cb) {
+                    console.log('LASSSSTTT STEPPPP');
+
+                    async0Cb();
                 }
-            );
+
+            ],
+            // optional callback
+            function (err, res) {
+                // TODO: WRITE THE REPORT TO A FILE (WITH DE DATA IN THE NAME)
+                // TODO: Analyze results (impact, etc)
+                // TODO: Add the mitigation techniques in each case
+                // convert to  html with prottyjson + 2 pijadas (título y poco más, si eso poner como título el nombre y meter el json dentro)
+                callback(err, report);
+            });
 
         } // end run
 
