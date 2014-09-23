@@ -100,8 +100,8 @@ module.exports = (function () {
         run : function (options, callback) {
             var fakeIndex     = [],
                 limit         = 1,
+                blocking      = false,
                 indexCount    = 0, // User with delay to know in which index we are
-                lastAnswer    = null,
                 finalDelay; // by default we use delay
 
             if (options.delay === 'async') {
@@ -131,7 +131,7 @@ module.exports = (function () {
                             domain    : options.domain    || null
                         },
                         fakeStack = new SipFakeStack(stackConfig),
-                        msgConfig, finalMeth;
+                        msgConfig, finalMeth, lastIndex;
 
                     indexCount += 1;
 
@@ -143,19 +143,17 @@ module.exports = (function () {
                     msgConfig = { meth : finalMeth };
 
                     fakeStack.send(msgConfig, function (err, res) {
-                        var finalRes;
-
                         // We don't want to stop the full chain (if error)
                         if (!err) {
-                            lastAnswer = res.msg;
-                            printer.highlight('Response (index ' + indexCount +'): ');
+                            printer.highlight('Response received (index ' + indexCount + ')');
+                            lastIndex = indexCount;
                         } else {
-                            lastAnswer = null;
-                            printer.infoHigh('Response not received (index ' + indexCount +')');
+                            printer.infoHigh('Response not received (index ' + indexCount + ')');
                         }
 
                         // Last element
                         if (indexCount === options.numReq) {
+                            if (err) { blocking = true; }
                             asyncCb();
                         } else {
                             setTimeout(asyncCb, finalDelay);
@@ -163,8 +161,8 @@ module.exports = (function () {
                     });
                 }, function (err) {
                     callback(err, {
-                        online     : lastAnswer ? true: false,
-                        lastAnswer : lastAnswer
+                        blocking   : blocking,
+                        indexCount : indexCount
                     });
                 }
             );

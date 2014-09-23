@@ -153,7 +153,7 @@ module.exports = (function () {
                     }
                 ];
 
-
+            printer.infoHigh(options.target + ':' + options.port + ' / ' + options.transport);
             async.eachSeries(tortureCfgs, function (tortureCfg, asyncCb) {
                 var stackConfig = {
                         server    : options.target    || null,
@@ -170,7 +170,7 @@ module.exports = (function () {
                     msgConfig = tortureCfg,
                     vulnerable = false;
 
-                printer.info(tortureCfg.name + ' test ...');
+                printer.highlight(tortureCfg.name + ' test ...');
 
                 fakeStack.send(msgConfig, function (err, res) {
                     result[tortureCfg.id] = {};
