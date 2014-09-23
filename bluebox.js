@@ -27,6 +27,7 @@ var async        = require('async'),
 
 function Bluebox (options) {
     this.shodanKey = options.shodanKey || null;
+    this.virustotalKey = options.virustotalKey || null;
 
     this.modulesInfo  = requireDir(module, './modules');
 }
@@ -51,6 +52,10 @@ Bluebox.prototype.runModule = function (moduleName, config, callback) {
 
         if (moduleName.substr(0, 6) === 'shodan') {
             finalConfig.shodanKey = this.shodanKey;
+        }
+
+        if (moduleName.substr(0, 2) === 'vt') {
+            finalConfig.virustotalKey = this.virustotalKey;
         }
 
         if (moduleInfo.options) {

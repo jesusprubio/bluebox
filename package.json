@@ -60,7 +60,8 @@
     "mysql": "2.4.x",
     "ldapjs": "0.7.x",
     "snmp-native": "1.0.x",
-    "grunt": "0.4.x"
+    "grunt": "0.4.x",
+    "virustotal.js": "latest"
   },
   "engines": {
     "node": "0.10.x"

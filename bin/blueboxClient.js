@@ -28,6 +28,7 @@ var async       = require('async'),
     globalCfg   = require('./config'),
     printer     = require('../utils/printer'),
     shodanKey   = null,
+    virustotalKey = null,
     modulesInfo = {},
     modulesList = [],
     exitNext    = false,
@@ -198,8 +199,19 @@ if (globalCfg.shodanKey) {
     printer.regular('http://www.shodanhq.com/api_doc');
 }
 
+// Loading VirusTotal key (if any)
+if (globalCfg.virustotalKey) {
+    virustotalKey = globalCfg.virustotalKey;
+    printer.infoHigh('\nUsing VirusTotal key: ');
+    printer.highlight(virustotalKey);
+} else {
+    printer.infoHigh('\n- To get VirusTotal support you need to add your API key to ' +
+        'your "config.json" file (in the root folder):');
+    printer.regular('http://www.virustotal.com');
+}
+
 // Creating the Bluebox object
-bluebox = new Bluebox({ shodanKey : shodanKey });
+bluebox = new Bluebox(globalCfg);
 
 modulesInfo = bluebox.getModulesInfo();
 // Generating modules list
