@@ -1,5 +1,4 @@
 /*
- Copyright Jesus Perez <jesusprubio gmail com>
  Copyright Sergio Garcia <s3rgio.gr gmail com>
 
  This program is free software: you can redistribute it and/or modify
@@ -25,13 +24,13 @@ module.exports = function () {
     return {
 
         info: {
-            name: 'vtScanUrl',
-            description: 'Virustotal URL Scanner',
-            options: {
-                target: {
-                    description: 'URL to scan',
-                    defaultValue: 'http://example.org',
-                    type: 'anyValue'
+            name        : 'vtScanUrl',
+            description : 'Virustotal URL Scanner',
+            options : {
+                target : {
+                    description  : 'URL to scan',
+                    defaultValue : 'http://example.org',
+                    type         : 'anyValue'
                 }
             }
         },

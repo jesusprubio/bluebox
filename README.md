@@ -83,10 +83,14 @@ Developer guide
 
 Core devs
 ---------
-- Jesús Pérez
+- Jesús Pérez, author
  - [@jesusprubio](https://twitter.com/jesusprubio)
  - jesusprubio gmail com
  - [http://jesusprubio.name/](http://jesusprubio.name/)
+
+- Sergio García
+ - [@s3rgiogr](https://twitter.com/s3rgiogr)
+ - s3rgio.gr gmail com
 
 Contributors
 ------------

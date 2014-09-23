@@ -1,5 +1,4 @@
 /*
- Copyright Jesus Perez <jesusprubio gmail com>
  Copyright Sergio Garcia <s3rgio.gr gmail com>
 
  This program is free software: you can redistribute it and/or modify
@@ -25,13 +24,13 @@ module.exports = function () {
     return {
 
         info: {
-            name: 'vtScanIP',
-            description: 'Virustotal IP Scanner',
-            options: {
-                target: {
-                    description: 'IP address to scan',
-                    defaultValue: '8.8.8.8',
-                    type: 'targetIp'
+            name        : 'vtScanIp',
+            description : 'Virustotal IP Scanner',
+            options     : {
+                target : {
+                    description  : 'IP address to scan',
+                    defaultValue : '8.8.8.8',
+                    type         : 'targetIp'
                 }
             }
         },
