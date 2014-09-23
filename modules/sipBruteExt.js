@@ -99,7 +99,6 @@ module.exports = (function () {
             var result      = [],
                 limit       = 1,
                 indexCount  = 0, // User with delay to know in which index we are
-                finalDelay  = options.delay, // by default we use delay
                 stackConfig = {
                     server    : options.target    || null,
                     port      : options.port      || '5060',
@@ -136,6 +135,7 @@ module.exports = (function () {
 
                     // Checking if vulnerable
                     if (resCode !== '404') {
+                        printer.info('Host not vulnerable (' + options.meth + ')');
                         callback(null, {
                             message : 'Host not vulnerable',
                             data    : finalRes
@@ -200,7 +200,7 @@ module.exports = (function () {
                                         if (indexCount === options.extensions.length) {
                                             asyncCb();
                                         } else {
-                                            setTimeout(asyncCb, finalDelay);
+                                            setTimeout(asyncCb, options.delay);
                                         }
                                     } else {
                                         asyncCb(err);

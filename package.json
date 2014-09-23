@@ -61,7 +61,8 @@
     "ldapjs": "0.7.x",
     "snmp-native": "1.0.x",
     "grunt": "0.4.x",
-    "virustotal.js": "latest"
+    "virustotal.js": "latest",
+    "handlebars" : "2.0.x"
   },
   "engines": {
     "node": "0.10.x"

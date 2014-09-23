@@ -164,11 +164,11 @@ module.exports = (function () {
                     } else {
                         // We want to stop the full chain
                         asyncCb(err);
-                    }});
-                }, function (err) {
-                    callback(err, result);
-                }
-            );
+                    }
+                });
+            }, function (err) {
+                callback(err, result);
+            });
         }
     };
 

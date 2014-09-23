@@ -22,7 +22,7 @@ var SipFakeStack = require('../utils/sipFakeStack'),
     printer      = require('../utils/printer'),
     utils        = require('../utils/utils');
 
-
+// http://www.cs.columbia.edu/~dgen/papers/conferences/conference-02.pdf
 module.exports = (function () {
 
     return {

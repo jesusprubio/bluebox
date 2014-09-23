@@ -101,7 +101,9 @@ module.exports = (function () {
 
         run : function (options, callback) {
             var extPairs    = [],
-                result      = [],
+                result      = {
+                    data : []
+                },
                 indexCount  = 0, // User with delay to know in which index we are
                 stackConfig = {
                     server    : options.target    || null,
@@ -165,7 +167,7 @@ module.exports = (function () {
                                     info    : finalInfo,
                                     data    : res.msg
                                 };
-                                result.push(partialResult);
+                                result.data.push(partialResult);
                                 printer.highlight('Accepted: ' + extPair.fromExt + ' => ' + extPair.toExt );
                             } else {
                             // but we print info about tested ones
@@ -183,6 +185,11 @@ module.exports = (function () {
                         }
                     });
                 }, function (err) {
+                    if (result.data.length === 0) {
+                        result.vulnerable = false;
+                    } else {
+                        result.vulnerable = true;
+                    }
                     callback(err, result);
                 }
             );
