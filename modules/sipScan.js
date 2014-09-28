@@ -167,6 +167,9 @@ module.exports = (function () {
                         if (stackConfig.transport === 'TLS') {
                             msgString += ' (' + stackConfig.tlsType + ')';
                         }
+                        if (stackConfig.transport === 'WS' || stackConfig.transport === 'WSS') {
+                            msgString += ' ( WS path: ' + stackConfig.wsPath + ')';
+                        }
                         msgString += ' - ' + msgConfig.meth;
 
                         // We don't want to stop the full chain (if error)
