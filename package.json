@@ -62,7 +62,9 @@
     "snmp-native": "1.0.x",
     "grunt": "0.4.x",
     "virustotal.js": "latest",
-    "handlebars" : "2.0.x"
+    "handlebars" : "2.0.x",
+    "subquest" : "latest"
+
   },
   "engines": {
     "node": "0.10.x"
