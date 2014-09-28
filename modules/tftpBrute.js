@@ -20,14 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var Tftp   = require('tftp-client'),
     async  = require('async'),
     lodash = require('lodash'),
-    
+
     printer = require('../utils/printer');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'tftpBrute',
             description : 'Try to brute-force valid credentials for the TFTP protocol',
@@ -44,7 +44,7 @@ module.exports = (function () {
                 },
                 fileList : {
                     description  : 'File (or file with them) to test',
-                    defaultValue : 'test',
+                    defaultValue : 'file:artifacts/dics/tftp.txt',
                     type         : 'userPass'
                 },
                 delay : {
@@ -54,11 +54,11 @@ module.exports = (function () {
                 }
             }
         },
-                
+
         run : function (options, callback) {
             var result      = [],
                 indexCount  = 0; // User with delay to know in which index we are
-            
+
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(options.fileList, function (file, asyncCb) {
                 var client = new Tftp(options.port, options.target);
@@ -72,7 +72,7 @@ module.exports = (function () {
                 }
 
                 indexCount += 1;
-                
+
                 client.read(file, function (err, data) {
                     // TODO: Destroy/close client, not supported by the module
                     if (err) {
@@ -92,6 +92,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

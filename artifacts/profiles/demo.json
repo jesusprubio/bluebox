@@ -1,0 +1,51 @@
+{
+    "goodScanTypes" : ["OPTIONS", "REGISTER", "INVITE", "MESSAGE",
+                       "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
+    "badScanTypes" : ["CANCEL", "ACK", "Trying", "Ringing", "OK"],
+    "maxScanParallel" : 1,
+    "sipServices" : [
+        {
+            "port" : "5060",
+            "transport" : "UDP"
+        },
+        {
+            "port" : "5060",
+            "transport" : "TCP"
+        },
+        {
+            "port" : "5061",
+            "transport" : "TLS"
+        },
+        {
+            "port" : "80",
+            "transport" : "WS"
+        },
+        {
+            "port" : "8080",
+            "transport" : "WS"
+        },
+        {
+            "port" : "443",
+            "transport" : "WSS"
+        },
+        {
+            "port" : "4443",
+            "transport" : "WSS"
+        }
+    ],
+    "unauthFrom" : "range:100-110",
+    "unauthTo" : "range:100-110",
+    "unauthDelay" : 0,
+    "slowTypes" : ["OPTIONS","INVITE","REGISTER"],
+    "slowDelay" : 20000,
+    "dosNumReq" : 1000,
+    "dosDelay" : 0,
+    "commonPorts" : [21, 22, 23, 69, 80, 389, 443, 3306, 5038, 27017],
+    "bruteExtTypes" : ["OPTIONS","INVITE","REGISTER"],
+    "bruteExtensions" : "range:100-110",
+    "bruteExtDelay" : 0,
+    "brutePassExts" : "range:100-110",
+    "brutePassPasses" : "file:artifacts/dics/john.txt",
+    "bruteUserAsPass" : true,
+    "brutePassDelay" : 0
+}

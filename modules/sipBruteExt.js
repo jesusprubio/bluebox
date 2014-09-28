@@ -96,7 +96,10 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var result      = [],
+            var result      = {
+                    valid  : [],
+                    errors : []
+                },
                 limit       = 1,
                 indexCount  = 0, // User with delay to know in which index we are
                 stackConfig = {
@@ -137,8 +140,8 @@ module.exports = (function () {
                     if (resCode !== '404') {
                         printer.info('Host not vulnerable (' + options.meth + ')');
                         callback(null, {
-                            message : 'Host not vulnerable',
-                            data    : finalRes
+                            vulnerable : false,
+                            data       : finalRes
                         });
                     } else {
                         async.eachSeries(
@@ -176,21 +179,22 @@ module.exports = (function () {
                 // https://github.com/jesusprubio/bluebox-ng/blob/master/src/modules/sipBruteExtAst.coffee
                 // https://github.com/jesusprubio/metasploit-sip/blob/master/enumerator_asterisk_nat_peers.rb
                                         if(['401', '407', '200'].indexOf(resCode) !== -1) {
-                                            if (options.meth === 'OPTIONS') {
-                                                hasAuth = 'unknown';
-                                            } else if (resCode === '200') {
+                                            if (resCode === '200') {
                                                 hasAuth = false;
+                                            } else {
+                                                hasAuth = true;
                                             }
+
                                             partialResult = {
                                                 extension : extension,
                                                 auth      : hasAuth,
-                                                data      : res
+                                                data      : res.msg
                                             };
                                         }
 
                                         // We only add valid extensions to final result
                                         if (Object.keys(partialResult).length !== 0) {
-                                            result.push(partialResult);
+                                            result.valid.push(partialResult);
                                             printer.highlight('Extension found: ' + extension);
                                         } else {
                                         // but we print info about tested ones
@@ -203,7 +207,12 @@ module.exports = (function () {
                                             setTimeout(asyncCb, options.delay);
                                         }
                                     } else {
-                                        asyncCb(err);
+                                        // We don't want to stop the full chain
+                                        result.errors.push({
+                                            extension : extension,
+                                            data      : err
+                                        });
+                                        asyncCb();
                                     }
                                 });
                             }, function (err) {

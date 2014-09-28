@@ -23,5 +23,6 @@
     "maxstatements" : 20,
     "maxlen"        : 120,
 
-    "node"          : true
+    "node"          : true,
+    "jquery"        : true
 }

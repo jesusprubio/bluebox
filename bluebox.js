@@ -52,9 +52,7 @@ Bluebox.prototype.runModule = function (moduleName, config, callback) {
 
         if (moduleName.substr(0, 6) === 'shodan') {
             finalConfig.shodanKey = this.shodanKey;
-        }
-
-        if (moduleName.substr(0, 2) === 'vt') {
+        } else if (moduleName.substr(0, 2) === 'vt') {
             finalConfig.virustotalKey = this.virustotalKey;
         }
 

@@ -17,8 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // These functions are used to define the structure of a valid SIP packet following
 // RFC 3261 (http://www.ietf.org/rfc/rfc3261.txt) and its extensions.
-// SIP requests creator. It creates more or less valid (but standard) SIP requests.
-
+// SIP requests creator. It creates "more or less" valid SIP requests ;).
 
 'use strict';
 
@@ -26,6 +25,7 @@ var os             = require('os'),
     net            = require('net'),
     crypto         = require('crypto'),
     lodash         = require('lodash'),
+    randomPort     = require('random-port'),
 
     utils          = require('./utils'),
     SteroidsSocket = require('./steroidsSocket'),
@@ -356,6 +356,8 @@ function createMessage (options) {
 
 function SipFakeStack (config) {
 
+    var self = this;
+
     if (!config.server) {
         throw '(SipFakeStack) You need at least to specify a valid IPv4/6 target';
     }
@@ -363,9 +365,9 @@ function SipFakeStack (config) {
     this.server    = config.server      || null;
     this.port      = config.port        || 5060;
     this.transport = config.transport   || 'UDP';
-    // TODO: ADD IPv6 SUPPORT
+//    this.lport     = config.lport       || utils.randomPort();
+    this.lport     = config.lport       || null;
     this.srcHost   = config.srcHost;
-    this.lport     = config.lport       || utils.randomPort();
     this.timeout   = config.timeout     || 8000;
     this.wsPath    = config.wsPath      || null;
     this.tlsType   = config.tlsType     || 'SSLv3';
@@ -381,155 +383,195 @@ function SipFakeStack (config) {
 
 // Public functions
 
-SipFakeStack.prototype.send = function (config, callback) {
-    var self = this,
-        msgOptions = config;
+SipFakeStack.prototype.send = function (cfg, callback) {
+    var self = this;
 
-    // Reusing options object
-    msgOptions.lport = this.lport;
-    msgOptions.server = this.server;
-    msgOptions.srcHost = this.srcHost;
-    msgOptions.domain = this.domain;
-    msgOptions.transport = this.transport;
+    function sendLport () {
+        var socketCfg = {
+                target    : self.server,
+                port      : self.port,
+                transport : self.transport,
+                lport     : self.lport,
+                timeout   : self.timeout ,
+                wsProto   : 'sip',
+                wsPath    : self.wsPath,
+                tlsType   : self.tlsType
+            },
+            msgOptions = cfg;
 
-    this.megaSocket = new SteroidsSocket({
-        target    : this.server,
-        port      : this.port,
-        transport : this.transport,
-        lport     : this.lport,
-        timeout   : this.timeout ,
-        wsProto   : 'sip',
-        wsPath    : this.wsPath,
-        tlsType   : this.tlsType
-    });
+        // Reusing options object
+        msgOptions.lport     = self.lport;
+        msgOptions.server    = self.server;
+        msgOptions.srcHost   = self.srcHost;
+        msgOptions.domain    = self.domain;
+        msgOptions.transport = self.transport;
 
-    this.megaSocket.on('error', function (err) {
-        callback(err);
-    });
+        self.megaSocket = new SteroidsSocket(socketCfg);
 
-    this.megaSocket.on('message', function (msg) {
-        self.megaSocket.close();
-        // SIP can be a binary or text protocol, but text widely used
-        callback(null, {
-            msg : msg.data.toString()
+        self.megaSocket.on('error', function (err) {
+            callback(err);
         });
-    });
 
-    this.megaSocket.send(createMessage(msgOptions));
+        self.megaSocket.on('message', function (msg) {
+            self.megaSocket.close();
+            // SIP can be a binary or text protocol, but text widely used
+            callback(null, {
+                msg : msg.data.toString()
+            });
+        });
+
+        self.megaSocket.send(createMessage(msgOptions));
+    }
+
+    // Trick needed to avoid problem with bussy ports in UDP (EADDINUSE)
+    if (!this.lport) {
+        if (this.transport !== 'UDP') {
+            this.lport = utils.randomPort();
+            sendLport();
+        } else {
+            randomPort(function (port) {
+                self.lport = port;
+                sendLport();
+            });
+        }
+    } else {
+        sendLport();
+    }
 };
 
 SipFakeStack.prototype.authenticate = function (config, callback) {
-    var self         = this,
-        msgOptions   = config,
-        firstTime    = true,
-        valid        = false,
-        // We need to know this values in advance to continue the transaction
-        cseq         = 1,
-        callId       = utils.randomString(16),
-        toExt        = utils.randomString(3),
-        // in case of webscokets
-        gruuInstance = 'urn:uuid:' + utils.randomString(3) + '-' +
-                        utils.randomString(4) + '-' + utils.randomString(8);
+    var self = this;
 
-    // Reusing options object
-    msgOptions.lport = this.lport;
-    msgOptions.server = this.server;
-    msgOptions.srcHost = this.srcHost;
-    msgOptions.domain = this.domain;
-    msgOptions.cseq = cseq;
-    msgOptions.callId = callId;
-    msgOptions.toExt = toExt;
-    msgOptions.gruuInstance = gruuInstance;
+    function authenticateLport () {
+        var msgOptions   = config,
+            firstTime    = true,
+            valid        = false,
+            // We need to know this values in advance to continue the transaction
+            cseq         = 1,
+            callId       = utils.randomString(16),
+            toExt        = utils.randomString(3),
+            // in case of webscokets
+            gruuInstance = 'urn:uuid:' + utils.randomString(3) + '-' +
+                            utils.randomString(4) + '-' + utils.randomString(8),
+            socketCfg    = {
+                target    : self.server,
+                port      : self.port,
+                transport : self.transport,
+                lport     : self.lport,
+                timeout   : self.timeout ,
+                wsProto   : 'sip',
+                wsPath    : self.wsPath,
+                tlsType   : self.tlsType
+            };
 
-    this.megaSocket = new SteroidsSocket({
-        target    : this.server,
-        port      : this.port,
-        transport : this.transport,
-        lport     : this.lport,
-        timeout   : this.timeout ,
-        wsProto   : 'sip',
-        wsPath    : this.wsPath,
-        tlsType   : this.tlsType
-    });
+        // Reusing options object
+        msgOptions.lport        = self.lport;
+        msgOptions.server       = self.server;
+        msgOptions.srcHost      = self.srcHost;
+        msgOptions.domain       = self.domain;
+        msgOptions.cseq         = cseq;
+        msgOptions.callId       = callId;
+        msgOptions.toExt        = toExt;
+        msgOptions.gruuInstance = gruuInstance;
 
-    this.megaSocket.on('error', function (err) {
-        if (!firstTime) {
-            err.second = true;
-        }
-        callback(err);
-    });
+        self.megaSocket = new SteroidsSocket(socketCfg);
 
-    this.megaSocket.on('message', function (msg) {
-        var response, resCode, parsedAuth;
+        self.megaSocket.on('error', function (err) {
+            var newLport = utils.randomPort();
 
-        // TODO: We need to be more polite at the end of this function
-        // (send ACKs, etc.) to avoid retryings
-        self.megaSocket.close();
+            if (!firstTime) {
+                err.second = true;
+            }
+            callback(err);
+        });
 
-        if (!(msg && msg.data)) {
-            callback({
-                type : 'Empty message, firstTime: ' + firstTime
-            });
-        } else {
-            // SIP can be a binary or text protocol, but text widely used
-            response = msg.data.toString();
-            resCode  = sipParser.code(response);
+        self.megaSocket.on('message', function (msg) {
+            var response, resCode, parsedAuth;
 
-            if (firstTime) {
-                firstTime = false;
-                if(['401', '407', '200'].indexOf(resCode) !== -1) {
-                    if (resCode === '200') {
-                        callback(null, {
-                            message : 'User without authentication',
-                            valid   : true,
-                            data    : response
-                        });
-                    } else {
-                        // Upgrading SIP fields
-                        parsedAuth = sipParser.realmNonce(response);
+            // TODO: We need to be more polite at the end of this function
+            // (send ACKs, etc.) to avoid retryings
+            self.megaSocket.close();
 
-                        if (parsedAuth) {
-                            msgOptions.isProxy = parsedAuth.isProxy;
-                            msgOptions.realm = parsedAuth.realm;
-                            msgOptions.nonce = parsedAuth.nonce;
-                            msgOptions.pass = config.pass;
-                            msgOptions.cseq = cseq + 1;
+            if (!(msg && msg.data)) {
+                callback({
+                    type : 'Empty message, firstTime: ' + firstTime
+                });
+            } else {
+                // SIP can be a binary or text protocol, but text widely used
+                response = msg.data.toString();
+                resCode  = sipParser.code(response);
 
-                            self.megaSocket.send(createMessage(msgOptions));
-                        } else {
+                if (firstTime) {
+                    firstTime = false;
+                    if(['401', '407', '200'].indexOf(resCode) !== -1) {
+                        if (resCode === '200') {
                             callback(null, {
-                                message : 'Not expected SIP code (2nd res.)',
-                                valid   : false,
+                                message : 'User without authentication',
+                                valid   : true,
                                 data    : response
                             });
+                        } else {
+                            // Upgrading SIP fields
+                            parsedAuth = sipParser.realmNonce(response);
+
+                            if (parsedAuth) {
+                                msgOptions.isProxy = parsedAuth.isProxy;
+                                msgOptions.realm = parsedAuth.realm;
+                                msgOptions.nonce = parsedAuth.nonce;
+                                msgOptions.pass = config.pass;
+                                msgOptions.cseq = cseq + 1;
+
+                                self.megaSocket.send(createMessage(msgOptions));
+                            } else {
+                                callback(null, {
+                                    message : 'Not expected SIP code (2nd res.)',
+                                    valid   : false,
+                                    data    : response
+                                });
+                            }
                         }
+                    } else {
+                        callback(null, {
+                            message : 'Not expected SIP code (1st res.)',
+                            valid   : false,
+                            data    : response
+                        });
+                        self.megaSocket.close(); // just in case
                     }
-                } else {
-                    callback(null, {
-                        message : 'Not expected SIP code (1st res.)',
-                        valid   : false,
-                        data    : response
-                    });
-                    self.megaSocket.close(); // just in case
-                }
-            } else { // second time
-                if (['REGISTER', 'PUBLISH'].indexOf(config.meth) !== -1) {
-                    if (resCode === '200') {
+                } else { // second time
+                    if (['REGISTER', 'PUBLISH'].indexOf(config.meth) !== -1) {
+                        if (resCode === '200') {
+                            valid = true;
+                        }
+                    } else if (['401', '407'].indexOf(resCode) === -1) {
                         valid = true;
                     }
-                } else if (['401', '407'].indexOf(resCode) === -1) {
-                    valid = true;
+                    callback(null, {
+                        message : 'Accepted',
+                        valid   : valid,
+                        data    : response
+                    });
                 }
-                callback(null, {
-                    message : 'Accepted',
-                    valid   : valid,
-                    data    : response
-                });
             }
-        }
-    });
+        });
 
-    this.megaSocket.send(createMessage(msgOptions));
+        self.megaSocket.send(createMessage(msgOptions));
+    }
+
+    if (!this.lport) {
+        if (this.transport !== 'UDP') {
+            this.lport = utils.randomPort();
+            authenticateLport();
+        } else {
+            randomPort(function (port) {
+                self.lport = port;
+                authenticateLport();
+            });
+        }
+    } else {
+        authenticateLport();
+    }
+
 };
 
 module.exports = SipFakeStack;

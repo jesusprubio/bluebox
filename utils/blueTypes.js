@@ -236,36 +236,26 @@ function userPass (value) {
     return finalValues;
 }
 
-function domain (value) {
-    var splitDomain = value.split('.');
+function isDomain (value) {
+    var splitDomain = value.toString().split('.');
 
     if ((splitDomain.length === 2) ||
         ((splitDomain.length === 3) && (splitDomain[0] === 'www'))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function domain (value) {
+    if (isDomain(value)) {
         return value;
     } else {
         throw new Error('ie: google.com, www.google.com');
     }
 }
 
-
-// Public functions
-// - They return the option in the final type needed by the module
-// - Should throw an error if not passing the check
-// - The error could include hints about a correct input
-
-module.exports.yesNo = function (value) {
-    if (value === 'yes' || value === 'no') {
-        if (value === 'yes') {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        throw new Error('valid: yes, no');
-    }
-};
-
-module.exports.targets = function (value) {
+function targets (value) {
     if (value.slice(0,5) === 'file:') {
         var slicedValue = value.slice(5),
             data;
@@ -282,6 +272,25 @@ module.exports.targets = function (value) {
         return targetRange(value);
     } else {
         return [targetIp(value)];
+    }
+}
+
+
+// Public functions
+
+// - They return the option in the final type needed by the module
+// - Should throw an error if not passing the check
+// - The error could include hints about a correct input
+
+module.exports.yesNo = function (value) {
+    if (value === 'yes' || value === 'no') {
+        if (value === 'yes') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        throw new Error('valid: yes, no');
     }
 };
 
@@ -428,8 +437,18 @@ module.exports.domainIp = function (value) {
     }
 };
 
+module.exports.targetsDomain = function (value) {
+    try {
+        return domain(value);
+    } catch (e) {
+        return targets(value);
+    }
+};
+
 // Aliases
 module.exports.domain      = domain;
-module.exports.targetIp       = targetIp;
-module.exports.port           = port;
+module.exports.isDomain    = isDomain;
+module.exports.targetIp    = targetIp;
+module.exports.port        = port;
 module.exports.positiveInt = positiveInt;
+module.exports.targets     = targets;

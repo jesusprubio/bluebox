@@ -185,9 +185,6 @@ module.exports = (function () {
                                 auth       : hasAuth,
                                 service    : parsedService.service,
                                 version    : parsedService.version,
-                                domain     : stackConfig.domain,
-                                srcHost    : stackConfig.srcHost,
-                                srcPort    : stackConfig.lport,
                                 data       : finalRes
                             };
 
