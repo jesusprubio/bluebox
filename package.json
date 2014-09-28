@@ -61,6 +61,8 @@
     "ldapjs": "0.7.x",
     "snmp-native": "1.0.x",
     "grunt": "0.4.x",
+    "handlebars" : "2.0.x",
+    "subquest" : "latest",
     "virustotal.js": "0.3.x",
     "random-port": "0.1.x"
   },

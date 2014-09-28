@@ -437,6 +437,18 @@ module.exports.domainIp = function (value) {
     }
 };
 
+module.exports.dnsDictionary = function (value) {
+    var dnsDictionary = ['all', 'top_50', 'top_100', 'top_150', 'top_200'],
+        finalValue = value.toLowerCase();
+
+
+    if (dnsDictionary.indexOf(finalValue) !== -1) {
+        return finalValue;
+    } else {
+        throw new Error(dnsDictionary.toString());
+    }
+};
+
 module.exports.targetsDomain = function (value) {
     try {
         return domain(value);
