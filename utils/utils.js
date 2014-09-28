@@ -138,6 +138,50 @@ module.exports.createTargetPairs = function (targets, ports) {
     return pairs;
 };
 
+module.exports.createAutoTargets = function (ips, customServices, sipTypes) {
+    var targets = [];
+
+    // Getting all combinations
+    lodash.each(ips, function (target) {
+        lodash.each(customServices, function (sipService) {
+            // All requeqs which the server could answer at
+            lodash.each(sipTypes, function (meth) {
+                if (sipService.transport === 'TLS') {
+                    lodash.each(TLS_TYPES, function (tlsVersion) {
+                        targets.push({
+                            ip        : target,
+                            port      : sipService.port,
+                            transport : sipService.transport,
+                            meth      : meth,
+                            tlsType   : tlsVersion
+                        });
+                    });
+                } else if (sipService.transport === 'WS' ||
+                           sipService.transport === 'WSS') {
+                    lodash.each(['', 'ws'], function (wsPath) {
+                        targets.push({
+                            ip        : target,
+                            port      : sipService.port,
+                            transport : sipService.transport,
+                            meth      : meth,
+                            wsPath    : wsPath
+                        });
+                    });
+                } else {
+                    targets.push({
+                        ip        : target,
+                        port      : sipService.port,
+                        transport : sipService.transport,
+                        meth      : meth,
+                    });
+                }
+            });
+        });
+    });
+
+    return targets;
+};
+
 module.exports.isReservedIp = function (address) {
     return /(^127\.)|(^192\.168\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^::1$)/.test(address);
 };

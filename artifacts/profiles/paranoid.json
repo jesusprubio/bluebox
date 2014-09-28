@@ -1,0 +1,42 @@
+{
+    "goodScanTypes" : ["OPTIONS"],
+    "badScanTypes" : ["OK"],
+    "maxScanParallel" : 1,
+    "sipServices" : [
+        {
+            "port" : "5060",
+            "transport" : "UDP"
+        }
+        {
+            "port" : "5060",
+            "transport" : "TCP"
+        },
+        {
+            "port" : "5061",
+            "transport" : "TLS"
+        },
+        {
+            "port" : "80",
+            "transport" : "WS"
+        },
+        {
+            "port" : "443",
+            "transport" : "WSS"
+        }
+    ],
+    "unauthFrom" : "100",
+    "unauthTo" : "101",
+    "unauthDelay" : 10000,
+    "slowTypes" : ["REGISTER"],
+    "slowDelay" : 10000,
+    "dosNumReq" : 5,
+    "dosDelay" : 10000,
+    "commonPorts" : [80],
+    "bruteExtTypes" : ["INVITE"],
+    "bruteExtensions" : "range:0000-0005",
+    "bruteExtDelay" : 10000,
+    "brutePassExts" : "range:0000-0005",
+    "brutePassPasses" : "guest",
+    "bruteUserAsPass" : false,
+    "brutePassDelay" : 10000
+}

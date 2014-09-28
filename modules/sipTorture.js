@@ -173,9 +173,9 @@ module.exports = (function () {
                 printer.highlight(tortureCfg.name + ' test ...');
 
                 fakeStack.send(msgConfig, function (err, res) {
-                    result[tortureCfg.id] = {};
-                    result[tortureCfg.id].name = tortureCfg.name;
-                    result[tortureCfg.id].data = err || res;
+                    result[tortureCfg.name] = {};
+                    result[tortureCfg.name].id = tortureCfg.id;
+                    result[tortureCfg.name].data = err || res;
 
                     asyncCb();
                 });

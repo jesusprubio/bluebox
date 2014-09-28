@@ -111,7 +111,7 @@ module.exports = (function () {
 
             async.series([
                 function(asyncCb){
-                    printer.info('\nChecking if slow extension enumeration is being blocked ...\n');
+                    printer.info('Checking if slow extension enumeration is being blocked ...\n');
 
                     async.eachSeries(
                         // Fake extensions, don't matter here
@@ -134,7 +134,7 @@ module.exports = (function () {
                                                       ' (' + options.meth + ')');
                                     asyncCb1(err);
                                 } else {
-                                // but we print info about tested ones
+                                    // but we print info about tested ones
                                     printer.highlight('Answering: ' + extension +
                                                      ' (' + options.meth + ')');
                                     setTimeout(asyncCb1, options.delay);
@@ -153,7 +153,7 @@ module.exports = (function () {
                     // Fake passwords, don't matter here
                     var fakePasswords = lodash.times(10, function () { return lodash.random(1000, 9999); }),
                         finalPairs = [];
-                    printer.info('\n\nChecking if slow password brute-force is being blocked ...\n');
+                    printer.info('\nChecking if slow password brute-force is being blocked ...\n');
                     lodash.each(fakePasswords, function (pass) {
                             finalPairs.push({
                                 testExt : '100',
@@ -180,7 +180,7 @@ module.exports = (function () {
                                         asyncCb1(err);
                                     } else {
                                     // but we print info about tested ones
-                                        printer.highlight('Answering: ' + msgConfig.testExt + ' / ' +
+                                        printer.highlight('Answering: ' + finalPair.testExt + ' / ' +
                                                           finalPair.pass  + ' (' + msgConfig.meth + ')');
                                         // Last element
                                         if (indexCount === finalPairs.length) {

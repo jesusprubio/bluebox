@@ -7,7 +7,7 @@ Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. 
 - **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
 - **IRC(Freenode)**: #breakingVoIP
 
-NOTE: We've said we were working in the v.2 but, finally, I decided that this one is going to be the 0.0.x. The reason is that the old code is a crap and I like more the Node versioning style. For now I consider it a beta version because of not being enough tested to be used in professional environments. So use it and report the bugs please. Anyway everything should work, if not, please open an issue and I'll fix it gracefully.
+NOTE: We've said we were working in the v.2 but, finally, I decided that this one is going to be the 0.0.x. The reason is that the old code is a crap and I like more the Node versioning style. For now we consider it a beta version because of not being enough tested to be used in professional environments. So use it and report the bugs please. Anyway everything should work, if not, please open an issue and we'll fix it gracefully.
 
 Features
 --------
@@ -29,10 +29,11 @@ Features
 - Dumb fuzzing
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
+- VirusTotal IP, URL and domain support
 - Geolocation
 - Colored output
 - Command completion
-- Cross-platform support (GNU/Linux, Mac OS X and Windows, for now)
+- Cross-platform support
 
 Install
 -------
@@ -83,7 +84,7 @@ Developer guide
 
 Core devs
 ---------
-- Jesús Pérez, author
+- Jesús Pérez
  - [@jesusprubio](https://twitter.com/jesusprubio)
  - jesusprubio gmail com
  - [http://jesusprubio.name/](http://jesusprubio.name/)
@@ -107,6 +108,7 @@ Thanks to
 - David Endler and Mark Collier ([@markcollier46](https://twitter.com/markcollier46)), the authors of ["Hacking VoIP Exposed" book](http://www.hackingvoip.com/).
 - John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN API and GHDB.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
+- [VirusTotal](https://www.virustotal.com/) friends.
 - All developers who have written the Node.js modules used in the project.
 - All VoIP, free software and security hackers that I read everyday.
 - My friend Carlos Pérez, the logo designer.

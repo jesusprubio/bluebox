@@ -108,8 +108,16 @@ module.exports = (function () {
 
         run : function (options, callback) {
 
-            var loginPairs  = utils.createLoginPairs(options.extensions, options.passwords, options.userAsPass),
-                result      = [],
+            var loginPairs  = utils.createLoginPairs(
+                    options.extensions,
+                    options.passwords,
+                    options.userAsPass
+                ),
+                result      = {
+                    valid  : [],
+                    errors : []
+                },
+                recErrors      = [],
                 indexCount  = 0, // User with delay to know in which index we are
                 tmpUser;
 
@@ -141,7 +149,7 @@ module.exports = (function () {
                 fakeStack.authenticate(msgConfig, function (err, res) {
                     if (!err) {
                         if (res.valid) {
-                            result.push({
+                            result.valid.push({
                                 extension : loginPair.user,
                                 pass      : loginPair.pass,
                                 data      : res.data
@@ -162,8 +170,13 @@ module.exports = (function () {
                             setTimeout(asyncCb, options.delay);
                         }
                     } else {
-                        // We want to stop the full chain
-                        asyncCb(err);
+                        // We don't want to stop the full chain
+                        result.errors.push({
+                            extension : loginPair.user,
+                            pass      : loginPair.pass,
+                            data      : err
+                        });
+                        asyncCb();
                     }
                 });
             }, function (err) {
