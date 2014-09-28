@@ -1,6 +1,5 @@
 # Node modules
 node_modules
-modules/auto.js
 
 # Logs and databases
 *.log
