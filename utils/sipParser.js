@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var lodash = require('lodash'),
-    
+
     // Statics
     GRAMMAR = {
         versionRE   : /(\d{1,2}(\.\d{1,2})?(\.\d{1,2}})?)/,
@@ -55,15 +55,23 @@ module.exports.userAgent = function (pkt) {
         return GRAMMAR.userRE.test(line);
     });
 
-    return (userLine[0]).split(':')[1];
+    if (userLine[0]) {
+        return (userLine[0]).split(':')[1];
+    } else {
+        return null;
+    }
 };
 
 module.exports.code = function (pkt) {
     var codeLine = lodash.filter(splitMsg(pkt), function (line) {
         return GRAMMAR.codeLineRE.test(line);
     });
-        
-    return (codeLine[0]).match(GRAMMAR.codeRE)[0];
+
+    if (codeLine[0]) {
+        return (codeLine[0]).match(GRAMMAR.codeRE)[0];
+    } else {
+        return null;
+    }
 };
 
 // It parses "Server" string from a packet.
@@ -71,8 +79,12 @@ module.exports.server = function (pkt) {
     var serverLine = lodash.filter(splitMsg(pkt), function (line) {
         return GRAMMAR.serverRE.test(line);
     });
-    
-    return (serverLine[0]).split(':')[1];
+
+    if (serverLine[0]) {
+        return (serverLine[0]).split(':')[1];
+    } else {
+        return null;
+    }
 };
 
 // It parses "Organization" string from a packet.
@@ -80,14 +92,15 @@ module.exports.organization = function (pkt) {
     var orgLine = lodash.filter(splitMsg(pkt), function (line) {
         return GRAMMAR.orgRE.test(line);
     });
-    
+
     return (orgLine[0]).split(':')[1];
 };
 
 // It parses the service from a string.
 module.exports.service = function (fprint) {
-    var cutString, match, service;
-    
+    var service = null,
+        cutString, match;
+
     // TODO: Refactor this
     match = /fpbx/i.test(fprint.toString());
     if (match) {
@@ -110,26 +123,31 @@ module.exports.service = function (fprint) {
             }
         }
     }
-    
+
     return service;
 };
 
 // It parses the service version from a string.
 module.exports.version = function (fprint) {
     var version;
-    
-    return (fprint.match(GRAMMAR.versionRE))[0];
+
+    if (fprint && fprint.match(GRAMMAR.versionRE) &&
+        ((fprint.match(GRAMMAR.versionRE))[0])) {
+            return (fprint.match(GRAMMAR.versionRE))[0];
+    } else {
+        return null;
+    }
 };
 
 module.exports.realmNonce = function (pkt) {
     var isProxy     = false,
         splittedMsg = splitMsg(pkt),
         authLine, authSplit, nonce, realm;
-    
+
     authLine = lodash.filter(splittedMsg, function (line) {
         return (GRAMMAR.authRE.test(line) || GRAMMAR.authProxyRE.test(line));
     })[0]; // It should appears only once
-        
+
     if (GRAMMAR.authProxyRE.test(authLine)) {
         isProxy = true;
     }
@@ -143,7 +161,7 @@ module.exports.realmNonce = function (pkt) {
             authLine = authLine.slice(18);
         }
         authSplit = authLine.split(',');
-                        
+
         for (var i = 0; i < authSplit.length; i++) {
             if (GRAMMAR.realmRE.test(authSplit[i])) {
                 realm = (authSplit[i].split('='))[1].slice(1, -1);
@@ -152,7 +170,7 @@ module.exports.realmNonce = function (pkt) {
                 nonce = (authSplit[i].split('='))[1].slice(1, -1);
             }
         }
-        
+
         return {
             realm   : realm,
             nonce   : nonce,

@@ -107,7 +107,7 @@ module.exports = (function () {
                 },
                 timeout : {
                     description  : 'Time to wait for a response (ms.)',
-                    defaultValue : 3000,
+                    defaultValue : 5000,
                     type         : 'positiveInt'
                 }
             }
@@ -186,10 +186,13 @@ module.exports = (function () {
                                 transport  : stackConfig.transport,
                                 meth       : msgConfig.meth,
                                 auth       : hasAuth,
-                                service    : parsedService.service,
-                                version    : parsedService.version,
                                 data       : finalRes
                             };
+
+                            if (parsedService) {
+                                partialResult.service = parsedService.service;
+                                partialResult.version = parsedService.version;
+                            }
 
                             result.push(partialResult);
                             printer.highlight('Response received: ' + msgString);
