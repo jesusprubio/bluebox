@@ -1,8 +1,10 @@
-![Bluebox-ng](https://lh5.googleusercontent.com/-2-wAflQfwBI/VAD1BRXSKcI/AAAAAAAAJXM/Rm0iTUnyX4o/w441-h456-no/blueboxLogo.jpg)
+![Bluebox-ng](https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png)
+
+<img src="http://24.media.tumblr.com/a6ab63017203cf23385eed463b0440c6/tumblr_mr6uzjmukX1qzg211o1_1280.jpg" width="200" height="150">
 
 Bluebox-ng
 ==========
-Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make Node.js still more awesome. ;)
+Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make the Node world still more awesome. ;)
 
 - **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
 - **IRC(Freenode)**: #breakingVoIP

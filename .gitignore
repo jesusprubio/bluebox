@@ -7,6 +7,9 @@ node_modules
 # Custon options
 #config.json
 
+# Reports
+finalReport*
+
 # OS files
 .DS_Store
 .DS_Store?
