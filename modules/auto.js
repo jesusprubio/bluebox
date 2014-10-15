@@ -151,7 +151,7 @@ module.exports = (function () {
 
             // Getting the profile
             // TODO: Errors management
-            profile = require('artifacts/profiles/' + options.profile + '.json');
+            profile = require('../artifacts/profiles/' + options.profile + '.json');
             printer.bold('Using "' + options.profile + '" profile:');
             printer.json(profile);
 

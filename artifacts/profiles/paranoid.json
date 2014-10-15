@@ -6,7 +6,7 @@
         {
             "port" : "5060",
             "transport" : "UDP"
-        }
+        },
         {
             "port" : "5060",
             "transport" : "TCP"
