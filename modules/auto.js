@@ -87,7 +87,6 @@ module.exports = (function () {
                 timeout : {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
-//                    defaultValue : 1000,
                     type         : 'positiveInt'
                 },
                 nmapLocation : {
@@ -98,7 +97,6 @@ module.exports = (function () {
                 profile : {
                     description  : 'Type of scanning (quick, regular, aggressive, paranoid)',
                     defaultValue : 'regular',
-//                    defaultValue : 'demo',
                     type         : 'anyValue' // checked in runtime
                 },
                 reportPath : {

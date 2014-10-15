@@ -22,17 +22,18 @@ var dns    = require('native-dns'),
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'dnsResolve',
             description : 'Resolve common VoIP DNS registers (SRV, NAPTR) for an specific domain',
             options     : {
                 domain : {
-                    description  : 'Domain to explore',
+                    description  : '(Sub)domain to explore',
                     defaultValue : 'google.com',
-                    type         : 'domain'
+//                    type         : 'domain'
+                    type         : 'anyValue'
                 },
                 server : {
                     description  : 'DNS server to make the request on',
@@ -41,13 +42,13 @@ module.exports = (function () {
                 },
                 timeout : {
                     description  : 'Time to wait for a response, in ms.',
-                    defaultValue : 3000,
+                    defaultValue : 5000,
                     type         : 'positiveInt'
                 }
             }
         },
-                
-        run : function (options, callback) {            
+
+        run : function (options, callback) {
             var reqTypes = [
                     'SOA',
                     'A',
@@ -60,8 +61,8 @@ module.exports = (function () {
                     'PTR',
                     'NAPTR'
                 ],
-                result = [];           
-            
+                result = [];
+
             // We use limit to control Node.js powers
             // (avoid socket problems, etc.)
             async.eachLimit(reqTypes, 5, function (reqType, asyncCb) {
@@ -104,7 +105,7 @@ module.exports = (function () {
             }, function (err) {
                 callback(err, result);
             });
-        }   
+        }
     };
-    
+
 }());

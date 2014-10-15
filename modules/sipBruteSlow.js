@@ -86,7 +86,7 @@ module.exports = (function () {
                 },
                 timeout : {
                     description  : 'Time to wait for a response (ms.)',
-                    defaultValue : 3000,
+                    defaultValue : 5000,
                     type         : 'positiveInt'
                 }
             }

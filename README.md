@@ -7,8 +7,6 @@ Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. 
 - **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
 - **IRC(Freenode)**: #breakingVoIP
 
-NOTE: We've said we were working in the v.2 but, finally, I decided that this one is going to be the 0.0.x. The reason is that the old code is a crap and I like more the Node versioning style. For now we consider it a beta version because of not being enough tested to be used in professional environments. So use it and report the bugs please. Anyway everything should work, if not, please open an issue and we'll fix it gracefully.
-
 Features
 --------
 - Auto VoIP/UC penetration test
@@ -22,7 +20,6 @@ Features
 - SIP Torture (RFC 4475) partial support
 - SIP SQLi check
 - SIP denial of service (DoS) testing
-- DNS brute-force
 - Web management panels discovery
 - Other common protocols brute-force: Asterisk AMI, MySQL, MongoDB, SSH, (S)FTP, HTTP(S), TFTP, LDAP, SNMP
 - Some common network tools: whois, ping (also TCP), traceroute, etc.
