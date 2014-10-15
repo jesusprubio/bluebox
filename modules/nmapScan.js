@@ -35,7 +35,7 @@ module.exports = (function () {
                 },
                 ports : {
                     description  : 'Port (or list of) to scan on chosen IPs',
-                    defaultValue : '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,27017',
+                    defaultValue : '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,8088,27017',
                     type         : 'nmapPorts'
                 },
                 binPath : {

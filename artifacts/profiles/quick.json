@@ -31,7 +31,7 @@
     "slowDelay" : 5000,
     "dosNumReq" : 50,
     "dosDelay" : 0,
-    "commonPorts" : [21, 22, 23, 69, 80, 389, 443, 3306, 5038, 27017],
+    "commonPorts" : [21, 22, 23, 69, 80, 389, 443, 3306, 5038, 8088, 27017],
     "bruteExtTypes" : ["INVITE"],
     "bruteExtensions" : "range:0000-0005",
     "bruteExtDelay" : 0,
