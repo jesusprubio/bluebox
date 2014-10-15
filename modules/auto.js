@@ -620,7 +620,7 @@ module.exports = (function () {
                     data           = {
                         report : JSON.stringify(report)
                     },
-                    templatePath   = 'artifacts/reportTemplates/default.hbs',
+                    templatePath   = '../artifacts/reportTemplates/default.hbs',
                     templateFile   = fs.readFileSync(templatePath, 'utf8'),
                     reportHtml, template;
 
