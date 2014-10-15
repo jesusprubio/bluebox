@@ -1,7 +1,5 @@
 ![Bluebox-ng](https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png)
 
-<img src="http://24.media.tumblr.com/a6ab63017203cf23385eed463b0440c6/tumblr_mr6uzjmukX1qzg211o1_1280.jpg" width="200" height="150">
-
 Bluebox-ng
 ==========
 Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make the Node world still more awesome. ;)
