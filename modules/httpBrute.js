@@ -79,10 +79,8 @@ module.exports = (function () {
                         sendImmediately : false
                     },
                     // to avoid blocking
-                    customAgent   = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0)' +
-                    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
                     customHeaders = {
-                        'User-Agent' : customAgent
+                        'User-Agent' :  utils.customHttpAgent()
                     },
                     cfg = {
                         uri       : options.uri,

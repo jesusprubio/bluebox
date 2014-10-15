@@ -5,7 +5,6 @@
     "eqeqeq"        : true,
     "forin"         : true,
     "freeze"        : true,
-    "inmed"         : true,
     "indent"        : 4,
     "latedef"       : true,
     "newcap"        : true,

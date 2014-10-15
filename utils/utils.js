@@ -185,3 +185,9 @@ module.exports.createAutoTargets = function (ips, customServices, sipTypes) {
 module.exports.isReservedIp = function (address) {
     return /(^127\.)|(^192\.168\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^::1$)/.test(address);
 };
+
+module.exports.customHttpAgent = function () {
+    return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0)' +
+           'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' +
+           '31.0.1650.63 Safari/537.36';
+};

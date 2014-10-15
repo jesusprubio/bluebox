@@ -13,8 +13,8 @@ NOTE: We've said we were working in the v.2 but, finally, I decided that this on
 
 Features
 --------
-- Auto VoIP/UC penetration test (coming soon)
-- Report generation (coming soon)
+- Auto VoIP/UC penetration test
+- Report generation
 - RFC compliant
 - SIP TLS and IPv6 support
 - SIP over websockets (and WSS) support (RFC 7118)
@@ -25,7 +25,7 @@ Features
 - SIP SQLi check
 - SIP denial of service (DoS) testing
 - DNS brute-force
-- Web management panels discovery (comming soon)
+- Web management panels discovery
 - Other common protocols brute-force: Asterisk AMI, MySQL, MongoDB, SSH, (S)FTP, HTTP(S), TFTP, LDAP, SNMP
 - Some common network tools: whois, ping (also TCP), traceroute, etc.
 - Dumb fuzzing
@@ -111,6 +111,7 @@ Thanks to
 - John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN API and GHDB.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
 - [VirusTotal](https://www.virustotal.com/) friends.
+- [sha0coder](https://twitter.com/sha0coder), we use the word lists included in "node-dirscan" project.
 - All developers who have written the Node.js modules used in the project.
 - All VoIP, free software and security hackers that I read everyday.
 - My friend Carlos Pérez, the logo designer.
