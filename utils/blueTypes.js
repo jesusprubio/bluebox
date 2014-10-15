@@ -17,10 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var net        = require('net'),
+var net     = require('net'),
     Netmask = require('netmask').Netmask,
     lodash  = require('lodash'),
     fs      = require('fs'),
+    path    = require('path'),
 
     utils   = require('./utils');
 
@@ -210,7 +211,7 @@ function padNumber(number, padding) {
 
 function userPass (value) {
     var finalValues = [],
-        slicedValue, data, splitted, padding, init, last;
+        slicedValue, normalizedFile, data, splitted, padding, init, last;
 
     if (value.slice(0,6) === 'range:') {
         slicedValue = value.slice(6);
@@ -224,9 +225,9 @@ function userPass (value) {
     } else if (value.slice(0,5) === 'file:') {
         slicedValue = value.slice(5);
 
-        data = fs.readFileSync(slicedValue);
+        data = fs.readFileSync(path.resolve(__dirname, '../', slicedValue));
         if (!data) {
-            throw new Error('Reading file: "' + slicedValue + '"');
+            throw new Error('Reading file: "' + normalizedFile + '"');
         } else {
             return data.toString().split('\n');
         }
@@ -260,7 +261,7 @@ function targets (value) {
         var slicedValue = value.slice(5),
             data;
 
-        data = fs.readFileSync(slicedValue);
+        data = fs.readFileSync(path.resolve(__dirname, '../', slicedValue));
         if (!data) {
             throw new Error('Reading file: "' + slicedValue + '"');
         } else {

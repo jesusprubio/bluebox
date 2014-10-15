@@ -24,6 +24,7 @@ var async      = require('async'),
     prettyjson = require('prettyjson'),
     moment     = require('moment'),
     shell      = require('shelljs'),
+    path       = require('path'),
 
     packageJson   = require('../package.json'),
     sipScan       = require('./sipScan'),
@@ -620,11 +621,12 @@ module.exports = (function () {
                     data           = {
                         report : JSON.stringify(report)
                     },
-                    templatePath   = '../artifacts/reportTemplates/default.hbs',
-                    templateFile   = fs.readFileSync(templatePath, 'utf8'),
-                    reportHtml, template;
+                    templatePath   = 'artifacts/reportTemplates/default.hbs',
+                    templateFile, reportHtml, template;
 
-                fs.writeFile(reportPath, JSON.stringify(report), function (err) {
+                templateFile = fs.readFileSync(path.resolve(__dirname, '../', templatePath), 'utf8');
+//                templateFile   = fs.readFileSync(templatePath, 'utf8'),
+                fs.writeFile(path.resolve(reportPath), JSON.stringify(report), function (err) {
                     if (err) {
                         printer.error('\nWriting the final report (JSON): ' + JSON.stringify(err));
                         callback(err);
@@ -641,7 +643,7 @@ module.exports = (function () {
                             profile : options.profile,
                             version : packageJson.version
                         });
-                        fs.writeFile(reportPathHtml, reportHtml, function (err) {
+                        fs.writeFile(path.resolve(reportPathHtml), reportHtml, function (err) {
                             if (err) {
                                 printer.error('\nWriting the final report (HTML): ' + JSON.stringify(err));
                                 callback(err);
