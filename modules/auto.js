@@ -25,6 +25,7 @@ var async      = require('async'),
     moment     = require('moment'),
     shell      = require('shelljs'),
 
+    packageJson   = require('../package.json'),
     sipScan       = require('./sipScan'),
     geoLocate     = require('./geoLocate'),
     whois         = require('./whois'),
@@ -65,6 +66,7 @@ module.exports = (function () {
                     description  : 'IP or domain to explore',
                     defaultValue : '127.0.0.1',
 //                    defaultValue : '172.16.190.128-132',
+//                    defaultValue : '172.16.190.128',
                     type         : 'targetsDomain'
                 },
                 srcHost : {
@@ -638,7 +640,8 @@ module.exports = (function () {
                         reportHtml = template({
                             report  : JSON.stringify(report),
                             date    : moment().format('MMMM Do YYYY, h:mm:ss a'),
-                            profile : options.profile
+                            profile : options.profile,
+                            version : packageJson.version
                         });
                         fs.writeFile(reportPathHtml, reportHtml, function (err) {
                             if (err) {
