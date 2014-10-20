@@ -1,7 +1,7 @@
 {
     "goodScanTypes" : ["OPTIONS"],
     "badScanTypes" : ["OK"],
-    "maxScanParallel" : 100,
+    "maxScanParallel" : 1,
     "sipServices" : [
         {
             "port" : "5060",

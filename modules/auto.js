@@ -407,7 +407,8 @@ module.exports = (function () {
                             srcPort    : report[finalPair.ipAddress].responses[0].srcPort || null,
                             domain     : report[finalPair.ipAddress].responses[0].domain || null,
                             // 3 req/min is normally not considered an attack
-                            delay      : profile.slowDelay,
+//                            delay      : profile.slowDelay,
+                            delay      : 0,
                             timeout    : options.timeout
                         }, function (err, res) {
                             if (res) {

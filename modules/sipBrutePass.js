@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var async  = require('async'),
+    lodash = require('lodash'),
+    Lazy   = require('lazy.js'),
+//    wu     = require('wu'),
 
     SipFakeStack = require('../utils/sipFakeStack'),
     sipParser    = require('../utils/sipParser'),
@@ -35,7 +38,7 @@ module.exports = (function () {
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
-                    defaultValue : '127.0.0.1',
+                    defaultValue : '172.16.190.128',
                     type         : 'targetIp'
                 },
                 port : {
@@ -60,12 +63,12 @@ module.exports = (function () {
                 },
                 extensions : {
                     description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
-                    defaultValue : 'range:100-110',
+                    defaultValue : 'file:artifacts/dics/johnPlusNum.txt',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'guest',
+                    defaultValue : 'file:artifacts/dics/johnPlusNum.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -102,17 +105,22 @@ module.exports = (function () {
                     description  : 'Time to wait for the first response, in ms.',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                },
+                }
             }
         },
 
         run : function (options, callback) {
 
-            var loginPairs  = utils.createLoginPairs(
-                    options.extensions,
-                    options.passwords,
-                    options.userAsPass
-                ),
+            console.log('OPTIONSSS');
+            console.log(options);
+
+
+//            var loginPairs  = utils.createLoginPairs(
+//                    options.extensions,
+//                    options.passwords,
+//                    options.userAsPass
+//                ),
+            var loginPairs = [],
                 result      = {
                     valid  : [],
                     errors : []
@@ -120,6 +128,44 @@ module.exports = (function () {
                 recErrors      = [],
                 indexCount  = 0, // User with delay to know in which index we are
                 tmpUser;
+
+//            lodash.each(options.extensions, function (user) {
+//                if(options.userAsPass && (user !== options.passwords[0])) {
+//                    loginPairs.push({
+//                        user : user,
+//                        pass : user
+//                    });
+//                }
+//                lodash.each(options.passwords, function (pass) {
+//                    console.log('PASSS: ' + pass);
+//                    loginPairs.push({
+//                        user : user,
+//                        pass : pass
+//                    });
+//                });
+//            });
+
+
+            Lazy(options.extensions).each(function (user) {
+                if(options.userAsPass && (user !== options.passwords[0])) {
+                    loginPairs.push({
+                        user : user,
+                        pass : user
+                    });
+                }
+                Lazy(options.passwords).each(function (pass) {
+                    console.log('PASSS: ' + pass);
+                    loginPairs.push({
+                        user : user,
+                        pass : pass
+                    });
+                });
+                console.log('LLEGAAA4444');
+            });
+
+            console.log('PAIRSSSS');
+            console.log(loginPairs);
+
 
             // We avoid to parallelize here to control the interval of the requests
             async.eachSeries(loginPairs, function (loginPair, asyncCb) {

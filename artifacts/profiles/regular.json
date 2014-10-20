@@ -2,7 +2,7 @@
     "goodScanTypes" : ["OPTIONS", "REGISTER", "INVITE", "MESSAGE",
                        "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
     "badScanTypes" : ["CANCEL", "ACK", "Trying", "Ringing", "OK"],
-    "maxScanParallel" : 10,
+    "maxScanParallel" : 1,
     "sipServices" : [
         {
             "port" : "5060",

@@ -59,7 +59,7 @@ module.exports = (function () {
                 },
                 extensions : {
                     description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
-                    defaultValue : 'range:100-110',
+                    defaultValue : 'file:artifacts/dics/johnPlusNum.txt',
                     type         : 'userPass'
                 },
                 meth : {
