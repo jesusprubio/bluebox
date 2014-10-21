@@ -1,7 +1,6 @@
 {
     "goodScanTypes" : ["OPTIONS"],
     "badScanTypes" : ["OK"],
-    "maxScanParallel" : 100,
     "sipServices" : [
         {
             "port" : "5060",
@@ -12,6 +11,7 @@
     "unauthTo" : "101",
     "unauthDelay" : 0,
     "slowTypes" : ["REGISTER"],
+    "slowExtensions" : "range:100-101",
     "slowDelay" : 0,
     "dosNumReq" : 50,
     "dosDelay" : 0,

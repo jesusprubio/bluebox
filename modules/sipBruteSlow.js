@@ -51,13 +51,18 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
                     description  : 'Websockets path (only when websockets)',
                     defaultValue : 'ws',
                     type         : 'anyValue'
+                },
+                extensions : {
+                    description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
+                    defaultValue : 'range:100-110',
+                    type         : 'userPass'
                 },
                 meth : {
                     description  : 'Type of SIP packets to do the requests',
@@ -103,40 +108,37 @@ module.exports = (function () {
                     transport : options.transport || 'UDP',
                     timeout   : options.timeout   || 10000,
                     wsPath    : options.wsPath    || null,
-                    tlsType   : options.tlsType   || 'SSLv3',
+                    tlsType   : options.tlsType   || 'TLSv1',
                     srcHost   : options.srcHost   || null,
                     lport     : options.srcPort   || null,
                     domain    : options.domain    || null
                 };
 
             async.series([
-                function(asyncCb){
+                function (asyncCb) {
                     printer.info('Checking if slow extension enumeration is being blocked ...\n');
 
                     async.eachSeries(
                         // Fake extensions, don't matter here
-                        ['100', '101', '102', '103', '104', '105',
-                         '106', '107', '108', '109', '110'],
+                        options.extensions,
                         function (extension, asyncCb1) {
-                                var fakeStack = new SipFakeStack(stackConfig),
-                                    msgConfig = {
-                                        meth    : options.meth,
-                                        fromExt : extension,
-                                        // To force inf INVITE, OPTIONS, etc. (better results)
-                                        toExt   : extension
-                                    };
+                            var fakeStack = new SipFakeStack(stackConfig),
+                                msgConfig = {
+                                    meth    : options.meth,
+                                    fromExt : extension,
+                                    // To force inf INVITE, OPTIONS, etc. (better results)
+                                    toExt   : extension
+                                };
 
                             // TODO: We need to be more polited here, an ACK and BYE
                             // is needed to avoid loops
                             fakeStack.send(msgConfig, function (err, res) {
                                 if (err) {
-                                    printer.infoHigh('Not answering: ' + extension +
-                                                      ' (' + options.meth + ')');
+                                    printer.infoHigh('Not answering: ' + extension + ' (' + options.meth + ')');
                                     asyncCb1(err);
                                 } else {
                                     // but we print info about tested ones
-                                    printer.highlight('Answering: ' + extension +
-                                                     ' (' + options.meth + ')');
+                                    printer.highlight('Answering: ' + extension + ' (' + options.meth + ')');
                                     setTimeout(asyncCb1, options.delay);
                                 }
                             });
@@ -151,16 +153,15 @@ module.exports = (function () {
                 },
                 function (asyncCb) {
                     // Fake passwords, don't matter here
-                    var fakePasswords = lodash.times(10, function () { return lodash.random(1000, 9999); }),
+                    var fakePasswords = lodash.times(options.extensions.length, function () { return lodash.random(1000, 9999); }),
                         finalPairs = [];
                     printer.info('\nChecking if slow password brute-force is being blocked ...\n');
                     lodash.each(fakePasswords, function (pass) {
-                            finalPairs.push({
-                                testExt : '100',
-                                pass    : pass.toString()
-                            });
-                        }
-                    );
+                        finalPairs.push({
+                            testExt : '100',
+                            pass    : pass.toString()
+                        });
+                    });
 
                     async.eachSeries(
                         finalPairs,

@@ -49,7 +49,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -59,7 +59,7 @@ module.exports = (function () {
                 },
                 extensions : {
                     description  : 'Extension, range (ie: range:0000-0100) or file with them to test',
-                    defaultValue : 'range:100-110',
+                    defaultValue : 'file:artifacts/dics/johnPlusNum.txt',
                     type         : 'userPass'
                 },
                 meth : {
@@ -108,7 +108,7 @@ module.exports = (function () {
                     transport : options.transport || 'UDP',
                     timeout   : options.timeout   || 10000,
                     wsPath    : options.wsPath    || null,
-                    tlsType   : options.tlsType   || 'SSLv3',
+                    tlsType   : options.tlsType   || 'TLSv1',
                     srcHost   : options.srcHost   || null,
                     lport     : options.srcPort   || null,
                     domain    : options.domain    || null

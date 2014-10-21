@@ -20,8 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var JsFtp  = require('jsftp'),
     async  = require('async'),
 
-    printer = require('../utils/printer'),
-    utils   = require('../utils/utils');
+    printer = require('../utils/printer');
 
 module.exports = (function () {
 
@@ -48,7 +47,7 @@ module.exports = (function () {
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'anonymous',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -65,44 +64,59 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+            var result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                var jsFtp = new JsFtp({
-                    host: options.target,
-                    port: options.port,
-                });
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                function delayCb () {
-                    if (indexCount === loginPairs.length) {
-                        asyncCb();
-                    } else {
-                        setTimeout(asyncCb, options.delay);
-                    }
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
                 }
 
-                indexCount += 1;
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    var jsFtp = new JsFtp({
+                        host: options.target,
+                        port: options.port,
+                    });
 
-                jsFtp.auth(loginPair.user, loginPair.pass, function (err, data) {
-                    // TODO: Destroy/close client, not supported by the module
-                    if (err) {
-                        if (/Login incorrect/.test(err)) {
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                            loginPair.user + ' | ' + loginPair.pass);
-                            delayCb();
+                    function delayCb () {
+                        // Last element
+                        if (indexCountPass === finalPasswords.length &&
+                            indexCountUsr === options.users.length) {
+                            asyncCbPass();
                         } else {
-                            asyncCb(err);
+                            setTimeout(asyncCbPass, options.delay);
                         }
-                    } else {
-                        result.push(loginPair);
-                        printer.highlight('Valid credentials found: ' +
-                                    loginPair.user + ' | ' + loginPair.pass);
-                        delayCb();
                     }
+
+                    indexCountPass += 1;
+
+                    jsFtp.auth(user, password, function (err, data) {
+                        // TODO: Destroy/close client, not supported by the module
+                        if (err) {
+                            if (/Login incorrect/.test(err)) {
+                                printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                                delayCb();
+                            } else {
+                                asyncCbPass(err);
+                            }
+                        } else {
+                            result.push({
+                                user : user,
+                                pass : password
+                            });
+                            printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                            delayCb();
+                        }
+                    });
+                }, function (err) {
+                    asyncCbUsr(err);
                 });
             }, function (err) {
                 callback(err, result);

@@ -17,7 +17,7 @@
 
 'use strict';
 
-var subquest    = require('subquest');
+var subquest = require('subquest');
 
 
 module.exports = (function () {
@@ -44,16 +44,16 @@ module.exports = (function () {
                     type         : 'positiveInt'
                 },
                 dictionary : {
-                    description  : 'Set the dictionary for bruteforcing [top_100]',
+                    description  : 'Set the dictionary for bruteforcing [top_50, ...]',
                     defaultValue : 'top_100',
                     type         : 'dnsDictionary'
                 }
             }
         },
 
+        // TODO: It doesn't return anything, it only prints!!
         run : function (options, callback) {
             subquest.find(options, callback);
-
         }
     };
 

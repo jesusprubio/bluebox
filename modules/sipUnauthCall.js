@@ -53,7 +53,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -100,44 +100,35 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var extPairs    = [],
-                result      = {
-                    data : []
-                },
-                indexCount  = 0, // User with delay to know in which index we are
-                stackConfig = {
+            var result         = { data : [] },
+                indexCountFrom = 0, // User with delay to know in which index we are
+                indexCountTo   = 0,
+                stackConfig    = {
                     server    : options.target    || null,
                     port      : options.port      || '5060',
                     transport : options.transport || 'UDP',
                     timeout   : options.timeout   || 10000,
                     wsPath    : options.wsPath    || null,
-                    tlsType   : options.tlsType   || 'SSLv3',
+                    tlsType   : options.tlsType   || 'TLSv1',
                     srcHost   : options.srcHost   || null,
                     lport     : options.srcPort   || null,
                     domain    : options.domain    || null
                 };
 
-            lodash.each(options.fromExt, function (fromExt) {
-                lodash.each(options.toExt, function (toExt) {
-                    extPairs.push({
-                        fromExt : fromExt,
-                        toExt   : toExt
-                    });
-                });
-            });
-
-            async.eachSeries(
-                extPairs,
-                function (extPair, asyncCb) {
+            // We avoid to parallelize here to control the interval of the requests
+            async.eachSeries(options.fromExt, function (fromExt, asyncCbFrom) {
+                indexCountFrom += 1;
+                indexCountTo = 0;
+                async.eachSeries(options.toExt, function (toExt, asyncCbTo) {
                     // We use a new stack in each request to simulate different users
                     var msgConfig = {
                             meth    : 'INVITE',
-                            fromExt : extPair.fromExt,
-                            toExt   : extPair.toExt
+                            fromExt : fromExt,
+                            toExt   : toExt
                         },
                         fakeStack;
 
-                    indexCount += 1;
+                    indexCountTo += 1;
                     fakeStack = new SipFakeStack(stackConfig);
 
                     // TODO: We need to be more polited here, an ACK and BYE
@@ -162,37 +153,40 @@ module.exports = (function () {
                             // We only add valid extensions to final result
                             if (finalInfo === 'Accepted') {
                                 partialResult = {
-                                    fromExt : extPair.fromExt,
-                                    toExt   : extPair.toExt,
+                                    fromExt : fromExt,
+                                    toExt   : toExt,
                                     info    : finalInfo,
                                     data    : res.msg
                                 };
                                 result.data.push(partialResult);
-                                printer.highlight('Accepted: ' + extPair.fromExt + ' => ' + extPair.toExt );
+                                printer.highlight('Accepted: ' + fromExt + ' => ' + toExt );
                             } else {
                             // but we print info about tested ones
-                                printer.infoHigh(finalInfo + ': ' + extPair.fromExt + ' => ' + extPair.toExt );
+                                printer.infoHigh(finalInfo + ': ' + fromExt + ' => ' + toExt );
                             }
                             // Last element
-                            if (indexCount === extPairs.length ) {
-                                asyncCb();
+                            if (indexCountFrom === options.fromExt.length &&
+                                indexCountTo === options.toExt.length) {
+                                asyncCbTo();
                             } else {
-                                setTimeout(asyncCb, options.delay);
+                                setTimeout(asyncCbTo, options.delay);
                             }
                         } else {
                             // We want to stop the full chain
-                            asyncCb(err);
+                            asyncCbTo(err);
                         }
                     });
                 }, function (err) {
-                    if (result.data.length === 0) {
-                        result.vulnerable = false;
-                    } else {
-                        result.vulnerable = true;
-                    }
-                    callback(err, result);
+                    asyncCbFrom(err);
+                })
+            }, function (err) {
+                if (result.data.length === 0) {
+                    result.vulnerable = false;
+                } else {
+                    result.vulnerable = true;
                 }
-            );
+                callback(err, result);
+            });
         }
     };
 

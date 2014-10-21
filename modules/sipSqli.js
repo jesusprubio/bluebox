@@ -48,7 +48,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -88,7 +88,7 @@ module.exports = (function () {
                     transport : options.transport || 'UDP',
                     timeout   : options.timeout   || 10000,
                     wsPath    : options.wsPath    || null,
-                    tlsType   : options.tlsType   || 'SSLv3',
+                    tlsType   : options.tlsType   || 'TLSv1',
                     srcHost   : options.srcHost   || null,
                     lport     : options.srcPort   || null,
                     domain    : options.domain    || null

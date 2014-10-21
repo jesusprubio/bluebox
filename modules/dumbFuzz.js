@@ -59,7 +59,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 string : {

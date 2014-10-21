@@ -20,8 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var mongo  = require('mongodb'),
     async  = require('async'),
 
-    printer = require('../utils/printer'),
-    utils   = require('../utils/utils');
+    printer = require('../utils/printer');
 
 
 module.exports = (function () {
@@ -44,12 +43,12 @@ module.exports = (function () {
                 },
                 users : {
                     description  : 'User (or file with them) to test',
-                    defaultValue : 'guest',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'guest',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -72,55 +71,69 @@ module.exports = (function () {
 
         run : function (options, callback) {
             var client      = mongo.MongoClient,
-                loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+                result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                indexCount += 1;
-                client.connect(
-                    'mongodb://' + loginPair.user + ':' + loginPair.pass + '@' +
-                    options.target + ':' + options.port.toString() +
-                    '/admin?autoReconnect=false&connectTimeoutMS=' + options.timeout,
-                    // By default the client tries 5 times
-                    {
-                        numberOfRetries  : 0,
-                        retryMiliSeconds : 0 // Just in case
-                    },
-                    function(err, res) {
-                        // TODO: Destroy/close client, not supported by the module
-                        if (err) {
-                            // Only in this case we want to stop the chain
-                            if (/timed out/.exec(err)) {
-                                asyncCb({
-                                    type : 'Timeout'
-                                });
-                            // Strange users/passwords sometimes users invalid chars
-                            // so we are neither callbacking the error here
-                            } else  {
-                                printer.infoHigh('Valid credentials NOT found for: ' +
-                                        loginPair.user + ' | ' + loginPair.pass);
-                                if (!(/auth failed/.exec(err))) {
-                                    printer.infoHigh(err);
-                                }
-                            }
-                        } else {
-                            loginPair.res = res;
-                            result.push(loginPair);
-                            printer.highlight('Valid credentials found: ' +
-                                        loginPair.user + ' | ' + loginPair.pass);
-                        }
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                        // Last element
-                        if (indexCount === loginPairs.length) {
-                            asyncCb();
-                        } else {
-                            setTimeout(asyncCb, options.delay);
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
+                }
+
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    indexCountPass += 1;
+                    client.connect(
+                        'mongodb://' + user + ':' + password + '@' + options.target + ':' + options.port.toString() +
+                        '/admin?autoReconnect=false&connectTimeoutMS=' + options.timeout,
+                        // By default the client tries 5 times
+                        {
+                            numberOfRetries  : 0,
+                            retryMiliSeconds : 0 // Just in case
+                        },
+                        function(err, res) {
+                            // TODO: Destroy/close client, not supported by the module
+                            if (err) {
+                                // Only in this case we want to stop the chain
+                                if (/timed out/.exec(err)) {
+                                    asyncCbPass({
+                                        type : 'Timeout'
+                                    });
+                                // Strange users/passwords sometimes users invalid chars
+                                // so we are neither callbacking the error here
+                                } else  {
+                                    printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password)
+                                    if (!(/auth failed/.exec(err))) {
+                                        printer.infoHigh(err);
+                                    }
+                                }
+                            } else {
+                                loginPair.res = res;
+                                result.push({
+                                    user : user,
+                                    pass : password,
+                                    res  : res
+                                });
+                                printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                            }
+
+                            // Last element
+                            if (indexCountPass === finalPasswords.length &&
+                                indexCountUsr === options.users.length) {
+                                asyncCbPass();
+                            } else {
+                                setTimeout(asyncCbPass, options.delay);
+                            }
                         }
-                    }
-                );
+                    );
+                }, function (err) {
+                    asyncCbUsr(err);
+                });
             }, function (err) {
                 callback(err, result);
             });

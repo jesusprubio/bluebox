@@ -21,8 +21,7 @@ var async  = require('async'),
 
     SipFakeStack = require('../utils/sipFakeStack'),
     sipParser    = require('../utils/sipParser'),
-    printer      = require('../utils/printer'),
-    utils        = require('../utils/utils');
+    printer      = require('../utils/printer');
 
 
 module.exports = (function () {
@@ -35,7 +34,7 @@ module.exports = (function () {
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
-                    defaultValue : '172.16.190.128',
+                    defaultValue : '127.0.0.1',
                     type         : 'targetIp'
                 },
                 port : {
@@ -50,7 +49,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -161,7 +160,7 @@ module.exports = (function () {
                         transport : options.transport || 'UDP',
                         timeout   : options.timeout   || 10000,
                         wsPath    : options.wsPath    || null,
-                        tlsType   : options.tlsType   || 'SSLv3',
+                        tlsType   : options.tlsType   || 'TLSv1',
                         srcHost   : options.srcHost   || null,
                         lport     : options.srcPort   || null,
                         domain    : options.domain    || null

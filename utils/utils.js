@@ -101,43 +101,6 @@ module.exports.getCombinations = function (chars) {
     return result;
 };
 
-module.exports.createLoginPairs = function (users, passwords, userAsPass) {
-    var pairs = [];
-
-    lodash.each(users, function (user) {
-        if(userAsPass && (user !== passwords[0])) {
-            pairs.push({
-                user : user,
-                pass : user
-            });
-        }
-        lodash.each(passwords, function (pass) {
-            pairs.push({
-                user : user,
-                pass : pass
-            });
-        });
-
-    });
-
-    return pairs;
-};
-
-module.exports.createTargetPairs = function (targets, ports) {
-    var pairs = [];
-
-    lodash.each(targets, function (target) {
-        lodash.each(ports, function (port) {
-            pairs.push({
-                target : target,
-                port   : port
-            });
-        });
-    });
-
-    return pairs;
-};
-
 module.exports.createAutoTargets = function (ips, customServices, sipTypes) {
     var targets = [];
 

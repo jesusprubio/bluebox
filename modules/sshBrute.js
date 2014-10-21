@@ -21,8 +21,7 @@ var Connection  = require('ssh2'),
     async       = require('async'),
     lodash      = require('lodash'),
 
-    printer = require('../utils/printer'),
-    utils   = require('../utils/utils');
+    printer = require('../utils/printer');
 
 
 module.exports = (function () {
@@ -45,12 +44,12 @@ module.exports = (function () {
                 },
                 users : {
                     description  : 'User (or file with them) to test',
-                    defaultValue : 'root',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'god',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -72,51 +71,65 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+            var result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                var conn = new Connection();
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                function delayCb () {
-                    conn.end();
-                    if (indexCount === loginPairs.length) {
-                        asyncCb();
-                    } else {
-                        setTimeout(asyncCb, options.delay);
-                    }
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
                 }
 
-                indexCount += 1;
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    var conn = new Connection();
 
-                conn.on('error', function (err) {
-                    if (/Authentication failure/.test(err)) {
-                        printer.infoHigh('Valid credentials NOT found for: ' +
-                                        loginPair.user + ' | ' + loginPair.pass);
-                        delayCb();
-                    } else {
-                        asyncCb(err);
+                    function delayCb () {
+                        // Last element
+                        if (indexCountPass === finalPasswords.length &&
+                            indexCountUsr === options.users.length) {
+                            asyncCbPass();
+                        } else {
+                            setTimeout(asyncCbPass, options.delay);
+                        }
                     }
-                });
 
-                conn.on('ready', function () {
-                    result.push(loginPair);
-                    printer.highlight('Valid credentials found: ' +
-                                loginPair.user + ' | ' + loginPair.pass);
-                    delayCb();
-                });
+                    indexCountPass += 1;
 
-                conn.connect({
-                    host         : options.target,
-                    port         : options.port,
-                    username     : loginPair.user,
-                    password     : loginPair.pass,
-//                    // TODO: Add support
-//                    privateKey: require('fs').readFileSync('/here/is/my/key')
-                    readyTimeout : options.timeout
+                    conn.on('error', function (err) {
+                        if (/Authentication failure/.test(err)) {
+                            printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                            delayCb();
+                        } else {
+                            asyncCbPass(err);
+                        }
+                    });
+
+                    conn.on('ready', function () {
+                        result.push({
+                            user : user,
+                            pass : password
+                        });
+                        printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                        delayCb();
+                    });
+
+                    conn.connect({
+                        host         : options.target,
+                        port         : options.port,
+                        username     : user,
+                        password     : password,
+    //                    // TODO: Add support
+    //                    privateKey: require('fs').readFileSync('/here/is/my/key')
+                        readyTimeout : options.timeout
+                    });
+                }, function (err) {
+                    asyncCbUsr(err);
                 });
             }, function (err) {
                 callback(err, result);
