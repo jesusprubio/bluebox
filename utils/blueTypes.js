@@ -211,7 +211,7 @@ function padNumber(number, padding) {
 
 function userPass (value) {
     var finalValues = [],
-        slicedValue, normalizedFile, data, splitted, padding, init, last;
+        slicedValue, data, splitted, padding, init, last;
 
     if (value.slice(0,6) === 'range:') {
         slicedValue = value.slice(6);
@@ -227,7 +227,7 @@ function userPass (value) {
 
         data = fs.readFileSync(path.resolve(__dirname, '../', slicedValue));
         if (!data) {
-            throw new Error('Reading file: "' + normalizedFile + '"');
+            throw new Error('Reading file: "' + slicedValue + '"');
         } else {
             return data.toString().split('\n');
         }
@@ -440,10 +440,24 @@ module.exports.domainIp = function (value) {
 
 module.exports.dnsDictionary = function (value) {
     var dnsDictionary = ['all', 'top_50', 'top_100', 'top_150', 'top_200'],
-        finalValue = value.toLowerCase();
-
+        finalValue    = value.toLowerCase(),
+        slicedValue, data;
 
     if (dnsDictionary.indexOf(finalValue) !== -1) {
+        return finalValue;
+    } else {
+        throw new Error(dnsDictionary.toString());
+    }
+};
+
+module.exports.profiles = function (value) {
+    var dnsDictionary = ['quick', 'regular', 'aggressive', 'paranoid'],
+        finalValue    = value.toLowerCase(),
+        slicedValue, data;
+
+    if (value.slice(0,5) === 'file:') {
+        return(value.slice(5));
+    } else if (dnsDictionary.indexOf(finalValue) !== -1) {
         return finalValue;
     } else {
         throw new Error(dnsDictionary.toString());

@@ -39,12 +39,12 @@ module.exports = (function () {
                 },
                 users : {
                     description  : 'User (or file with them) to test',
-                    defaultValue : 'anonymous',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'anonymous',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -66,57 +66,70 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+            var result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                var authCfg = {
-                        user            : loginPair.user,
-                        pass            : loginPair.pass,
-                        sendImmediately : false
-                    },
-                    // to avoid blocking
-                    customHeaders = {
-                        'User-Agent' :  utils.customHttpAgent()
-                    },
-                    cfg = {
-                        uri       : options.uri,
-                        method    : 'GET',
-                        headers   : customHeaders,
-                        json      : false,
-                        timeout   : options.timeout,
-                        strictSSL : false,
-                        auth      : authCfg
-                    };
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                function delayCb () {
-                    if (indexCount === loginPairs.length) {
-                        asyncCb();
-                    } else {
-                        setTimeout(asyncCb, options.delay);
-                    }
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
                 }
 
-                indexCount += 1;
-                request.get(cfg, function (err, res, body) {
-                    // TODO: Destroy/close client, not supported by the module
-                    if (!err && res.statusCode === 200) {
-                        result.push(loginPair);
-                        printer.highlight('Valid credentials found: ' +
-                                    loginPair.user + ' | ' + loginPair.pass);
-                        delayCb();
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    var authCfg = {
+                            user            : user,
+                            pass            : password,
+                            sendImmediately : false
+                        },
+                        // to avoid blocking
+                        customHeaders = {
+                            'User-Agent' :  utils.customHttpAgent()
+                        },
+                        cfg = {
+                            uri       : options.uri,
+                            method    : 'GET',
+                            headers   : customHeaders,
+                            json      : false,
+                            timeout   : options.timeout,
+                            strictSSL : false,
+                            auth      : authCfg
+                        };
 
-                        //                        if ( {
-                    } else if ( !err && /Authorization Required/.test(body)) {
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                            loginPair.user + ' | ' + loginPair.pass);
-                            delayCb();
-                    } else {
-                        asyncCb(err);
+                    function delayCb () {
+                        // Last element
+                        if (indexCountPass === finalPasswords.length &&
+                            indexCountUsr === options.users.length) {
+                            asyncCbPass();
+                        } else {
+                            setTimeout(asyncCbPass, options.delay);
+                        }
                     }
+
+                    indexCountPass += 1;
+                    request.get(cfg, function (err, res, body) {
+                        // TODO: Destroy/close client, not supported by the module
+                        if (!err && res.statusCode === 200) {
+                            result.push({
+                                user : user,
+                                pass : password
+                            });
+                            printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                            delayCb();
+                        } else if ( !err && /Authorization Required/.test(body)) {
+                            printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                            delayCb();
+                        } else {
+                            asyncCbPass(err);
+                        }
+                    });
+                }, function (err) {
+                    asyncCbUsr(err);
                 });
             }, function (err) {
                 callback(err, result);

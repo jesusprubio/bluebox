@@ -20,8 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var ldap   = require('ldapjs'),
     async  = require('async'),
 
-    printer = require('../utils/printer'),
-    utils   = require('../utils/utils');
+    printer = require('../utils/printer');
 
 
 module.exports = (function () {
@@ -71,45 +70,59 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+            var result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                var lpath = loginPair.user.split(',').slice(1),
-                    client;
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                function delayCb () {
-                    if (indexCount === loginPairs.length) {
-                        asyncCb();
-                    } else {
-                        setTimeout(asyncCb, options.delay);
-                    }
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
                 }
 
-                indexCount += 1;
-                client = ldap.createClient({
-                    url: 'ldap://' + options.target + ':' +
-                    options.port.toString() + '/' + lpath
-                });
-                client.bind(loginPair.user, loginPair.pass, function (err, data) {
-                    // TODO: Destroy/close client, not supported by the module
-                    if (!err) {
-                        result.push(loginPair);
-                        printer.highlight('Valid credentials found: ' +
-                                    loginPair.user + ' | ' + loginPair.pass);
-                        delayCb();
-                    } else {
-                        if (/Invalid Credentials/.test(err)) {
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                            loginPair.user + ' | ' + loginPair.pass);
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    var lpath = user.split(',').slice(1),
+                        client;
+
+                        function delayCb () {
+                            // Last element
+                            if (indexCountPass === finalPasswords.length &&
+                                indexCountUsr === options.users.length) {
+                                asyncCbPass();
+                            } else {
+                                setTimeout(asyncCbPass, options.delay);
+                            }
+                        }
+
+                    indexCountPass += 1;
+                    client = ldap.createClient({
+                        url: 'ldap://' + options.target + ':' + options.port.toString() + '/' + lpath
+                    });
+                    client.bind(user, password, function (err, data) {
+                        // TODO: Destroy/close client, not supported by the module
+                        if (!err) {
+                            result.push({
+                                user : user,
+                                pass : password
+                            });
+                            printer.highlight('Valid credentials found: ' + user + ' | ' + password);
                             delayCb();
                         } else {
-                            asyncCb(err);
+                            if (/Invalid Credentials/.test(err)) {
+                                printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                                delayCb();
+                            } else {
+                                asyncCbPass(err);
+                            }
                         }
-                    }
+                    });
+                }, function (err) {
+                    asyncCbUsr(err);
                 });
             }, function (err) {
                 callback(err, result);

@@ -72,7 +72,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -101,7 +101,7 @@ module.exports = (function () {
                     type         : 'domainIp'
                 },
                 delay : {
-                    description  : 'Delay between requests in ms. ("async" to concurrent)',
+                    description  : 'Delay between requests (ms.)',
                     defaultValue : 0,
                     type         : 'delay'
                 },
@@ -114,35 +114,28 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var hostPortPairs = utils.createTargetPairs(options.targets, options.ports),
-                result        = [],
-                limit         = 1,
-                indexCount    = 0, // User with delay to know in which index we are
-                hasAuth       = false,
+            var result         = [],
+                limit          = 1,
+                indexCountHost = 0, // User with delay to know in which index we are
+                indexCountPort = 0,
+                hasAuth        = false,
                 finalDelay; // by default we use delay
 
-            if (options.delay === 'async') {
-                limit = 10; // low value to avoid problems (too much opened sockets, etc.)
-                finalDelay = 0;
-            } else {
-                limit = 1;
-                finalDelay = options.delay;
-            }
-            async.eachLimit(
-                hostPortPairs,
-                limit,
-                function (hostPortPair, asyncCb) {
+            async.eachSeries(options.targets, function (target, asyncCbHost) {
+                indexCountHost += 1;
+                indexCountPort = 0;
+                async.eachSeries(options.ports, function (port, asyncCbPort) {
                     // We use a new stack in each request to simulate different users
                     var stackConfig = {
-                            server    : hostPortPair.target || null,
-                            port      : hostPortPair.port   || '5060',
-                            transport : options.transport   || 'UDP',
-                            timeout   : options.timeout     || 10000,
-                            wsPath    : options.wsPath      || null,
-                            tlsType   : options.tlsType     || 'SSLv3',
-                            srcHost   : options.srcHost     || null,
-                            lport     : options.srcPort     || null,
-                            domain    : options.domain      || null
+                            server    : target            || null,
+                            port      : port              || '5060',
+                            transport : options.transport || 'UDP',
+                            timeout   : options.timeout   || 10000,
+                            wsPath    : options.wsPath    || null,
+                            tlsType   : options.tlsType   || 'TLSv1',
+                            srcHost   : options.srcHost   || null,
+                            lport     : options.srcPort   || null,
+                            domain    : options.domain    || null
                         },
                         fakeStack = new SipFakeStack(stackConfig),
                         msgConfig, finalMeth, finalSrcHost, finalSrcPort;
@@ -157,7 +150,7 @@ module.exports = (function () {
                         meth : finalMeth
                     };
 
-                    indexCount += 1;
+                    indexCountPort += 1;
                     fakeStack.send(msgConfig, function (err, res) {
                         var msgString, parsedService, partialResult, finalRes;
 
@@ -201,16 +194,19 @@ module.exports = (function () {
                         }
 
                         // Last element
-                        if (indexCount === hostPortPairs.length ) {
-                            asyncCb();
+                        if (indexCountHost === options.targets.length &&
+                            indexCountPort === options.ports.length) {
+                            asyncCbPort();
                         } else {
-                            setTimeout(asyncCb, finalDelay);
+                            setTimeout(asyncCbPort, options.delay);
                         }
                     });
                 }, function (err) {
-                    callback(err, result);
-                }
-            );
+                    asyncCbHost(err);
+                });
+            }, function (err) {
+                callback(err, result);
+            });
         }
     };
 

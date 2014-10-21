@@ -1,7 +1,6 @@
 {
     "goodScanTypes" : ["OPTIONS"],
     "badScanTypes" : ["OK"],
-    "maxScanParallel" : 1,
     "sipServices" : [
         {
             "port" : "5060",
@@ -28,6 +27,7 @@
     "unauthTo" : "101",
     "unauthDelay" : 10000,
     "slowTypes" : ["REGISTER"],
+    "slowExtensions" : "range:100-110",
     "slowDelay" : 10000,
     "dosNumReq" : 5,
     "dosDelay" : 10000,
@@ -37,6 +37,6 @@
     "bruteExtDelay" : 10000,
     "brutePassExts" : "range:0000-0005",
     "brutePassPasses" : "guest",
-    "bruteUserAsPass" : false,
+    "bruteUserAsPass" : true,
     "brutePassDelay" : 10000
 }

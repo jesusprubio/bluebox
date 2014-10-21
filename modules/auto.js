@@ -95,8 +95,9 @@ module.exports = (function () {
                     defaultValue : '/usr/local/bin/nmap',
                     type         : 'anyValue'
                 },
+                // TODO: USE file:...
                 profile : {
-                    description  : 'Type of scanning (quick, regular, aggressive, paranoid)',
+                    description  : 'Type of scanning (quick, regular, aggressive, paranoid) or custom file (file:...)',
                     defaultValue : 'regular',
                     type         : 'anyValue' // checked in runtime
                 },
@@ -186,9 +187,8 @@ module.exports = (function () {
                     printer.bold('\n\nINITIAL SIP SCAN\n');
                     printer.bold('\nScanning ' + options.targets.length + ' targets ... (' +
                                  initialTargets.length + ' tries)\n');
-                    async.eachLimit(
+                    async.eachSeries(
                         initialTargets,
-                        profile.maxScanParallel,
                         makeScan,
                         function (err) {
                             if (Object.keys(report).length > 0) {
@@ -334,11 +334,8 @@ module.exports = (function () {
                 function (async0Cb) {
                     printer.bold('\nSending more types of SIP packets ...\n');
                     async.eachSeries(Object.keys(report), function (ipAddress, async1Cb) {
-                        async.eachLimit(
-                            utils.createAutoTargets([ipAddress],
-                                                    profile.sipServices,
-                                                    profile.badScanTypes),
-                            profile.maxScanParallel,
+                        async.eachSeries(
+                            utils.createAutoTargets([ipAddress], profile.sipServices, profile.badScanTypes),
                             makeScan,
                             function (err) {
                                 async1Cb(); // error never thrown inside
@@ -401,6 +398,7 @@ module.exports = (function () {
                             port       : report[finalPair.ipAddress].responses[0].port,
                             transport  : report[finalPair.ipAddress].responses[0].transport,
                             wsPath     : report[finalPair.ipAddress].responses[0].path || null,
+                            extensions : blueTypes.userPass(profile.slowExtensions),
                             tlsType    : report[finalPair.ipAddress].responses[0].tlsType || null,
                             meth       : finalPair.meth,
                             srcHost    : report[finalPair.ipAddress].responses[0].srcHost || null,

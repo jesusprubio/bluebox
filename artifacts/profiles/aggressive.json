@@ -2,7 +2,6 @@
     "goodScanTypes" : ["OPTIONS", "REGISTER", "INVITE", "MESSAGE",
                        "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
     "badScanTypes" : ["CANCEL", "ACK", "Trying", "Ringing", "OK"],
-    "maxScanParallel" : 1,
     "sipServices" : [
         {
             "port" : "5060",
@@ -37,6 +36,7 @@
     "unauthTo" : "range:100-110",
     "unauthDelay" : 0,
     "slowTypes" : ["OPTIONS", "INVITE", "REGISTER"],
+    "slowExtensions" : "range:100-110",
     "slowDelay" : 0,
     "dosNumReq" : 1000,
     "dosDelay" : 0,
@@ -46,6 +46,6 @@
     "bruteExtDelay" : 0,
     "brutePassExts" : "file:artifacts/dics/johnPlusNum.txt",
     "brutePassPasses" : "file:artifacts/dics/johnPlusNum.txt",
-    "bruteUserAsPass" : true,
+    "bruteUserAsPass" : false,
     "brutePassDelay" : 0
 }

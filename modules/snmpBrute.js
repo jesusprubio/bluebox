@@ -20,21 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var snmp   = require('snmp-native'),
     async  = require('async'),
     net    = require('net'),
-    
+
     printer = require('../utils/printer');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'tftpBrute',
             description : 'Try to brute-force valid communities for the SNMP protocol',
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
-                    defaultValue : '172.16.190.128',
+                    defaultValue : '127.0.0.1',
                     type         : 'targetIp'
                 },
                 port : {
@@ -56,16 +56,16 @@ module.exports = (function () {
                     description  : 'Time to wait for a response (ms.)',
                     defaultValue : 5000,
                     type         : 'positiveInt'
-                }                
+                }
             }
         },
-                
+
         run : function (options, callback) {
             var result      = [],
                 indexCount  = 0; // User with delay to know in which index we are
-            
+
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(options.communities, function (community, asyncCb) {        
+            async.eachSeries(options.communities, function (community, asyncCb) {
                 var cfg = {
                         host      : options.target,
                         port      : options.port,
@@ -73,7 +73,7 @@ module.exports = (function () {
                         timeouts  : [options.timeout]
                     },
                     session;
-                
+
                 function delayCb () {
                     if (indexCount === options.communities.length) {
                         asyncCb();
@@ -82,13 +82,13 @@ module.exports = (function () {
                     }
                 }
 
-                
+
                 if (net.isIPv6(options.target)) {
                     cfg.family = 'udp6';
                 }
                 indexCount += 1;
                 session = new snmp.Session(cfg);
-                
+
                 session.get({ oid: [ 1, 3, 6, 1 ] }, function (err, res) {
                     // TODO: Destroy/close client, not supported by the module
                     if (err) {
@@ -108,6 +108,6 @@ module.exports = (function () {
                 callback(err, result);
             });
         }
-	};
-	
+    };
+
 }());

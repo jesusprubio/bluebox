@@ -2,7 +2,6 @@
     "goodScanTypes" : ["OPTIONS", "REGISTER", "INVITE", "MESSAGE",
                        "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
     "badScanTypes" : ["CANCEL", "ACK", "Trying", "Ringing", "OK"],
-    "maxScanParallel" : 1,
     "sipServices" : [
         {
             "port" : "5060",
@@ -29,6 +28,7 @@
     "unauthTo" : "range:100-105",
     "unauthDelay" : 0,
     "slowTypes" : ["REGISTER"],
+    "slowExtensions" : "range:100-105",
     "slowDelay" : 3000,
     "dosNumReq" : 100,
     "dosDelay" : 0,

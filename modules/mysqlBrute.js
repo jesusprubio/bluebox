@@ -49,12 +49,12 @@ module.exports = (function () {
                 },
                 users : {
                     description  : 'User (or file with them) to test',
-                    defaultValue : 'anonymous',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'anonymous',
+                    defaultValue : 'file:artifacts/dics/john.txt',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -71,51 +71,67 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            var loginPairs  = utils.createLoginPairs(options.users, options.passwords, options.userAsPass),
-                result      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
+            var result         = [],
+                indexCountUsr  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                var config = {
-                        host           : options.target,
-                        port           : options.port,
-                        user           : loginPair.user,
-                        password       : loginPair.pass,
-                        connectTimeout : options.timeout
-                    },
-                    conn;
+            async.eachSeries(options.users, function (user, asyncCbUsr) {
+                var finalPasswords = [];
 
-                function delayCb () {
-                    if (indexCount === loginPairs.length) {
-                        asyncCb();
-                    } else {
-                        setTimeout(asyncCb, options.delay);
-                    }
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountUsr += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(user);
                 }
 
-                if (options.ssl) {
-                    config.ssl = { rejectUnauthorized: false };
-                }
-                conn = mysql.createConnection(config);
-                indexCount += 1;
-                conn.connect(function (err, data) {
-                    conn.destroy();
-                    if (err) {
-                        if (/ER_ACCESS_DENIED_ERROR/.test(err)) {
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                            loginPair.user + ' | ' + loginPair.pass);
-                            delayCb();
+                async.eachSeries(finalPasswords, function (password, asyncCbPass) {
+                    var config = {
+                            host           : options.target,
+                            port           : options.port,
+                            user           : user,
+                            password       : password,
+                            connectTimeout : options.timeout
+                        },
+                        conn;
+
+                    function delayCb () {
+                        // Last element
+                        if (indexCountPass === finalPasswords.length &&
+                            indexCountUsr === options.users.length) {
+                            asyncCbPass();
                         } else {
-                            asyncCb(err);
+                            setTimeout(asyncCbPass, options.delay);
                         }
-                    } else {
-                        result.push(loginPair);
-                        printer.highlight('Valid credentials found: ' +
-                                    loginPair.user + ' | ' + loginPair.pass);
-                        delayCb();
                     }
+
+                    if (options.ssl) {
+                        config.ssl = { rejectUnauthorized: false };
+                    }
+
+                    conn = mysql.createConnection(config);
+                    indexCountPass += 1;
+                    conn.connect(function (err, data) {
+                        conn.destroy();
+                        if (err) {
+                            if (/ER_ACCESS_DENIED_ERROR/.test(err)) {
+                                printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                                delayCb();
+                            } else {
+                                asyncCbPass(err);
+                            }
+                        } else {
+                            result.push({
+                                user : user,
+                                pass : password
+                            });
+                            printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                            delayCb();
+                        }
+                    });
+                }, function (err) {
+                    asyncCbUsr(err);
                 });
             }, function (err) {
                 callback(err, result);

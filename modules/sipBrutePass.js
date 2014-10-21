@@ -19,13 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var async  = require('async'),
     lodash = require('lodash'),
-    Lazy   = require('lazy.js'),
-//    wu     = require('wu'),
 
     SipFakeStack = require('../utils/sipFakeStack'),
     sipParser    = require('../utils/sipParser'),
-    printer      = require('../utils/printer'),
-    utils        = require('../utils/utils');
+    printer      = require('../utils/printer');
 
 
 module.exports = (function () {
@@ -38,7 +35,7 @@ module.exports = (function () {
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
-                    defaultValue : '172.16.190.128',
+                    defaultValue : '127.0.0.1',
                     type         : 'targetIp'
                 },
                 port : {
@@ -53,7 +50,7 @@ module.exports = (function () {
                 },
                 tlsType : {
                     description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'SSLv3',
+                    defaultValue : 'TLSv1',
                     type         : 'tlsType'
                 },
                 wsPath : {
@@ -110,120 +107,81 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-
-            console.log('OPTIONSSS');
-            console.log(options);
-
-
-//            var loginPairs  = utils.createLoginPairs(
-//                    options.extensions,
-//                    options.passwords,
-//                    options.userAsPass
-//                ),
-            var loginPairs = [],
-                result      = {
+            var result         = {
                     valid  : [],
                     errors : []
                 },
-                recErrors      = [],
-                indexCount  = 0, // User with delay to know in which index we are
-                tmpUser;
-
-//            lodash.each(options.extensions, function (user) {
-//                if(options.userAsPass && (user !== options.passwords[0])) {
-//                    loginPairs.push({
-//                        user : user,
-//                        pass : user
-//                    });
-//                }
-//                lodash.each(options.passwords, function (pass) {
-//                    console.log('PASSS: ' + pass);
-//                    loginPairs.push({
-//                        user : user,
-//                        pass : pass
-//                    });
-//                });
-//            });
-
-
-            Lazy(options.extensions).each(function (user) {
-                if(options.userAsPass && (user !== options.passwords[0])) {
-                    loginPairs.push({
-                        user : user,
-                        pass : user
-                    });
-                }
-                Lazy(options.passwords).each(function (pass) {
-                    console.log('PASSS: ' + pass);
-                    loginPairs.push({
-                        user : user,
-                        pass : pass
-                    });
-                });
-                console.log('LLEGAAA4444');
-            });
-
-            console.log('PAIRSSSS');
-            console.log(loginPairs);
-
+                indexCountExt  = 0, // Used with delay to know in which index we are
+                indexCountPass = 0;
 
             // We avoid to parallelize here to control the interval of the requests
-            async.eachSeries(loginPairs, function (loginPair, asyncCb) {
-                // We use a new stack in each request to simulate different users
-                var stackConfig = {
-                    server    : options.target    || null,
-                    port      : options.port      || '5060',
-                    transport : options.transport || 'UDP',
-                    timeout   : options.timeout   || 10000,
-                    wsPath    : options.wsPath    || null,
-                    tlsType   : options.tlsType   || 'SSLv3',
-                    srcHost   : options.srcHost   || null,
-                    lport     : options.srcPort   || null,
-                    domain    : options.domain    || null
-                },
-                fakeStack, msgConfig;
+            async.eachSeries(options.extensions, function (extension, asyncCbExt) {
+                var finalPasswords = [];
 
-                msgConfig = {
-                    meth    : options.meth,
-                    fromExt : loginPair.user,
-                    pass    : loginPair.pass
-                };
+                finalPasswords = finalPasswords.concat(options.passwords);
+                indexCountExt += 1;
+                indexCountPass = 0;
+                if (options.userAsPass) {
+                    finalPasswords.push(extension);
+                }
 
-                indexCount += 1;
-                fakeStack = new SipFakeStack(stackConfig);
+                async.eachSeries(finalPasswords, function (passsword, asyncCbPass) {
+                    // We use a new stack in each request to simulate different users
+                    var stackConfig = {
+                        server    : options.target    || null,
+                        port      : options.port      || '5060',
+                        transport : options.transport || 'UDP',
+                        timeout   : options.timeout   || 10000,
+                        wsPath    : options.wsPath    || null,
+                        tlsType   : options.tlsType   || 'TLSv1',
+                        srcHost   : options.srcHost   || null,
+                        lport     : options.srcPort   || null,
+                        domain    : options.domain    || null
+                    },
+                    fakeStack, msgConfig;
 
-                fakeStack.authenticate(msgConfig, function (err, res) {
-                    if (!err) {
-                        if (res.valid) {
-                            result.valid.push({
-                                extension : loginPair.user,
-                                pass      : loginPair.pass,
-                                data      : res.data
+                    msgConfig = {
+                        meth    : options.meth,
+                        fromExt : extension,
+                        pass    : passsword
+                    };
+
+                    indexCountPass += 1;
+                    fakeStack = new SipFakeStack(stackConfig);
+
+                    fakeStack.authenticate(msgConfig, function (err, res) {
+                        if (!err) {
+                            if (res.valid) {
+                                result.valid.push({
+                                    extension : extension,
+                                    pass      : passsword,
+                                    data      : res.data
+                                });
+                                // We only add valid extensions to final result
+                                printer.highlight('Valid credentials found: ' + extension + ' | ' + passsword);
+                            } else {
+                                // but we print info about tested ones
+                                printer.infoHigh('Valid credentials NOT found for: ' + extension + ' | ' + passsword);
+                            }
+                            // Last element
+                            if (indexCountPass === finalPasswords.length &&
+                                indexCountExt === options.extensions.length) {
+                                asyncCbPass();
+                            } else {
+                                setTimeout(asyncCbPass, options.delay);
+                            }
+                        } else {
+                            // We don't want to stop the full chain
+                            result.errors.push({
+                                extension : extension,
+                                pass      : passsword,
+                                data      : err
                             });
-                            // We only add valid extensions to final result
-                            printer.highlight('Valid credentials found: ' +
-                                               loginPair.user + ' | ' + loginPair.pass);
-                        } else {
-                            // but we print info about tested ones
-                            printer.infoHigh('Valid credentials NOT found for: ' +
-                                loginPair.user + ' | ' + loginPair.pass);
+                            asyncCbPass();
                         }
-
-                        // Last element
-                        if (indexCount === loginPairs.length) {
-                            asyncCb();
-                        } else {
-                            setTimeout(asyncCb, options.delay);
-                        }
-                    } else {
-                        // We don't want to stop the full chain
-                        result.errors.push({
-                            extension : loginPair.user,
-                            pass      : loginPair.pass,
-                            data      : err
-                        });
-                        asyncCb();
-                    }
+                    });
+                }, function (err) {
+                    asyncCbExt();
                 });
             }, function (err) {
                 callback(err, result);
