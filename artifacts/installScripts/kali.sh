@@ -20,19 +20,19 @@
 
 sourcesFile='/etc/apt/sources.list.d/nodesource.list'
 
-# Adding Backbports repo
+echo "Adding deps ..."
+aptitude install -y apt-transport-https
+
 echo "Adding Nodesource APT repos ..."
 curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 echo "# Debian Wheezy Backports" >> $sourcesFile
 echo 'deb https://deb.nodesource.com/node wheezy main' > $sourcesFile
 echo 'deb-src https://deb.nodesource.com/node wheezy main' >> $sourcesFile
 
-# Installing Node
 echo "Installing Node.js binaries ..."
 aptitude update
 aptitude install -y nodejs
 
-# Installing Bluebox-ng
 echo "Installing Bluebox-ng, wait a momento please ..."
 npm i -g bluebox-ng
 echo "Done, just type 'bluebox-ng' :)"
