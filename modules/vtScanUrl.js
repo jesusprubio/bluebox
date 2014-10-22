@@ -25,7 +25,7 @@ module.exports = function () {
 
         info: {
             name        : 'vtScanUrl',
-            description : 'Virustotal URL Scanner',
+            description : 'VirusTotal URL Scanner',
             options : {
                 target : {
                     description  : 'URL to scan',
@@ -36,20 +36,25 @@ module.exports = function () {
         },
 
         run: function (options, callback) {
-            virustotal.setKey(options.virustotalKey);
-            virustotal.scanUrl(options.target, function (err, res) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                console.log(res.resource);
+            if (options.virustotalKey) {
+                virustotal.setKey(options.virustotalKey);
+                virustotal.scanUrl(options.target, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    console.log(res.resource);
 
-                virustotal.getUrlReport(
-                    res.resource,
-                    callback
-                );
-            });
-
+                    virustotal.getUrlReport(
+                        res.resource,
+                        callback
+                    );
+                });
+            } else {
+                callback({
+                    type : 'A key is needed to run this module.'
+                });
+            }
         }
     };
 

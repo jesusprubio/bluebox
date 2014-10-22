@@ -25,7 +25,6 @@ var async       = require('async'),
     fs          = require('fs'),
 
     Bluebox     = require('../'),
-    globalCfg   = require('./config'),
     printer     = require('../utils/printer'),
     shodanKey   = null,
     virustotalKey = null,
@@ -135,6 +134,34 @@ function runCommand (comm, rl) {
                     printer.result(modulesList.join(' '));
                 }
                 rl.prompt();
+            },
+            'setShodanKey' : function () {
+                rl.question(
+                    '* Enter your key: ',
+                    function (answer) {
+                        if (answer) {
+                            answer = answer.trim();
+                            bluebox.setShodanKey(answer);
+                            printer.infoHigh('Using SHODAN key: ');
+                            printer.highlight(answer + '\n');
+                        }
+                        rl.prompt();
+                    }
+                );
+            },
+            'setVirustotalKey' : function () {
+                rl.question(
+                    '* Enter your key: ',
+                    function (answer) {
+                        if (answer) {
+                            answer = answer.trim();
+                            bluebox.setVirustotalKey(answer);
+                            printer.infoHigh('Using Virus Total key: ');
+                            printer.highlight(answer + '\n');
+                        }
+                        rl.prompt();
+                    }
+                );
             }
         };
 
@@ -188,30 +215,8 @@ function createPrompt () {
 }
 
 
-// Loading SHODAN key (if any)
-if (globalCfg.shodanKey) {
-    shodanKey = globalCfg.shodanKey;
-    printer.infoHigh('\nUsing SHODAN key: ');
-    printer.highlight(shodanKey);
-} else {
-    printer.infoHigh('\n- To get SHODAN support you need to add your API key to ' +
-                     'your "config.json" file (in the root folder):');
-    printer.regular('http://www.shodanhq.com/api_doc');
-}
-
-// Loading VirusTotal key (if any)
-if (globalCfg.virustotalKey) {
-    virustotalKey = globalCfg.virustotalKey;
-    printer.infoHigh('\nUsing VirusTotal key: ');
-    printer.highlight(virustotalKey);
-} else {
-    printer.infoHigh('\n- To get VirusTotal support you need to add your API key to ' +
-        'your "config.json" file (in the root folder):');
-    printer.regular('http://www.virustotal.com');
-}
-
 // Creating the Bluebox object
-bluebox = new Bluebox(globalCfg);
+bluebox = new Bluebox();
 
 modulesInfo = bluebox.getModulesInfo();
 // Generating modules list
@@ -219,7 +224,7 @@ lodash.each(bluebox.getModulesInfo(), function (v, k) {
     modulesList.push(k);
 });
 // and manually adding client modules
-modulesList = modulesList.concat(['help', 'quit', 'exit']);
+modulesList = modulesList.concat(['help', 'quit', 'exit', 'setShodanKey', 'setVirustotalKey']);
 
 // Welcome info is printed
 printer.bold('\n\tWelcome to Bluebox-ng\n');

@@ -26,20 +26,24 @@ var async        = require('async'),
 // Constructor
 
 function Bluebox (options) {
-    this.shodanKey = options.shodanKey || null;
-    this.virustotalKey = options.virustotalKey || null;
-
-    this.modulesInfo  = requireDir(module, './modules');
+    this.shodanKey     = null;
+    this.virustotalKey = null;
+    this.modulesInfo   = requireDir(module, './modules');
 }
-
-
-// Helpers
 
 
 // Public functions
 
 Bluebox.prototype.getModulesInfo = function () {
     return this.modulesInfo;
+};
+
+Bluebox.prototype.setShodanKey = function (value) {
+    this.shodanKey = value;
+};
+
+Bluebox.prototype.setVirustotalKey = function (value) {
+    this.virustotalKey = value;
 };
 
 Bluebox.prototype.runModule = function (moduleName, config, callback) {

@@ -27,7 +27,7 @@ Features
 - Dumb fuzzing
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
-- VirusTotal IP, URL and domain support
+- VirusTotal IP, URL and domain
 - Geolocation
 - Colored output
 - Command completion
@@ -38,11 +38,17 @@ Install
 Dependencies. It should work in all systems which support Node:
 - Node.js: [http://nodejs.org/](http://nodejs.org/).
  - A comofortable way to have your Node version updated is to use the official binary distributions: [https://github.com/nodesource/distributions](https://github.com/nodesource/distributions)
- - These scripts don't work in Kali GNU/Linux, so we've implemented one which also installs Bluebox-ng. Yoy can use it using the next command:
+ - These scripts don't work in Kali GNU/Linux ([https://github.com/nodesource/distributions/issues/28#issuecomment-60062280](https://github.com/nodesource/distributions/issues/28#issuecomment-60062280)), so we've implemented one which also installs Bluebox-ng. Yoy can use it using the next command:
 ```curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -```
 - Nmap (only for "nmapScan" module): [http://nmap.org/](http://nmap.org/)
 
 ```npm i -g bluebox-ng```
+
+NOTE: It takes a while because we're using a lot of official modules (Mongo, LDAP, etc.) which need to compile some stuff.
+
+Upgrade
+-------
+```npm update -g bluebox-ng```
 
 Use
 ---

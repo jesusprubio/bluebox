@@ -25,7 +25,7 @@ module.exports = function () {
 
         info: {
             name        : 'vtScanIp',
-            description : 'Virustotal IP Scanner',
+            description : 'VirusTotal IP Scanner',
             options     : {
                 target : {
                     description  : 'IP address to scan',
@@ -36,11 +36,17 @@ module.exports = function () {
         },
 
         run: function (options, callback) {
-            virustotal.setKey(options.virustotalKey);
-            virustotal.getIpReport(
-                options.target,
-                callback
-            );
+            if (options.virustotalKey) {
+                virustotal.setKey(options.virustotalKey);
+                virustotal.getIpReport(
+                    options.target,
+                    callback
+                );
+            } else {
+                callback({
+                    type : 'A key is needed to run this module.'
+                });
+            }
         }
 
     };

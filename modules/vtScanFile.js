@@ -25,7 +25,7 @@ module.exports = function () {
 
         info: {
             name        : 'vtScanFile',
-            description : 'Virustotal File Scanner',
+            description : 'VirusTotal File Scanner',
             options     : {
                 target : {
                     description  : 'file to scan',
@@ -36,19 +36,24 @@ module.exports = function () {
         },
 
         run: function (options, callback) {
-            virustotal.setKey(options.virustotalKey);
-            virustotal.scanFile(options.target, function (err, res) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
+            if (options.virustotalKey) {
+                virustotal.setKey(options.virustotalKey);
+                virustotal.scanFile(options.target, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
 
-                virustotal.getFileReport(
-                    res.resource,
-                    callback
-                );
-            });
-
+                    virustotal.getFileReport(
+                        res.resource,
+                        callback
+                    );
+                });
+            } else {
+                callback({
+                    type : 'A key is needed to run this module.'
+                });
+            }
         }
     };
 

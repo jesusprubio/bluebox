@@ -21,9 +21,9 @@ var ShodanClient = require('shodan-client');
 
 
 module.exports = (function () {
-    
+
     return {
-        
+
         info : {
             name        : 'shodanHost',
             description : 'Look if the target is indexed by SHODAN computer search engine',
@@ -40,17 +40,17 @@ module.exports = (function () {
                 }
             }
         },
-        
+
         run : function (options, callback) {
             var reqOptions  = {
-                key     : options.shodanKey,
-                timeout : parseInt(options.timeout),
-            },
+                    key     : options.shodanKey,
+                    timeout : parseInt(options.timeout),
+                },
                 shodanClient = new ShodanClient(reqOptions),
                 hostOptions  = {
                     ip      : options.ip
                 };
-            
+
             if (options.shodanKey) {
                 shodanClient.host(hostOptions, callback);
             }
@@ -58,8 +58,8 @@ module.exports = (function () {
                 callback({
                     type : 'A SHODAN key is needed to run this module.'
                 });
-            }   
-        } 
+            }
+        }
     };
-    
+
 }());
