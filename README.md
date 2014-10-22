@@ -36,7 +36,10 @@ Features
 Install
 -------
 Dependencies. It should work in all systems which support Node:
-- Node.js: [http://nodejs.org/](http://nodejs.org/)
+- Node.js: [http://nodejs.org/](http://nodejs.org/).
+ - A comofortable way to have your Node version updated is to use the official binary distributions: [https://github.com/nodesource/distributions](https://github.com/nodesource/distributions)
+ - These scripts don't work in Kali GNU/Linux, so we've implemented one which also installs Bluebox-ng. Yoy can use it using the next command:
+```curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -```
 - Nmap (only for "nmapScan" module): [http://nmap.org/](http://nmap.org/)
 
 ```npm i -g bluebox-ng```

@@ -16,21 +16,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# Script to launch Bluebox client avoiding debugging problems with "npm start"
+# Script to install Bluebox-ng in Kali GNU/Linux
 
-dir='./node_modules'
+sourcesFile='/etc/apt/sources.list.d/nodesource.list'
 
-# Checking if Node.js is installed
-if which node > /dev/null
-then
-    # Checking if Node.js deps are installed
-    if [ ! -d $dir ]
-    then
-        echo 'The "'$dir'" folder is not present, so Node.js deps are going to be automatically installed ...'
-        npm i
-    fi
-    # Starting
-    node bin/blueboxClient.js
-else
-    echo 'Node.js is not present, install it (http://nodejs.org/) and start again, please.'
-fi
+# Adding Backbports repo
+curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+echo "# Debian Wheezy Backports" >> $sourcesFile
+echo 'deb https://deb.nodesource.com/node wheezy main' > $sourcesFile
+echo 'deb-src https://deb.nodesource.com/node wheezy main' >> $sourcesFile
+
+# Installing Node
+aptitude update
+aptitude install nodejs
+
+# Installing Bluebox-ng
+npm i -g bluebox-ng
