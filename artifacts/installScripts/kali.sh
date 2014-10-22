@@ -20,6 +20,9 @@
 
 sourcesFile='/etc/apt/sources.list.d/nodesource.list'
 
+# Just in case the first boot (or Live cd)
+echo "Updating sources ... (just in case)"
+aptitude update
 echo "Adding deps ..."
 aptitude install -y apt-transport-https
 
