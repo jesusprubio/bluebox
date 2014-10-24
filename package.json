@@ -64,7 +64,6 @@
     "tcp-ping": "0.1.x",
     "tftp-client": "0.2.x",
     "traceroute": "0.0.x",
-    "virustotal.js": "0.3.x",
     "websocket": "git://github.com/jesusprubio/WebSocket-Node.git#master"
   },
   "engines": {
