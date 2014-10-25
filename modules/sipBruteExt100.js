@@ -34,7 +34,7 @@ module.exports = (function () {
             options : {
                 target : {
                     description  : 'IP address to attack',
-                    defaultValue : '172.16.190.137',
+                    defaultValue : '127.0.0.1',
                     type         : 'targetIp'
                 },
                 port : {
@@ -155,6 +155,7 @@ module.exports = (function () {
                                 };
 
                                 indexCount += 1;
+                                stackConfig.onlyFirst = false;
                                 fakeStack = new SipFakeStack(stackConfig);
 
                                 // TODO: We need to be more polited here, an ACK and BYE
@@ -163,11 +164,9 @@ module.exports = (function () {
                                     var hasAuth       = true,
                                         partialResult = {};
 
-                                    console.log(res);
-
                                     if (!err) {
-                                        finalRes = res.msg;
-                                        resCode = sipParser.code(finalRes);
+                                        // checking the first received response
+                                        resCode = sipParser.code(res.msg[0]);
                                         if(['401', '200'].indexOf(resCode) !== -1) {
                                             if (resCode === '200') {
                                                 hasAuth = false;
@@ -178,12 +177,15 @@ module.exports = (function () {
                                             partialResult = {
                                                 extension : extension,
                                                 auth      : hasAuth,
-                                                data      : res.msg
+                                                data      : res.msg[0]
                                             };
+                                        } else if (resCode === '100' && sipParser.code(res.msg[1]) !== '200') {
+                                            partialResult = {
+                                                extension : extension,
+                                                hasAuth   : false,
+                                                data      : res.msg[1]
+                                            };                                            
                                         }
-//                                        } else if (resCode === '100') {
-//                                            res
-//                                        }
 
                                         // We only add valid extensions to final result
                                         if (Object.keys(partialResult).length !== 0) {

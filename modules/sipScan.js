@@ -135,7 +135,7 @@ module.exports = (function () {
                             tlsType   : options.tlsType   || 'TLSv1',
                             srcHost   : options.srcHost   || null,
                             lport     : options.srcPort   || null,
-                            domain    : options.domain    || null
+                            domain    : options.domain    || null,
                         },
                         fakeStack = new SipFakeStack(stackConfig),
                         msgConfig, finalMeth, finalSrcHost, finalSrcPort;

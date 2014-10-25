@@ -372,6 +372,7 @@ function SipFakeStack (config) {
     this.wsPath    = config.wsPath      || null;
     this.tlsType   = config.tlsType     || 'SSLv3';
     this.domain    = config.domain      || null;
+    this.onlyFirst = config.onlyFirst   || true;
 
     if (net.isIPv6(config.server) && !config.srcHost) {
         this.srcHost = utils.randomIP6();
@@ -397,7 +398,9 @@ SipFakeStack.prototype.send = function (cfg, callback) {
                 wsPath    : self.wsPath,
                 tlsType   : self.tlsType
             },
-            msgOptions = cfg;
+            msgOptions = cfg,
+            allRes     = [],
+            returned   = false;
 
         // Reusing options object
         msgOptions.lport     = self.lport;
@@ -413,11 +416,27 @@ SipFakeStack.prototype.send = function (cfg, callback) {
         });
 
         self.megaSocket.on('message', function (msg) {
-            self.megaSocket.close();
-            // SIP can be a binary or text protocol, but text widely used
-            callback(null, {
-                msg : msg.data.toString()
-            });
+
+            if (!self.onlyFirst) {
+                self.megaSocket.close();
+                callback(null, {
+                    msg : msg
+                });           
+            } else {
+                if (!returned) {
+                    returned = true;
+                    // We wait for a while for more responses
+                    setTimeout( function () {
+                        self.megaSocket.close();
+                        callback(null, {
+                            msg : allRes
+                        });                
+                    }, Math.round(self.timeout/3));
+                }
+
+                // SIP can be a binary or text protocol, but text widely used
+                allRes.push(msg.data.toString());
+            }
         });
 
         self.megaSocket.send(createMessage(msgOptions));

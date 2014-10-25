@@ -42,12 +42,12 @@ module.exports = (function () {
                 },
                 users : {
                     description  : 'User (or file with them) to test',
-                    defaultValue : 'guest',
+                    defaultValue : 'admin',
                     type         : 'userPass'
                 },
                 passwords : {
                     description  : 'Password (or file with them) to test',
-                    defaultValue : 'file:artifacts/dics/john.txt',
+                    defaultValue : 'amp111',
                     type         : 'userPass'
                 },
                 userAsPass : {
@@ -58,11 +58,6 @@ module.exports = (function () {
                 delay : {
                     description  : 'Delay between requests in ms.',
                     defaultValue : 0,
-                    type         : 'positiveInt'
-                },
-                timeout : {
-                    description  : 'Time to wait for a response (ms.)',
-                    defaultValue : 5000,
                     type         : 'positiveInt'
                 }
             }
@@ -85,70 +80,51 @@ module.exports = (function () {
                 }
 
                 async.eachSeries(finalPasswords, function (password, asyncCbPass) {
-                    var connected = false,
-                        valid     = false,
-                        returned  = false,
+                    var returned  = false,
                         ami;
 
                     function delayCb () {
                         // Last element
-                        if (indexCountPass === finalPasswords.length &&
-                            indexCountUsr === options.users.length) {
+                        if (indexCountPass === finalPasswords.length && indexCountUsr === options.users.length) {
                             asyncCbPass();
                         } else {
                             setTimeout(asyncCbPass, options.delay);
                         }
                     }
 
-                    // The module do not supports connection timeout, so
-                    // we add it manually ("returned" var), really dirty trick
-                    setTimeout(function () {
-                        if (!connected && !returned) {
-                            returned = true;
-                            callback({
-                                type : 'timeout'
-                            });
-                        }
-                        ami.disconnect();
-                    }, options.timeout);
-                    ami = new require('asterisk-manager')(
-                        options.port.toString(), options.target, user, password,
-                        true // determines whether events are emited
-                    );
-
-                    ami.on('managerevent', function (evt) {
-                        if (evt.event === 'FullyBooted') {
-                            valid = true;
-                            ami.disconnect();
-                            result.push({
-                                user      : user,
-                                pass      : password,
-                                privilege : evt.privilege
-                            });
-                            printer.highlight('Valid credentials found: ' + user + ' | ' + password);
-                        }
-                        delayCb();
-                    });
-
+                    ami = new require('asterisk-manager')( options.port.toString(), options.target, user, password, true);
                     indexCountPass += 1;
 
-                    ami.on('end', function (msg) {
-                        if (!valid) {
-                            printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
-                            delayCb();
-                        }
-                    });
-
                     ami.on('connect', function () {
-                        connected = true;
+                        ami.action({
+                            'action'   : 'login',
+                            'username' : user,
+                            'secret'   : password
+                        }, function (err, res) {
+                            if (!err) {
+                                ami.disconnect();
+                                result.push({
+                                    user      : user,
+                                    pass      : password
+                                });
+                                printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                            }
+                            delayCb();
+                        });
+
                     });
 
                     ami.on('error', function (err) {
-                        // Onyl if not callbacked, look the comments above
-                        if (!returned) {
-                            returned = true;
-                            asyncCbPass(err);
+                        if (err.toString().indexOf('ECONNRESET') > -1) {
+                            printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                        } else {
+                            // Onyl if not connected or callbacked, look the comments above                            
+                            if (!returned) {
+                                returned = true;
+                                asyncCbPass({ err : err });
+                            }
                         }
+                        delayCb();
                     });
                 }, function (err) {
                     asyncCbUsr(err);
