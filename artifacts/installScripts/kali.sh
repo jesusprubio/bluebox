@@ -36,6 +36,6 @@ echo "Installing Node.js binaries ..."
 aptitude update
 aptitude install -y nodejs
 
-echo "Installing Bluebox-ng, wait a momento please ..."
+echo "Installing Bluebox-ng, wait a moment please ..."
 npm i -g bluebox-ng
 echo "Done, just type 'bluebox-ng' :)"

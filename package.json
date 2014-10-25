@@ -64,7 +64,8 @@
     "tcp-ping": "0.1.x",
     "tftp-client": "0.2.x",
     "traceroute": "0.0.x",
-    "websocket": "git://github.com/jesusprubio/WebSocket-Node.git#master"
+    "websocket": "git://github.com/jesusprubio/WebSocket-Node.git#master",
+    "local-ip": "1.0.x"
   },
   "engines": {
     "node": "0.10.x"

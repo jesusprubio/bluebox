@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var async        = require('async'),
     requireDir   = require('require-directory'),
+    request      = require('request'),
+    localIp      = require('local-ip'),
 
     blueTypes    = require('./utils/blueTypes');
 
@@ -69,21 +71,59 @@ Bluebox.prototype.runModule = function (moduleName, config, callback) {
                     if (blueTypes[optionValue.type]) {
                         if ( config[option] || optionValue.defaultValue ||
                             optionValue.defaultValue === 0) {
-                                try {
-                                    if (!config[option]) {
-                                        // Default value always used if the option
-                                        // is not provided
-                                        finalConfig[option] = blueTypes[optionValue.type](optionValue.defaultValue);
-                                    } else {
+                                // Default value always used if the option is not provided
+                                if (!config[option]) {
+                                    finalConfig[option] = blueTypes[optionValue.type](optionValue.defaultValue);
+                                } else {
+                                    try {
                                         finalConfig[option] = blueTypes[optionValue.type](config[option]);
+                                    } catch (e) {
+                                        callback({
+                                            type : 'Bad param',
+                                            info : option,
+                                            hint : e.toString()
+                                        });
                                     }
+                                }
+                                // Async params
+                                if (option === 'srcHost') {
+                                    if (finalConfig[option].slice(0,6) === 'iface:') {
+                                        localIp(finalConfig[option].slice(6), function(err, res) {
+                                          if (err) {
+                                                callback({
+                                                    type : 'Bad param',
+                                                    info : option,
+                                                    hint : err.toString()
+                                                });
+                                            } else {
+                                                finalConfig[option] = res;
+                                                callback();
+                                            }
+                                        });
+                                    } else if (finalConfig[option] === 'external') {
+                                        request.get({
+                                            uri     : 'http://icanhazip.com/',
+                                            timeout : 5000,
+                                            json    : false
+                                        }, function(err, r, body) {
+                                            if (err) {
+                                                callback({
+                                                    type : 'Bad param',
+                                                    info : option,
+                                                    hint : err.toString()
+                                                });
+                                            } else {
+                                                // Removing the ending '\n'
+                                                finalConfig[option] = body.substr(0, body.length - 1);
+                                                callback();
+                                            }
+                                        });
+                                    } else if (finalConfig[option] === 'random') {
+                                        finalConfig[option] = null;
+                                        callback();
+                                    }
+                                } else {
                                     callback();
-                                } catch (e) {
-                                    callback({
-                                        type : 'Bad param',
-                                        info : option,
-                                        hint : e.toString()
-                                    });
                                 }
                         } else {
                             callback({

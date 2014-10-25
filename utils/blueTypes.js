@@ -382,9 +382,20 @@ module.exports.delay = function (value) {
     }
 };
 
+// TODO: DELETE!!!!
 module.exports.targetIpRand = function (value) {
     if (value === 'random') {
         return null;
+    } else {
+        return targetIp(value);
+    }
+};
+
+module.exports.srcHost = function (value) {
+    if (value.slice(0,6) === 'iface:') {
+        return value;
+    } else if (['random', 'external'].indexOf(value) !== -1) {
+        return value;
     } else {
         return targetIp(value);
     }

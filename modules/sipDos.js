@@ -70,9 +70,9 @@ module.exports = (function () {
                     type         : 'positiveInt'
                 },
                 srcHost : {
-                    description  : 'Source host to include in the  SIP request',
-                    defaultValue : 'random',
-                    type         : 'targetIpRand'
+                    description  : 'Source host to include in the  SIP request ("external" and "random" supported)',
+                    defaultValue : 'iface:eth0',
+                    type         : 'srcHost'
                 },
                 srcPort : {
                     description  : 'Source port to include in the  SIP request',
