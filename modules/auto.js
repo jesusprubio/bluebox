@@ -26,28 +26,29 @@ var async      = require('async'),
     shell      = require('shelljs'),
     path       = require('path'),
 
-    packageJson   = require('../package.json'),
-    sipScan       = require('./sipScan'),
-    geoLocate     = require('./geoLocate'),
-    whois         = require('./whois'),
-    traceroute    = require('./traceroute'),
-    ping          = require('./ping'),
-    pingTcp       = require('./pingTcp'),
-    exploitSearch = require('./exploitSearch'),
-    shodanHost    = require('./shodanHost'),
-    nmapScan      = require('./nmapScan'),
-    dnsReverse    = require('./dnsReverse'),
-    sipSqli       = require('./sipSqli'),
-    sipTorture    = require('./sipTorture'),
-    sipBruteSlow  = require('./sipBruteSlow'),
-    sipBruteExt   = require('./sipBruteExt'),
-    sipBrutePass  = require('./sipBrutePass'),
-    sipUnauthCall = require('./sipUnauthCall'),
-    sipDos        = require('./sipDos'),
-    blueTypes     = require('../utils/blueTypes'),
-    sipParser     = require('../utils/sipParser'),
-    printer       = require('../utils/printer'),
-    utils         = require('../utils/utils'),
+    packageJson    = require('../package.json'),
+    sipScan        = require('./sipScan'),
+    geoLocate      = require('./geoLocate'),
+    whois          = require('./whois'),
+    traceroute     = require('./traceroute'),
+    ping           = require('./ping'),
+    pingTcp        = require('./pingTcp'),
+    exploitSearch  = require('./exploitSearch'),
+    shodanHost     = require('./shodanHost'),
+    nmapScan       = require('./nmapScan'),
+    dnsReverse     = require('./dnsReverse'),
+    sipSqli        = require('./sipSqli'),
+    sipTorture     = require('./sipTorture'),
+    sipBruteSlow   = require('./sipBruteSlow'),
+    sipBruteExt404 = require('./sipBruteExt404'),
+    sipBruteExt100 = require('./sipBruteExt100'),
+    sipBrutePass   = require('./sipBrutePass'),
+    sipUnauthCall  = require('./sipUnauthCall'),
+    sipDos         = require('./sipDos'),
+    blueTypes      = require('../utils/blueTypes'),
+    sipParser      = require('../utils/sipParser'),
+    printer        = require('../utils/printer'),
+    utils          = require('../utils/utils'),
 
     // Statics
     CVE_URL           = 'http://www.cvedetails.com/product-search.php?vendor_id=0&search=',
@@ -524,7 +525,7 @@ module.exports = (function () {
                 function (async0Cb) {
                     var finalTargets = [];
 
-                    printer.bold('\nSIP extension brute-force ...');
+                    printer.bold('\nSIP extension brute-force (CVE-2009-3727 / AST-2009-008) ...');
 
                     // We're testing these three because the servers sometimes answer different to them
                     lodash.each(profile.bruteExtTypes, function (meth) {
@@ -540,10 +541,10 @@ module.exports = (function () {
                         var lastMeth;
 
                         printer.bold('\n... into ' + finalPair.ipAddress + ' (' + finalPair.meth + ')');
-                        if (!report[finalPair.ipAddress].sipBruteExt) {
-                            report[finalPair.ipAddress].sipBruteExt = {};
+                        if (!report[finalPair.ipAddress].sipBruteExt404) {
+                            report[finalPair.ipAddress].sipBruteExt404 = {};
                         }
-                        sipBruteExt.run({
+                        sipBruteExt404.run({
                             target     : finalPair.ipAddress,
                             port       : report[finalPair.ipAddress].responses[0].port,
                             transport  : report[finalPair.ipAddress].responses[0].transport,
@@ -557,7 +558,50 @@ module.exports = (function () {
                             delay      : profile.bruteExtDelay,
                             timeout    : options.timeout
                         }, function (err, res) {
-                            report[finalPair.ipAddress].sipBruteExt[finalPair.meth] = err || res;
+                            report[finalPair.ipAddress].sipBruteExt404[finalPair.meth] = err || res;
+                            async1Cb();
+                        });
+                    }, function (err) {
+                        async0Cb();
+                    });
+                },
+                function (async0Cb) {
+                    var finalTargets = [];
+
+                    printer.bold('\nSIP extension brute-force (CVE-2011-2536 / AST-2011-011)) ...');
+
+                    // We're testing these three because the servers sometimes answer different to them
+                    lodash.each(profile.bruteExtTypes, function (meth) {
+                        lodash.each(Object.keys(report), function (ipAddress) {
+                            finalTargets.push({
+                                ipAddress : ipAddress,
+                                meth      : meth
+                            });
+                        });
+                    });
+
+                    async.eachSeries(finalTargets, function (finalPair, async1Cb) {
+                        var lastMeth;
+
+                        printer.bold('\n... into ' + finalPair.ipAddress + ' (' + finalPair.meth + ')');
+                        if (!report[finalPair.ipAddress].sipBruteExt100) {
+                            report[finalPair.ipAddress].sipBruteExt100 = {};
+                        }
+                        sipBruteExt100.run({
+                            target     : finalPair.ipAddress,
+                            port       : report[finalPair.ipAddress].responses[0].port,
+                            transport  : report[finalPair.ipAddress].responses[0].transport,
+                            wsPath     : report[finalPair.ipAddress].responses[0].path || null,
+                            tlsType    : report[finalPair.ipAddress].responses[0].tlsType || null,
+                            extensions : blueTypes.userPass(profile.bruteExtensions),
+                            meth       : finalPair.meth,
+                            srcHost    : report[finalPair.ipAddress].responses[0].srcHost || null,
+                            srcPort    : report[finalPair.ipAddress].responses[0].srcPort || null,
+                            domain     : report[finalPair.ipAddress].responses[0].domain || null,
+                            delay      : profile.bruteExtDelay,
+                            timeout    : options.timeout
+                        }, function (err, res) {
+                            report[finalPair.ipAddress].sipBruteExt100[finalPair.meth] = err || res;
                             async1Cb();
                         });
                     }, function (err) {
@@ -572,10 +616,19 @@ module.exports = (function () {
 
                         // Looking if any valid extension was found in the last step
                         lodash.each(profile.bruteExtTypes, function (type) {
-                            if (report[ipAddress].sipBruteExt &&
-                                report[ipAddress].sipBruteExt[type] &&
-                                report[ipAddress].sipBruteExt[type].valid) {
-                                lodash.each(report[ipAddress].sipBruteExt[type].valid, function (extObj) {
+                            if (report[ipAddress].sipBruteExt404 &&
+                                report[ipAddress].sipBruteExt404[type] &&
+                                report[ipAddress].sipBruteExt404[type].valid) {
+                                lodash.each(report[ipAddress].sipBruteExt404[type].valid, function (extObj) {
+                                    finalExtensions.push(extObj.extension);
+                                });
+                            }
+                        });
+                        lodash.each(profile.bruteExtTypes, function (type) {
+                            if (report[ipAddress].sipBruteExt100 &&
+                                report[ipAddress].sipBruteExt100[type] &&
+                                report[ipAddress].sipBruteExt100[type].valid) {
+                                lodash.each(report[ipAddress].sipBruteExt100[type].valid, function (extObj) {
                                     finalExtensions.push(extObj.extension);
                                 });
                             }
@@ -624,7 +677,6 @@ module.exports = (function () {
                     templateFile, reportHtml, template;
 
                 templateFile = fs.readFileSync(path.resolve(__dirname, '../', templatePath), 'utf8');
-//                templateFile   = fs.readFileSync(templatePath, 'utf8'),
                 fs.writeFile(path.resolve(reportPath), JSON.stringify(report), function (err) {
                     if (err) {
                         printer.error('\nWriting the final report (JSON): ' + JSON.stringify(err));
