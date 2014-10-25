@@ -73,9 +73,9 @@ module.exports = (function () {
                     type         : 'srcHost'
                 },
                 srcPort : {
-                    description  : 'Source port to include in the  SIP request',
-                    defaultValue : 'random',
-                    type         : 'portRand'
+                    description  : 'Source port to include in the  SIP request ("random" supported)',
+                    defaultValue : 'real',
+                    type         : 'srcPort'
                 },
                 domain : {
                     description  : 'Domain to explore ("ip" to use the target)',

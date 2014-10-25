@@ -131,7 +131,13 @@ function runCommand (comm, rl) {
                         printer.error('ERROR: Module not found');
                     }
                 } else {
-                    printer.result(modulesList.join(' '));
+                    lodash.each(modulesInfo, function (moduleInfo) {
+                        printer.highlight(moduleInfo.info.name);
+                        printer.regular(moduleInfo.info.description);
+                    });
+
+                    printer.infoHigh('\n' + 'You can get more info about a module ' +
+                                      'using "help MODULE" (ie: "help sipScan")');
                 }
                 rl.prompt();
             },

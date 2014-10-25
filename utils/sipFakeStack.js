@@ -425,15 +425,10 @@ SipFakeStack.prototype.send = function (cfg, callback) {
 
     // Trick needed to avoid problem with bussy ports in UDP (EADDINUSE)
     if (!this.lport) {
-        if (this.transport !== 'UDP') {
-            this.lport = utils.randomPort();
+        randomPort(function (port) {
+            self.lport = port;
             sendLport();
-        } else {
-            randomPort(function (port) {
-                self.lport = port;
-                sendLport();
-            });
-        }
+        });
     } else {
         sendLport();
     }
@@ -477,8 +472,6 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
         self.megaSocket = new SteroidsSocket(socketCfg);
 
         self.megaSocket.on('error', function (err) {
-            var newLport = utils.randomPort();
-
             if (!firstTime) {
                 err.second = true;
             }
@@ -559,15 +552,10 @@ SipFakeStack.prototype.authenticate = function (config, callback) {
     }
 
     if (!this.lport) {
-        if (this.transport !== 'UDP') {
-            this.lport = utils.randomPort();
+        randomPort(function (port) {
+            self.lport = port;
             authenticateLport();
-        } else {
-            randomPort(function (port) {
-                self.lport = port;
-                authenticateLport();
-            });
-        }
+        });
     } else {
         authenticateLport();
     }

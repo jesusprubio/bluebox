@@ -382,15 +382,6 @@ module.exports.delay = function (value) {
     }
 };
 
-// TODO: DELETE!!!!
-module.exports.targetIpRand = function (value) {
-    if (value === 'random') {
-        return null;
-    } else {
-        return targetIp(value);
-    }
-};
-
 module.exports.srcHost = function (value) {
     if (value.slice(0,6) === 'iface:') {
         return value;
@@ -401,13 +392,16 @@ module.exports.srcHost = function (value) {
     }
 };
 
-module.exports.portRand = function (value) {
-    if (value === 'random') {
+module.exports.srcPort = function (value) {
+    if (value === 'real') {
         return null;
+    } else if (value === 'random') {
+        return utils.randomPort();
     } else {
         return port(value);
     }
 };
+
 
 module.exports.nmapTargets = function (value) {
     var split0  = value.split('/'),

@@ -71,10 +71,6 @@ module.exports.randomPort = function () {
     return lodash.random(1025, 65535);
 };
 
-module.exports.randomPort2 = function() {
-    return lodash.random(6000, 65535);
-};
-
 module.exports.randSipReq = function () {
     return SIP_REQS[lodash.random(11)];
 };
