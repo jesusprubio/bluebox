@@ -184,7 +184,7 @@ module.exports = (function () {
                                                 extension : extension,
                                                 hasAuth   : false,
                                                 data      : res.msg[1]
-                                            };                                            
+                                            };
                                         }
 
                                         // We only add valid extensions to final result

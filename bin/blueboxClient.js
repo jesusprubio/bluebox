@@ -26,11 +26,13 @@ var async       = require('async'),
 
     Bluebox     = require('../'),
     printer     = require('../utils/printer'),
-    shodanKey   = null,
+
+    // Globals
+    shodanKey     = null,
     virustotalKey = null,
-    modulesInfo = {},
-    modulesList = [],
-    exitNext    = false,
+    modulesInfo   = {},
+    modulesList   = [],
+    exitNext      = false,
     bluebox;
 
 
@@ -48,7 +50,8 @@ function completer (line) {
 function runModule (moduleName, rl) {
     var moduleInfo    = modulesInfo[moduleName].info,
         bModule       = require('../modules/' + moduleName),
-        moduleOptions = {};
+        moduleOptions = {},
+        chosenTransport;
 
     function cb (err, result) {
         printer.bold('\nRESULT:\n');
@@ -77,18 +80,31 @@ function runModule (moduleName, rl) {
                 if (defaultValue ||  defaultValue === 0) {
                     printDefault = defaultValue;
                 }
-                rl.question(
-                    '* ' + option +
-                    ': ' + moduleInfo.options[option].description +
-                    ' (' + printDefault + '): ',
-                    function (answer) {
-                        if (answer) {
+                // Avoiding to ask for not needed params
+                if ((option === 'tlsType' && chosenTransport !== 'tls') ||
+                    (option === 'wsPath' && chosenTransport !== 'ws')) {
+                    callback();
+                } else {
+                    rl.question(
+                        '* ' + option +
+                        ': ' + moduleInfo.options[option].description +
+                        ' (' + printDefault + '): ',
+                        function (answer) {
                             answer = answer.trim();
-                            moduleOptions[option] = answer;
+                            if (option === 'transport') {
+                                if (!answer) {
+                                    chosenTransport = 'udp';
+                                } else {
+                                    chosenTransport = answer.toLowerCase();
+                                }
+                            }
+                            if (answer) {
+                                moduleOptions[option] = answer;
+                            }
+                            callback();
                         }
-                        callback();
-                    }
-                );
+                    );
+                }
             },
             function (err) {
                 printer.infoHigh('\nStarting ...\n');
@@ -154,21 +170,21 @@ function runCommand (comm, rl) {
                         rl.prompt();
                     }
                 );
-            },
-            'setVirustotalKey' : function () {
-                rl.question(
-                    '* Enter your key: ',
-                    function (answer) {
-                        if (answer) {
-                            answer = answer.trim();
-                            bluebox.setVirustotalKey(answer);
-                            printer.infoHigh('Using Virus Total key: ');
-                            printer.highlight(answer + '\n');
-                        }
-                        rl.prompt();
-                    }
-                );
             }
+//            'setVirustotalKey' : function () {
+//                rl.question(
+//                    '* Enter your key: ',
+//                    function (answer) {
+//                        if (answer) {
+//                            answer = answer.trim();
+//                            bluebox.setVirustotalKey(answer);
+//                            printer.infoHigh('Using Virus Total key: ');
+//                            printer.highlight(answer + '\n');
+//                        }
+//                        rl.prompt();
+//                    }
+//                );
+//            }
         };
 
     if (commCases[splitComm[0]]) {
@@ -230,7 +246,7 @@ lodash.each(bluebox.getModulesInfo(), function (v, k) {
     modulesList.push(k);
 });
 // and manually adding client modules
-modulesList = modulesList.concat(['help', 'quit', 'exit', 'setShodanKey', 'setVirustotalKey']);
+modulesList = modulesList.concat(['help', 'quit', 'exit', 'setShodanKey']);
 
 // Welcome info is printed
 printer.bold('\n\tWelcome to Bluebox-ng\n');
