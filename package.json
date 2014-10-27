@@ -1,6 +1,6 @@
 {
   "name": "bluebox-ng",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers.",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
