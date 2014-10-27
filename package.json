@@ -33,7 +33,6 @@
   "license": "GPLv3",
   "scripts": {},
   "dependencies": {
-    "asterisk-manager": "0.1.x",
     "async": "0.9.x",
     "cli-color": "0.3.x",
     "exploitsearch": "latest",
@@ -65,7 +64,8 @@
     "tftp-client": "0.2.x",
     "traceroute": "0.0.x",
     "websocket": "git://github.com/jesusprubio/WebSocket-Node.git#master",
-    "local-ip": "1.0.x"
+    "local-ip": "1.0.x",
+    "nami": "0.6.x"
   },
   "engines": {
     "node": "0.10.x"

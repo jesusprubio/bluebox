@@ -30,7 +30,7 @@ module.exports = (function () {
 
         info : {
             name : 'sipBruteExt404',
-            description : 'SIP extension brute-forcer (CVE-2009-3727 / AST-2009-008).',
+            description : 'SIP extension brute-forcer (CVE-2009-3727 / AST-2009-008)',
             options : {
                 target : {
                     description  : 'IP address to attack',

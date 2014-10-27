@@ -24,46 +24,46 @@ var clc        = require('cli-color'),
 // Public functions
 
 module.exports.regular = function (str) {
-    console.log(str);
+    process.stdout.write(str + '\n');
 };
-        
+
 module.exports.info = function (str) {
-    console.log(clc.xterm(55)(str));
+    process.stdout.write(clc.xterm(55)(str) + '\n');
 };
-        
+
 module.exports.infoHigh = function (str) {
-    console.log(clc.xterm(63)(str));
+    process.stdout.write(clc.xterm(63)(str) + '\n');
 };
 
 module.exports.highlight = function (str) {
-    console.log(clc.xterm(202)(str));
+    process.stdout.write(clc.xterm(202)(str) + '\n');
 };
 
 // TODO: Some beautifull JSON printer
 module.exports.result = function (str) {
-    console.log(clc.xterm(46)(str));
+    process.stdout.write(clc.xterm(46)(str) + '\n');
 };
 
 module.exports.json = function (json) {
-    console.log(prettyjson.render(json, {
+    process.stdout.write(prettyjson.render(json, {
 //        keysColor: 'rainbow',
 //        dashColor: 'magenta',
 //        stringColor: 'white'
-    }));
+    }) + '\n');
 };
 
 module.exports.error = function (str) {
-    console.log(clc.red.bold(str));
+    process.stdout.write(clc.red.bold(str) + '\n');
 };
 
 module.exports.bold = function (str) {
-    console.log(clc.bold(str));
+    process.stdout.write(clc.bold(str) + '\n');
 };
 
 module.exports.clear = function () {
-    console.log(clc.reset);
+    process.stdout.write(clc.reset);
 };
 
 module.exports.remove = function (pos) {
-    console.log(clc.bol(-pos));
+    process.stdout.write(clc.bol(-pos) + '\n');
 };

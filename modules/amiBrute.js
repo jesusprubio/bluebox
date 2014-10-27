@@ -17,7 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var async  = require('async'),
+var async   = require('async'),
+    namiLib = require('nami'),
+    Nami    = namiLib.Nami,
 
     printer = require('../utils/printer');
 
@@ -59,6 +61,11 @@ module.exports = (function () {
                     description  : 'Delay between requests in ms.',
                     defaultValue : 0,
                     type         : 'positiveInt'
+                },
+                timeout : {
+                    description  : 'Time to wait for a response (ms.)',
+                    defaultValue : 5000,
+                    type         : 'positiveInt'
                 }
             }
         },
@@ -80,10 +87,11 @@ module.exports = (function () {
                 }
 
                 async.eachSeries(finalPasswords, function (password, asyncCbPass) {
-                    var returned  = false,
+                    var connected = false,
                         ami;
 
                     function delayCb () {
+                        if (connected) { ami.close(); }
                         // Last element
                         if (indexCountPass === finalPasswords.length && indexCountUsr === options.users.length) {
                             asyncCbPass();
@@ -92,40 +100,42 @@ module.exports = (function () {
                         }
                     }
 
-                    ami = new require('asterisk-manager')( options.port.toString(), options.target, user, password, true);
-                    indexCountPass += 1;
-
-                    ami.on('connect', function () {
-                        ami.action({
-                            'action'   : 'login',
-                            'username' : user,
-                            'secret'   : password
-                        }, function (err, res) {
-                            if (!err) {
-                                ami.disconnect();
-                                result.push({
-                                    user      : user,
-                                    pass      : password
-                                });
-                                printer.highlight('Valid credentials found: ' + user + ' | ' + password);
-                            }
-                            delayCb();
-                        });
-
+                    // http://ci.marcelog.name:8080/view/NodeJS/job/Nami/javadoc/index.html
+                    ami = new Nami({
+                        host     : options.target,
+                        port     : options.port,
+                        username : user,
+                        secret   : password
                     });
 
-                    ami.on('error', function (err) {
-                        if (err.toString().indexOf('ECONNRESET') > -1) {
-                            printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
-                        } else {
-                            // Onyl if not connected or callbacked, look the comments above                            
-                            if (!returned) {
-                                returned = true;
-                                asyncCbPass({ err : err });
-                            }
-                        }
+                    ami.logger.setLevel('OFF');
+
+                    ami.on('namiConnected', function () {
+                        connected = true;
+                        printer.highlight('Valid credentials found: ' + user + ' | ' + password);
+                        result.push({
+                            user : user,
+                            pass : password
+                        });
                         delayCb();
                     });
+
+                    ami.on('namiLoginIncorrect', function () {
+                        printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
+                        delayCb();
+                    });
+
+                    // The module do not supports connection timeout, so
+                    // we add it manually ("connected" var), really dirty trick
+                    setTimeout(function () {
+                        if (!connected) {
+                            callback({
+                                type : 'timeout'
+                            });
+                        }
+                    }, options.timeout);
+                    indexCountPass += 1;
+                    ami.open();
                 }, function (err) {
                     asyncCbUsr(err);
                 });

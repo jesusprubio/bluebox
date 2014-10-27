@@ -64,7 +64,7 @@ function runModule (moduleName, rl) {
         } else {
             printer.error('ERROR: run(): ' + JSON.stringify(err));
         }
-        console.log();
+        printer.regular('\n');
         rl.prompt();
     }
 
@@ -257,7 +257,7 @@ printer.info('If you have doubts just use the default options :)\n');
 createPrompt();
 
 // Just in case ;)
-process.on('uncaughtException', function (err) {
-    printer.error('"uncaughtException" found:');
-    printer.error(err);
-});
+//process.on('uncaughtException', function (err) {
+//    printer.error('"uncaughtException" found:');
+//    printer.error(err);
+//});
