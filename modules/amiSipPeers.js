@@ -72,7 +72,7 @@ module.exports = (function () {
             ami.logger.setLevel('OFF');
 
             ami.on('namiConnected', function () {
-                var action = new namiLib.Actions.Sip();
+                var action = new namiLib.Actions.SipPeers();
 
                 connected = true;
                 ami.send(action, function (res) {

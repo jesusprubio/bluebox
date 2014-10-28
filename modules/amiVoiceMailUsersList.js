@@ -34,7 +34,7 @@ module.exports = (function () {
             options     : {
                 target : {
                     description  : 'IP address to brute-force',
-                    defaultValue : '172.16.190.137',
+                    defaultValue : '127.0.0.1',
                     type         : 'targetIp'
                 },
                 port : {
@@ -62,6 +62,7 @@ module.exports = (function () {
 
         run : function (options, callback) {
             var connected = false,
+                data      = [],
                 ami       = new Nami({
                     host     : options.target,
                     port     : options.port,
@@ -77,8 +78,12 @@ module.exports = (function () {
                 connected = true;
                 ami.send(action, function (res) {
                     ami.close();
-                    callback(null, res);
+                    callback(null, data);
                 });
+            });
+
+            ami.on('namiRawMessage', function (evt) {
+                data.push(evt);
             });
 
             ami.on('namiLoginIncorrect', function () {
