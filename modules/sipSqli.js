@@ -28,7 +28,7 @@ module.exports = (function () {
     return {
 
         info : {
-            name        : 'sipSQLi',
+            name        : 'sipSqli',
             description : 'To check if the server blocks SIP SQLi attacks',
             options     : {
                 target : {

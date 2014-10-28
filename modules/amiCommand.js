@@ -29,7 +29,7 @@ module.exports = (function () {
     return {
 
         info : {
-            name        : 'amiCommand2',
+            name        : 'amiCommand',
             description : 'Use the Asterisk Manager service (AMI) to run a command',
             options     : {
                 target : {

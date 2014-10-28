@@ -28,7 +28,7 @@ module.exports = (function () {
     return {
 
         info : {
-            name        : 'bruteMongo',
+            name        : 'mongoBrute',
             description : 'MongoDB credentials brute-force',
             options     : {
                 target : {
