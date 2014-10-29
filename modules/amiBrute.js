@@ -88,6 +88,7 @@ module.exports = (function () {
 
                 async.eachSeries(finalPasswords, function (password, asyncCbPass) {
                     var connected = false,
+                        returned  = false,
                         ami;
 
                     function delayCb () {
@@ -112,6 +113,7 @@ module.exports = (function () {
 
                     ami.on('namiConnected', function () {
                         connected = true;
+                        returned = true;
                         printer.highlight('Valid credentials found: ' + user + ' | ' + password);
                         result.push({
                             user : user,
@@ -121,6 +123,7 @@ module.exports = (function () {
                     });
 
                     ami.on('namiLoginIncorrect', function () {
+                        returned = true;
                         printer.infoHigh('Valid credentials NOT found for: ' + user + ' | ' + password);
                         delayCb();
                     });
@@ -128,7 +131,7 @@ module.exports = (function () {
                     // The module do not supports connection timeout, so
                     // we add it manually ("connected" var), really dirty trick
                     setTimeout(function () {
-                        if (!connected) {
+                        if (!connected && !returned) {
                             callback({
                                 type : 'timeout'
                             });
