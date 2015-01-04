@@ -21,8 +21,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 module.exports = function(grunt) {
 
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+
+        pkg : grunt.file.readJSON('package.json'),
+
+        retire : {
+            js      : ['bluebox.js', 'modules/*.js', 'examples/*.js'],
+            node    : ['./'],
+            options : {
+                verbose        : true,
+                packageOnly    : true,
+                jsRepository   : 'https://raw.github.com/bekk/retire.js/master/repository/jsrepository.json',
+                nodeRepository : 'https://raw.github.com/bekk/retire.js/master/repository/npmrepository.json',
+//                ignore         : 'documents,java'
+            }
+        }
     });
 
-    grunt.loadNpmTasks('grunt-nsp-package');
+//    grunt.loadNpmTasks('grunt-nsp-package');
+
+    grunt.loadNpmTasks('grunt-retire');
+
 };

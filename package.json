@@ -1,6 +1,6 @@
 {
   "name": "bluebox-ng",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers.",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
@@ -36,23 +36,24 @@
     "async": "0.9.x",
     "cli-color": "0.3.x",
     "exploitsearch": "latest",
-    "grunt": "0.4.x",
     "handlebars": "2.0.x",
     "jsftp": "1.3.x",
     "ldapjs": "0.7.x",
+    "local-ip": "1.0.x",
     "lodash": "2.4.x",
     "moment": "2.8.x",
     "mongodb": "1.4.x",
-    "mysql": "2.4.x",
-    "native-dns": "0.6.x",
+    "mysql": "2.5.x",
+    "nami": "0.6.x",
+    "native-dns": "0.7.x",
     "netmask": "1.0.x",
-    "node-freegeoip": "0.0.1",
+    "node-freegeoip": "0.0.x",
     "node-libnmap": "0.1.x",
-    "node-wifiscanner": "0.0.x",
+    "node-wifiscanner": "0.1.x",
     "ping": "0.1.x",
     "prettyjson": "1.0.x",
     "random-port": "0.1.x",
-    "request": "2.36.x",
+    "request": "2.51.x",
     "require-directory": "2.0.x",
     "shelljs": "0.3.x",
     "shodan-client": "latest",
@@ -63,14 +64,14 @@
     "tcp-ping": "0.1.x",
     "tftp-client": "0.2.x",
     "traceroute": "0.0.x",
-    "websocket": "1.0.x",
-    "local-ip": "1.0.x",
-    "nami": "0.6.x"
+    "websocket": "1.0.x"
   },
   "engines": {
     "node": "0.10.x"
   },
   "devDependencies": {
-    "grunt-nsp-package": "0.0.5"
+    "grunt": "0.4.x",
+    "grunt-retire": "latest",
+    "grunt-nsp-package": "latest"
   }
 }
