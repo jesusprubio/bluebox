@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         pkg : grunt.file.readJSON('package.json'),
 
         retire : {
-            js      : ['bluebox.js', 'modules/*.js', 'examples/*.js'],
+            js      : ['bluebox.js', 'Gruntfile.js', 'modules/*.js', 'examples/*.js'],
             node    : ['./'],
             options : {
                 verbose        : true,
