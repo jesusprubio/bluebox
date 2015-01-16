@@ -93,7 +93,12 @@ module.exports.organization = function (pkt) {
         return GRAMMAR.orgRE.test(line);
     });
 
-    return (orgLine[0]).split(':')[1];
+    if (orgLine[0]) {
+        return (orgLine[0]).split(':')[1];
+    }
+    else {
+        return null;
+    }
 };
 
 // It parses the service from a string.
