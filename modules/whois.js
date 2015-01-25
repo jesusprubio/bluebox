@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var shui = require('shui');
+var whois = require('node-whois');
 
 
 module.exports = (function () {
@@ -37,9 +37,7 @@ module.exports = (function () {
         },
 
         run : function (options, callback) {
-            shui(options.domain, function (result) {
-                callback(null, result);
-            });
+            whois.lookup(options.domain, callback);
         }
     };
 

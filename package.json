@@ -50,6 +50,7 @@
     "node-freegeoip": "0.0.x",
     "node-libnmap": "0.1.x",
     "node-wifiscanner": "0.1.x",
+    "node-whois": "2.1.x",
     "ping": "0.1.x",
     "prettyjson": "1.0.x",
     "random-port": "0.1.x",
