@@ -58,7 +58,6 @@
     "require-directory": "2.0.x",
     "shelljs": "0.3.x",
     "shodan-client": "latest",
-    "shui": "0.0.x",
     "snmp-native": "1.0.x",
     "ssh2": "0.3.x",
     "subquest": "latest",
