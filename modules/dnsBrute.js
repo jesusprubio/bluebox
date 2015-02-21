@@ -28,17 +28,17 @@ module.exports = (function () {
             name        : 'dnsBrute',
             description : 'DNS brute force',
             options     : {
-                domain : {
+                host : {
                     description  : 'Domain to explore',
                     defaultValue : 'google.com',
                     type         : 'domain'
                 },
-                resolver : {
+                dnsServer : {
                     description  : 'Specify your custom DNS resolver',
                     defaultValue : '87.216.170.85',
                     type         : 'targetIp'
                 },
-                ratelimit : {
+                rateLimit : {
                     description  : "Set the Rate Limit [Default value is 10]",
                     defaultValue : 10,
                     type         : 'positiveInt'
@@ -51,9 +51,10 @@ module.exports = (function () {
             }
         },
 
-        // TODO: It doesn't return anything, it only prints!!
         run : function (options, callback) {
-            subquest.find(options, callback);
+            subquest.getSubDomains(options).on('end', function (arr) {
+            callback(null, arr); // array of subdomains.
+        });
         }
     };
 
