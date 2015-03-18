@@ -1,6 +1,6 @@
 {
   "name": "bluebox-ng",
-  "version": "0.1.10",
+  "version": "0.2.0",
   "description": "Pentesting stuff",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
@@ -38,7 +38,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "cli-color": "^0.3.2",
-    "dns-axfr": "git+https://github.com/jesusprubio/dns-axfr#master",
+    "dns-axfr": "^0.1.2",
     "exploitsearch": "^1.0.9",
     "handlebars": "^3.0.0",
     "jsftp": "^1.5.0",
