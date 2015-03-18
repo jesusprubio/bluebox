@@ -20,17 +20,11 @@
 
 // Private stuff
 
-var traceroute = require('traceroute'),
+var dorksJson = require('../artifacts/voipGoogleDorks'),
 
     HELP = {
-        description: 'Display the route of your packages',
-        options: {
-            target: {
-                type: 'ip',
-                description: 'Host to explore',
-                defaultValue: '8.8.8.8'
-            }
-        }
+        description: 'Find potential VoIP targets using a Google dork',
+        options: null
     };
 
 
@@ -39,5 +33,5 @@ var traceroute = require('traceroute'),
 module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
-    traceroute.trace(options.target, callback);
+    callback(null, dorksJson);
 };

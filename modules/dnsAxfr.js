@@ -20,31 +20,21 @@
 
 // Private stuff
 
-var subquest = require('subquest'),
+var dns = require('dns-axfr'),
 
     HELP = {
-        description: 'DNS subdomain brute force',
+        description: 'DNS zone transfer',
         options: {
-            host: {
+            domain: {
                 type: 'domain',
                 description: 'Domain to explore',
-                defaultValue: 'google.com'
+                defaultValue: 'acme.com'
             },
             server: {
-                type: 'ip',
-                description: 'Specify your custom DNS resolver',
-                defaultValue: '87.216.170.85'
-            },
-            rateLimit: {
-                type: 'positiveInt',
-                description: 'Set the Rate Limit [Default value is 10]',
-                defaultValue: 10
-            },
-            dictionary: {
-                // TODO: Add a type to support this
+                // TODO
                 type: 'allValid',
-                description: 'Set the dictionary for bruteforcing [top_50, ...]',
-                defaultValue: 'top_100'
+                description: 'Server to use',
+                defaultValue: 'dns01.acme.com'
             }
         }
     };
@@ -55,12 +45,5 @@ var subquest = require('subquest'),
 module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
-    // Reusing the options object
-    options.dnsServer = options.server;
-    delete options.server;
-
-    subquest.getSubDomains(options).on('end', function (arr) {
-        callback(null, arr);
-    });
-
+    dns.resolveAxfr(options.server, options.domain, callback);
 };

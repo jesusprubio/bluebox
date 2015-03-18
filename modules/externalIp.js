@@ -20,17 +20,11 @@
 
 // Private stuff
 
-var traceroute = require('traceroute'),
+var moira = require('moira'),
 
     HELP = {
-        description: 'Display the route of your packages',
-        options: {
-            target: {
-                type: 'ip',
-                description: 'Host to explore',
-                defaultValue: '8.8.8.8'
-            }
-        }
+        description: 'Get your external IP address (icanhazip.com)',
+        options: null
     };
 
 
@@ -39,5 +33,15 @@ var traceroute = require('traceroute'),
 module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
-    traceroute.trace(options.target, callback);
+    moira.getIP(function (err, ip, service) {
+        if (err) {
+            callback(err);
+
+            return;
+        }
+        callback(null, {
+            ip: ip,
+            service: service
+        });
+    });
 };

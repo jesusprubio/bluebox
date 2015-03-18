@@ -1,14 +1,10 @@
 ![Bluebox-ng](https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png)
 
-Bluebox-ng
-==========
-Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make the Node world still more awesome. ;)
+# Bluebox-ng
+Pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
+- **IRC(Freenode)**: #assaultjs
 
-- **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
-- **IRC(Freenode)**: #breakingVoIP
-
-Features
---------
+## Features
 - Auto VoIP/UC penetration test
 - Report generation
 - Performance
@@ -22,8 +18,10 @@ Features
 - SIP SQLi check
 - SIP denial of service (DoS) testing
 - Web management panels discovery
+- DNS brute-force, zone transfer, etc.
 - Other common protocols brute-force: Asterisk AMI, MySQL, MongoDB, SSH, (S)FTP, HTTP(S), TFTP, LDAP, SNMP
 - Some common network tools: whois, ping (also TCP), traceroute, etc.
+- Asterisk AMI post-explotation
 - Dumb fuzzing
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
@@ -33,34 +31,27 @@ Features
 - Command completion
 - Cross-platform support
 
-Install
--------
-Dependencies. It should work in all systems which support Node:
-- Node.js: [http://nodejs.org/](http://nodejs.org/).
- - A comfortable way to keep your Node version updated is to use the official binary distributions: [https://github.com/nodesource/distributions](https://github.com/nodesource/distributions)
- - These scripts don't work in Kali GNU/Linux ([https://github.com/nodesource/distributions/issues/28#issuecomment-60062280](https://github.com/nodesource/distributions/issues/28#issuecomment-60062280)), so we've implemented one which also installs Bluebox-ng. Yoy can use it using the next command: ```curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -```
-- Nmap (only for "nmapScan" module): [http://nmap.org/](http://nmap.org/)
+## Install
+- Tested with [iojs](https://iojs.org/) and [node.js™](http://nodejs.org/):
+- [Nmap](http://nmap.org/) optional.
+`npm i -g bluebox-ng`
 
-```npm i -g bluebox-ng```
+### Kali GNU/Linux
+- `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -`
 
-NOTE: It takes a while because we're using a lot of official modules (Mongo, LDAP, etc.) which need to compile some stuff.
-
-Upgrade
--------
-```npm update -g bluebox-ng```
-
-Use
----
+## Use
 - Console client: ```bluebox-ng```
 - As a library:
 ```javascript
 var Bluebox = require('bluebox-ng'),
 
-    options       = {},
-    bluebox       = new Bluebox(options),
+    bluebox = new Bluebox({}),
     moduleOptions = {
-        target : '188.87.148.41'
+        target: '8.8.8.8'
     };
+
+console.log('Modules info:');
+console.log(JSON.stringify(bluebox.getModulesInfo(), null, 2));
 
 bluebox.runModule('geoLocate', moduleOptions, function (err, result) {
     if (err) {
@@ -73,23 +64,17 @@ bluebox.runModule('geoLocate', moduleOptions, function (err, result) {
 });
 ```
 
-Issues
-------
-- Please use GitHub web ([https://github.com/jesusprubio/bluebox-ng/issues](https://github.com/jesusprubio/bluebox-ng/issues)). If you have doubts playing with the software label the issue as "question".
+## Issues
+- https://github.com/jesusprubio/bluebox-ng/issues
 
-Developer guide
----------------
-- To add a module you only have to add one file with the code which implements the new features. I suggest to copy the most similar one and start to write code from there. If you needed a new parser/printer feel free to also change the code in the "utils" folder.
-- To contribute we use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
-- Only include external tools written in Node.js. I know we're using Nmap, it's an exception because we still not have a serious replacement for it.
-- Never call a module from another, use a Grunt task to automate things (ie: "auto" module).
-- Styleguide:
- - Always use camelCase, never underscores
- - Use soft-tabs with a four space indent
- - Follow the style of the actual modules
+## Developer guide
+- Start coding with one of the actual modules similar to the new one as a boilerplate.
+- Use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
+- Conventions:
+ - We use [JSHint](http://jshint.com/) and [Crockford's Styleguide](http://javascript.crockford.com/code.html).
+ - Please run `grunt contribute` to be sure your code fits with them.
 
-Core devs
----------
+## Core devs
 - Jesús Pérez
  - [@jesusprubio](https://twitter.com/jesusprubio)
  - jesusprubio gmail com
@@ -99,12 +84,10 @@ Core devs
  - [@s3rgiogr](https://twitter.com/s3rgiogr)
  - s3rgio.gr gmail com
 
-Contributors
-------------
-[https://github.com/jesusprubio/bluebox-ng/graphs/contributors](https://github.com/jesusprubio/bluebox-ng/graphs/contributors)
+## Contributors
+- https://github.com/jesusprubio/bluebox-ng/graphs/contributors
 
-Thanks to
----------
+## Thanks to
 - Jose Luis Verdeguer ([@pepeluxx](https://twitter.com/pepeluxx)), my mate playing with VoIP security related stuff.
 - Damián Franco ([@pamojarpan](https://twitter.com/pamojarpan)), help during first steps.
 - [Quobis](http://www.quobis.com), some hours of work through personal projects program.
@@ -115,13 +98,11 @@ Thanks to
 - John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN API and GHDB.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
 - [VirusTotal](https://www.virustotal.com/) friends.
-- [sha0coder](https://twitter.com/sha0coder), we use the word lists included in "node-dirscan" project.
 - All developers who have written the Node.js modules used in the project.
 - All VoIP, free software and security hackers that I read everyday.
 - My friend Carlos Pérez, the logo designer.
 
-License
--------
+## License
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or

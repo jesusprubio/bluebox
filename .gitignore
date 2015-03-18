@@ -1,11 +1,12 @@
+# Reports
+finalReport*
+
 # Node modules
 node_modules
 
 # Logs and databases
 *.log
-
-# Reports
-finalReport*
+output
 
 # OS files
 .DS_Store
@@ -16,3 +17,4 @@ finalReport*
 Icon?
 ehthumbs.db
 Thumbs.db
+

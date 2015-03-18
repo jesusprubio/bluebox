@@ -20,26 +20,16 @@
 
 // Private stuff
 
-var ping = require('ping'),
+var geoip = require('node-freegeoip'),
 
     HELP = {
-        description: 'Ping protocol client',
+        description: 'Geolocate a host (freegeoip.net)',
         options: {
             target: {
                 type: 'ip',
                 description: 'Host to explore',
                 defaultValue: '8.8.8.8'
             }
-//            timeout: {
-//                type: 'positiveInt',
-//                description: 'Time to wait for a response (s)',
-//                defaultValue: 5,
-//            },
-//            interval: {
-//                type: 'float',
-//                description: 'Time to wait between (s)',
-//                defaultValue: '0.5'
-//            }
         }
     };
 
@@ -49,22 +39,5 @@ var ping = require('ping'),
 module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
-    // Not working
-//    ping.promise.probe(
-//        options.target,
-//        {
-//            timeout: options.timeout,
-//            extra: [
-//                '-i ' + options.interval
-//            ]
-//        }
-//    ).then(function (res) {
-//        callback(null, res);
-//    })
-//    .done();
-    ping.sys.probe(options.target, function (alive) {
-        callback(null, {
-            alive: alive
-        });
-    });
+    geoip.getLocation(options.target, callback);
 };

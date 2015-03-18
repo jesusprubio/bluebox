@@ -1,179 +1,135 @@
 /*
-Copyright Jesus Perez <jesusprubio gmail com>
+    Copyright Sergio García <s3rgio.gr gmail com>
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 'use strict';
 
-var async  = require('async'),
+// Private stuff
 
-    printer        = require('../utils/printer'),
-    utils          = require('../utils/utils'),
-    SteroidsSocket = require('../utils/steroidsSocket');
+var SteroidsSocket = require('sip-fake-stack').SteroidsSocket,
+    printer = require('../utils/printer'),
 
-
-module.exports = (function () {
-
-    return {
-
-        info : {
-            name : 'dumbFuzz',
-            description : 'Really stupid app layer fuzzer (underlying support: UDP, TCP, TLS, [secure] websockects)',
-            options     : {
-                target : {
-                    description  : 'IP address to fuzz',
-                    defaultValue : '127.0.0.1',
-                    type         : 'targetIp'
-                },
-                port : {
-                    description  : 'Port to use',
-                    defaultValue : 5060,
-                    type         : 'port'
-                },
-                transport : {
-                    description  : 'Underlying protocol',
-                    defaultValue : 'UDP',
-                    type         : 'protocols'
-                },
-                wsPath : {
-                    description  : 'Websockets path (only when websockets)',
-                    defaultValue : 'ws',
-                    type         : 'anyValue'
-                },
-                wsProto : {
-                    description  : 'Websockets protocol (only when websockets)',
-                    defaultValue : 'sip',
-                    type         : 'anyValue'
-                },
-                tlsType : {
-                    description  : 'Version of TLS protocol to use (only when TLS)',
-                    defaultValue : 'TLSv1',
-                    type         : 'tlsType'
-                },
-                string : {
-                    description  : 'String or char to send',
-                    defaultValue : 'A',
-                    type         : 'anyValue'
-                },
-                minLen : {
-                    description  : 'Min. lenght of the string to fuzz',
-                    defaultValue : 1,
-                    type         : 'anyValue'
-                },
-                maxLen : {
-                    description  : 'Max. lenght of the string to fuzz',
-                    defaultValue : 1000,
-                    type         : 'anyValue'
-                },
-                delay : {
-                    description  : 'Delay between requests in ms. (use "async" to concurrent)',
-                    defaultValue : 0,
-                    type         : 'delay'
-                },
-                timeout : {
-                    description  : 'Time to wait for a response (ms.)',
-                    defaultValue : 5000,
-                    type         : 'positiveInt'
-                }
+    HELP = {
+        description: 'Really stupid app layer fuzzer (support:' +
+                     'UDP, TCP, TLS, [secure] websockects)',
+        options: {
+            target: {
+                type: 'ip',
+                description: 'Host to attack',
+                defaultValue: '127.0.0.1'
+            },
+            port: {
+                type: 'port',
+                description: 'Port to attack on chosen IPs',
+                defaultValue: 1337
+            },
+            transport: {
+                type: 'transports',
+                description: 'Underlying protocol',
+                defaultValue: 'TCP'
+            },
+            wsPath: {
+                type: 'allValid',
+                description: 'Websockets path (only when websockets)',
+                defaultValue: 'ws'
+            },
+            wsProto: {
+                type: 'allValid',
+                description: 'Websockets protocol (only when websockets)',
+                defaultValue: 'sip'
+            },
+            tlsType: {
+                type: 'tlsType',
+                description: 'Version of TLS protocol to use (only when TLS)',
+                defaultValue: 'TLSv1'
+            },
+            payload: {
+                type: 'allValid',
+                description: 'Stuff to send',
+                defaultValue: 'A'
+            },
+            timeout: {
+                type: 'positiveInt',
+                description: 'Time to wait for a response, in ms.',
+                defaultValue: 5000
             }
-        },
-
-        run : function (options, callback) {
-            var fakeIndex   = [],
-                fuzzStrings = [],
-                limit       = 1,
-                indexCount  = 0, // User with delay to know in which index we are
-                lastAnswer  = null,
-                minLen      = parseInt(options.minLen),
-                maxLen      = parseInt(options.maxLen),
-                initString  = '',
-                megaSocket = new SteroidsSocket({
-                    target    : options.target,
-                    port      : options.port,
-                    transport : options.transport,
-                    wsProto   : options.wsProto,
-                    wsPath    : options.wsPath,
-                    tlsType   : options.tlsType
-                }),
-                finalDelay, lastSent, totalCount; // by default we use delay
-
-            if (options.delay === 'async') {
-                limit = 100; // low value to avoid problems (too much opened sockets, etc.)
-                finalDelay = 0;
-            } else {
-                limit = 1;
-                finalDelay = options.delay;
-            }
-
-            for (var i = minLen; i <= maxLen; i++) {
-                initString += options.string;
-                fuzzStrings.push(initString);
-            }
-            totalCount = fuzzStrings.length;
-
-            printer.infoHigh('\nStarting ...\n');
-
-            async.eachLimit(
-                fuzzStrings,
-                limit,
-                function (fuzzString, asyncCb) {
-                    megaSocket.on('error', function (err) {
-                        // The error is used to pass the last one (supposed to break the code)
-                        asyncCb({
-                            type : 'lastSent',
-                            data : lastSent
-                        });
-                    });
-
-                    megaSocket.on('message', function (msg) {
-                        // TODO: Add param, string or buffer
-                        lastAnswer = msg.data.toString();
-                        printer.highlight('Response (index ' + indexCount +'): ');
-
-                        // Last element
-                        if (indexCount === totalCount ) {
-                            asyncCb();
-                        } else {
-                            setTimeout(asyncCb, finalDelay);
-                        }
-                    });
-
-                    // The message which is being sent
-                    lastSent = fuzzString;
-                    printer.infoHigh('Packet sent (index ' + indexCount +'): ');
-                    printer.highlight(fuzzString);
-                    megaSocket.send(fuzzString);
-                    indexCount += 1;
-                }, function (err) {
-                    if (err) {
-                        // Possible crash
-                        callback(null,  {
-                            answering : false,
-                            lastSent  : err.data
-                        });
-                    } else {
-                        callback(null,  {
-                            answering  : true,
-                            lastAnswer : lastAnswer
-                        });
-                    }
-                    // Only close when finished
-                    megaSocket.close();
-                }
-            );
         }
-    };
+    },
+    fuzzString = '',
+    payload, lastSent, megaSocket;
 
-}());
+
+// Simply takes the current string and add another payload string
+function mutate(oldPayload) {
+    return oldPayload + payload;
+}
+
+// Muting and sending the payload,
+// we're doing it over the last mutated value
+function send() {
+    fuzzString = mutate(fuzzString);
+    megaSocket.send(fuzzString);
+
+    // The message which is being sent
+    lastSent = fuzzString;
+    // Omit printint to increase performance
+    printer.infoHigh('Packet sent:');
+    printer.highlight(fuzzString);
+}
+
+
+// Public stuff
+
+module.exports.help = HELP;
+
+module.exports.run = function (options, callback) {
+    var socketCfg = {
+            target: options.target,
+            port: options.port,
+            transport: options.transport,
+            timeout: options.timeout
+        },
+        answering = false;
+
+    payload = options.payload;
+
+    megaSocket = new SteroidsSocket(socketCfg);
+    // Sending initial request
+    send();
+
+    // We reuse the same socket for now
+    megaSocket.on('error', function (err) {
+        if (!answering) {
+            callback(err);
+        } else {
+            callback(null, {
+                lastSent: lastSent
+            });
+            printer.info('Boom!, last packet sent:');
+            printer.highlight(lastSent);
+        }
+    });
+
+    //megaSocket.on('message', function (msg) {
+    megaSocket.on('message', function () {
+        answering = true;
+
+        printer.info('Response received');
+
+        // Server is still answering, so keep muting
+        send();
+    });
+};
