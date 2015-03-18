@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ![Bluebox-ng](https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png)
 
 # Bluebox-ng
@@ -5,6 +6,20 @@ Pentesting framework written using Node powers. Our 2 cents to make the Node wor
 - **IRC(Freenode)**: #assaultjs
 
 ## Features
+=======
+Bluebox-ng
+==========
+Bluebox-ng is a GPL VoIP/UC vulnerability scanner written using Node.js powers. "Our 2 cents" to improve security practices in these environments and to make the Node world still more awesome. ;)
+
+- **GitHub repo**: [https://github.com/jesusprubio/bluebox-ng](https://github.com/jesusprubio/bluebox-ng)
+- **IRC(Freenode)**: #breakingVoIP
+- [**Demo**](https://www.youtube.com/watch?v=M-6k4Md3qEQ)
+
+<img src="https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png" height="150" width="150" >
+
+Features
+--------
+>>>>>>> 22fd93e1b298b76c69608c6db0531cd612b4db8a
 - Auto VoIP/UC penetration test
 - Report generation
 - Performance
