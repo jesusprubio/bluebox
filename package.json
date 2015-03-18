@@ -42,7 +42,6 @@
     "exploitsearch": "^1.0.9",
     "handlebars": "^3.0.0",
     "jsftp": "^1.5.0",
-    "ldapjs": "^0.7.1",
     "local-ip": "^1.0.1",
     "lodash": "^3.5.0",
     "moira": "^1.1.2",

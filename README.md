@@ -32,7 +32,7 @@ Pentesting framework written using Node powers. Our 2 cents to make the Node wor
 - Cross-platform support
 
 ## Install
-- Tested with [iojs](https://iojs.org/) and [node.js™](http://nodejs.org/):
+- Tested with [node.js™](http://nodejs.org/) v0.12.0. We're working in all used modules to be compatible with [iojs](https://iojs.org/).
 - [Nmap](http://nmap.org/) optional.
 `npm i -g bluebox-ng`
 
