@@ -31,12 +31,12 @@ var async  = require('async'),
                 type: 'ips',
                 description: 'Hosts to explore',
                 defaultValue: '127.0.0.1'
-//                defaultValue: '172.16.190.128'
+                //defaultValue: '172.16.190.128'
             },
-			// TODO: Coupled with the client
-			// This order mandatory (between "transport" and "port" to try
-			// to guess the porter when asking for the options
-			transport: {
+            // TODO: Coupled with the client
+            // This order mandatory (between "transport" and "port" to try
+            // to guess the porter when asking for the options
+            transport: {
                 type: 'transports',
                 description: 'Underlying protocol',
                 defaultValue: 'UDP'
@@ -46,7 +46,7 @@ var async  = require('async'),
                 description: 'Ports to explore on chosen IPs',
                 defaultValue: 5060
             },
-			wsPath: {
+            wsPath: {
                 type: 'allValid',
                 description: 'Websockets path (only when websockets)',
                 defaultValue: 'ws'
@@ -61,7 +61,7 @@ var async  = require('async'),
                 description: 'Source host to include in the  SIP request ' +
                              '("external" and "random" supported)',
                 defaultValue: 'iface:eth0'
-//                defaultValue: 'iface:en0'
+                // defaultValue: 'iface:en0'
             },
             srcPort: {
                 type: 'srcPort',
@@ -73,7 +73,7 @@ var async  = require('async'),
                 description: 'Domain to explore ("ip" to use the target)',
                 defaultValue: 'ip'
             },
-			delay: {
+            delay: {
                 type: 'positiveInt',
                 description: 'Delay between requests, in ms.',
                 defaultValue: 0

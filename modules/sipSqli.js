@@ -31,10 +31,10 @@ var SipFakeStack = require('sip-fake-stack'),
                 description: 'Host to attack',
                 defaultValue: '127.0.0.1'
             },
-			// TODO: Coupled with the client
-			// This order mandatory (between "transport" and "port" to try
-			// to guess the porter when asking for the options
-			transport: {
+            // TODO: Coupled with the client
+            // This order mandatory (between "transport" and "port" to try
+            // to guess the porter when asking for the options
+            transport: {
                 type: 'transports',
                 description: 'Underlying protocol',
                 defaultValue: 'UDP'
@@ -44,7 +44,7 @@ var SipFakeStack = require('sip-fake-stack'),
                 description: 'Port to attack on chosen IPs',
                 defaultValue: 5060
             },
-			wsPath: {
+            wsPath: {
                 type: 'allValid',
                 description: 'Websockets path (only when websockets)',
                 defaultValue: 'ws'

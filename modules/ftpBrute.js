@@ -58,12 +58,7 @@ var JsFtp = require('jsftp'),
                 description: 'Delay between requests, in ms.',
                 defaultValue: 0
             }
-            // TODO
-//            timeout: {
-//                type: 'positiveInt',
-//                description: 'Time to wait for a response, in ms.',
-//                defaultValue: 5000
-//            }
+            // TODO: "timeout"
         }
     };
 

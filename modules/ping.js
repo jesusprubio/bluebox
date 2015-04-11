@@ -29,17 +29,17 @@ var ping = require('ping'),
                 type: 'ip',
                 description: 'Host to explore',
                 defaultValue: '8.8.8.8'
+            },
+            // timeout: {
+            //    type: 'positiveInt',
+            //    description: 'Time to wait for a response (s)',
+            //    defaultValue: 5,
+            // },
+            interval: {
+                type: 'float',
+                description: 'Time to wait between (s)',
+                defaultValue: '0.5'
             }
-//            timeout: {
-//                type: 'positiveInt',
-//                description: 'Time to wait for a response (s)',
-//                defaultValue: 5,
-//            },
-//            interval: {
-//                type: 'float',
-//                description: 'Time to wait between (s)',
-//                defaultValue: '0.5'
-//            }
         }
     };
 
@@ -50,18 +50,18 @@ module.exports.help = HELP;
 
 module.exports.run = function (options, callback) {
     // Not working
-//    ping.promise.probe(
-//        options.target,
-//        {
-//            timeout: options.timeout,
-//            extra: [
-//                '-i ' + options.interval
-//            ]
-//        }
-//    ).then(function (res) {
-//        callback(null, res);
-//    })
-//    .done();
+    // ping.promise.probe(
+    //    options.target,
+    //    {
+    //        timeout: options.timeout,
+    //        extra: [
+    //            '-i ' + options.interval
+    //        ]
+    //    }
+    //).then(function (res) {
+    //    callback(null, res);
+    //})
+    //.done();
     ping.sys.probe(options.target, function (alive) {
         callback(null, {
             alive: alive

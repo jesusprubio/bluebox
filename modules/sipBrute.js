@@ -32,10 +32,10 @@ var async  = require('async'),
                 description: 'Host to attack',
                 defaultValue: '127.0.0.1'
             },
-			// TODO: Coupled with the client
-			// This order mandatory (between "transport" and "port" to try
-			// to guess the porter when asking for the options
-			transport: {
+            // TODO: Coupled with the client
+            // This order mandatory (between "transport" and "port" to try
+            // to guess the porter when asking for the options
+            transport: {
                 type: 'transports',
                 description: 'Underlying protocol',
                 defaultValue: 'UDP'
@@ -45,7 +45,7 @@ var async  = require('async'),
                 description: 'Port to attack on chosen IPs',
                 defaultValue: 5060
             },
-			wsPath: {
+            wsPath: {
                 type: 'allValid',
                 description: 'Websockets path (only when websockets)',
                 defaultValue: 'ws'
@@ -71,7 +71,7 @@ var async  = require('async'),
                 description: 'Domain to explore ("ip" to use the target)',
                 defaultValue: 'ip'
             },
-			extensions: {
+            extensions: {
                 type: 'userPass',
                 description: 'User (or file with them) to test',
                 defaultValue: 'range:100-110'
@@ -86,7 +86,7 @@ var async  = require('async'),
                 description: 'Test the same user as password for each one.',
                 defaultValue: 'yes'
             },
-			delay: {
+            delay: {
                 type: 'positiveInt',
                 description: 'Delay between requests, in ms.',
                 defaultValue: 0

@@ -48,12 +48,7 @@ var Tftp = require('tftp-client'),
                 description: 'Delay between requests, in ms.',
                 defaultValue: 0
             }
-            // TODO, not supported by the module (hardcoded, returns 0)
-//            timeout: {
-//                type: 'positiveInt',
-//                description: 'Time to wait for a response, in ms.',
-//                defaultValue: 5000
-//            }
+            // TODO: "timeout" not supported by the module (hardcoded, returns 0)
         }
     };
 

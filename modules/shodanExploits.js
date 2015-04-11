@@ -51,7 +51,7 @@ module.exports.help = HELP;
 module.exports.run = function (options, callback) {
     var reqOptions = {
             query: options.query,
-//            facets: 'port:100',
+            // facets: 'port:100',
             page: parseInt(options.pages)
         },
         shodanClient;

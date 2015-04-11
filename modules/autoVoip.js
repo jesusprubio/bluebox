@@ -62,18 +62,18 @@ var async = require('async'),
         options: {
             targets: {
                 type: 'ips',
-//                description: 'Hosts or domain to explore',
+                // description: 'Hosts or domain to explore',
                 description: 'Hosts to explore',
                 defaultValue: '127.0.0.1'
-//                defaultValue: '172.16.190.128'
-//                defaultValue : '172.16.190.128-132'
+                // defaultValue: '172.16.190.128'
+                // defaultValue : '172.16.190.128-132'
             },
             srcHost: {
                 type: 'srcHost',
                 description: 'Source host to include in the  SIP request ' +
                              '("external" and "random" supported)',
                 defaultValue: 'iface:eth0'
-//                defaultValue: 'iface:en0'
+                // defaultValue: 'iface:en0'
             },
             srcPort: {
                 type: 'srcPort',
@@ -99,7 +99,7 @@ var async = require('async'),
                 type: 'allValid',
                 description: 'Type of scanning (quick, regular, aggressive, paranoid) or custom file (file:...)',
                 defaultValue: 'regular'
-//                defaultValue: 'debug'
+                // defaultValue: 'debug'
             },
             reportPath: {
                 type: 'allValid',
@@ -163,22 +163,17 @@ module.exports.run = function (options, callback) {
 
     async.series([
         function (async0Cb) {
-//            if (blueTypes.isDomain(options.targets)) {
-//                // TODO: Implement this!
-//                printer.bold('\nEXPLORING THE DOMAIN');
-//                printer.bold('\nGetting some info ...');
-////                whois.run({ domain : 'google.com' }, function (err, res) {
-////                    if (res) {
-////                        report[domain].whois = res;
-////                    }
-////                    async1Cb();
-////                });
-//                // Robtex DOMAIN: https://www.robtex.com/en/advisory/dns/es/DOMAIN/
-//                printer.bold('\nDNS brute-force ...\n');
-//                printer.bold('\nDNS resolve ...\n');
-//                initialTargets = [];
-//                async0Cb();
-//            } else {
+            // TODO: Domain support
+            // if (blueTypes.isDomain(options.targets)) {
+            // printer.bold('\nEXPLORING THE DOMAIN');
+            // printer.bold('\nGetting some info ...');
+            //  whois.run({ domain : 'google.com' }, function (err, res) {
+            // Robtex DOMAIN: https://www.robtex.com/en/advisory/dns/es/DOMAIN/
+            // printer.bold('\nDNS brute-force ...\n');
+            // printer.bold('\nDNS resolve ...\n');
+            // initialTargets = [];
+            // async0Cb();
+            //} else {
             initialTargets = utils.createAutoTargets(
                 options.targets,
                 profile.sipServices,
@@ -406,7 +401,7 @@ module.exports.run = function (options, callback) {
                     srcPort: report[finalPair.ipAddress].responses[0].srcPort || null,
                     domain: report[finalPair.ipAddress].responses[0].domain || null,
                     // 3 req/min is normally not considered an attack
-//                            delay: profile.slowDelay,
+                    // delay: profile.slowDelay,
                     delay: 0,
                     timeout: options.timeout
                 }, function (err, res) {

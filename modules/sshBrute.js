@@ -126,8 +126,8 @@ module.exports.run = function (options, callback) {
                 port: options.port,
                 username: user,
                 password: password,
-//                    // TODO: Add support
-//                    privateKey: require('fs').readFileSync('/here/is/my/key')
+                // TODO: Add support
+                //privateKey: require('fs').readFileSync('/here/is/my/key')
                 readyTimeout: options.timeout
             });
         }, function (err) {

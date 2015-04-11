@@ -26,11 +26,11 @@ var ShodanClient = require('shodan-client'),
         description: 'Look if the target is indexed by SHODAN computer search engine',
         options: {
             // TODO: Automatically included, maybe we need to deacoplate
-//            key: {
-//                type: 'allValid',
-//                description: 'Your SHODAN API key',
-//                defaultValue: null
-//            },
+            // key: {
+            //    type: 'allValid',
+            //    description: 'Your SHODAN API key',
+            //    defaultValue: null
+            //},
             target: {
                 type: 'ip',
                 description: 'Host to explore',
