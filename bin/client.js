@@ -263,7 +263,7 @@ printer.info('\t(v' + bluebox.version() + ')\n');
 rl = createPrompt();
 
 // Just in case ;)
-process.on('uncaughtException', function (err) {
-    printer.error('"uncaughtException" found:');
-    printer.error(err);
-});
+//process.on('uncaughtException', function (err) {
+//    printer.error('"uncaughtException" found:');
+//    printer.error(err);
+//});

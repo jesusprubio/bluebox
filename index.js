@@ -21,6 +21,7 @@
 // Private stuff
 
 var requireDir = require('require-directory'),
+    lodash = require('lodash'),
 
     utils = require('./utils/common'),
 
@@ -34,7 +35,10 @@ var requireDir = require('require-directory'),
 
 function Bluebox(options) {
     this.shodanKey = options.shodanKey || null;
-    this.modulesInfo = requireDir(module, './modules');
+    this.modulesInfo = lodash.extend(
+        requireDir(module, './modules'),
+        requireDir(module, './modules/private')
+    );
 }
 
 
@@ -64,7 +68,11 @@ Bluebox.prototype.runModule = function (moduleName, config, callback) {
 
         return;
     }
-    blueModule = require('./modules/' + moduleName);
+    try {
+        blueModule = require('./modules/' + moduleName);
+    } catch (err) {
+        blueModule = require('./modules/private/' + moduleName);
+    }
     // Parsing the paremeters passed by the client
     utils.parseOptions(
         config,
