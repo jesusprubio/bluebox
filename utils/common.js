@@ -145,18 +145,7 @@ module.exports.createAutoTargets = function (ips, customServices, sipTypes) {
         lodash.each(customServices, function (sipService) {
             // All requeqs which the server could answer at
             lodash.each(sipTypes, function (meth) {
-                if (sipService.transport === 'TLS') {
-                    lodash.each(blueTypes.getTlsTypes(), function (tlsVersion) {
-                        targets.push({
-                            ip: target,
-                            port: sipService.port,
-                            transport: sipService.transport,
-                            meth: meth,
-                            tlsType: tlsVersion
-                        });
-                    });
-                } else if (sipService.transport === 'WS' ||
-                           sipService.transport === 'WSS') {
+                if (sipService.transport === 'WS' || sipService.transport === 'WSS') {
                     lodash.each(['', 'ws'], function (wsPath) {
                         targets.push({
                             ip: target,

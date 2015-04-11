@@ -26,7 +26,6 @@ var async = require('async'),
     fs = require('fs'),
     path = require('path'),
     hbs = require('handlebars'),
-//    prettyjson = require('prettyjson'),
     moment = require('moment'),
     shell = require('shelljs'),
 
@@ -65,16 +64,16 @@ var async = require('async'),
                 type: 'ips',
 //                description: 'Hosts or domain to explore',
                 description: 'Hosts to explore',
-//                defaultValue: '127.0.0.1'
-                defaultValue: '172.16.190.128'
+                defaultValue: '127.0.0.1'
+//                defaultValue: '172.16.190.128'
 //                defaultValue : '172.16.190.128-132'
             },
             srcHost: {
                 type: 'srcHost',
                 description: 'Source host to include in the  SIP request ' +
                              '("external" and "random" supported)',
-//                defaultValue: 'iface:eth0'
-                defaultValue: 'iface:vmnet8'
+                defaultValue: 'iface:eth0'
+//                defaultValue: 'iface:en0'
             },
             srcPort: {
                 type: 'srcPort',
@@ -127,7 +126,6 @@ module.exports.run = function (options, callback) {
                 transport: finalTarget.transport,
                 wsPath: finalTarget.wsPath || null,
                 meth: finalTarget.meth,
-                tlsType: finalTarget.tlsType || null,
                 srcHost: options.srcHost || null,
                 srcPort: options.srcPort || null,
                 domain: options.domain || null,
@@ -363,7 +361,6 @@ module.exports.run = function (options, callback) {
                     port: report[ipAddress].responses[0].port,
                     transport: report[ipAddress].responses[0].transport,
                     wsPath: report[ipAddress].responses[0].path || null,
-                    tlsType: report[ipAddress].responses[0].tlsType || null,
                     fromExt: blueTypes.userPass(profile.unauthFrom),
                     toExt: blueTypes.userPass(profile.unauthTo),
                     srcHost: report[ipAddress].responses[0].srcHost || null,
@@ -404,7 +401,6 @@ module.exports.run = function (options, callback) {
                     transport: report[finalPair.ipAddress].responses[0].transport,
                     wsPath: report[finalPair.ipAddress].responses[0].path || null,
                     extensions: blueTypes.userPass(profile.slowExtensions),
-                    tlsType: report[finalPair.ipAddress].responses[0].tlsType || null,
                     meth: finalPair.meth,
                     srcHost: report[finalPair.ipAddress].responses[0].srcHost || null,
                     srcPort: report[finalPair.ipAddress].responses[0].srcPort || null,
@@ -434,7 +430,6 @@ module.exports.run = function (options, callback) {
                             port: report[ipAddress].responses[0].port,
                             transport: report[ipAddress].responses[0].transport,
                             wsPath: report[ipAddress].responses[0].path || null,
-                            tlsType: report[ipAddress].responses[0].tlsType || null,
                             srcHost: report[ipAddress].responses[0].srcHost || null,
                             srcPort: report[ipAddress].responses[0].srcPort || null,
                             domain: report[ipAddress].responses[0].domain || null,
@@ -462,7 +457,6 @@ module.exports.run = function (options, callback) {
                         port: report[ipAddress].responses[0].port,
                         transport: report[ipAddress].responses[0].transport,
                         wsPath: report[ipAddress].responses[0].path || null,
-                        tlsType: report[ipAddress].responses[0].tlsType || null,
                         srcHost: report[ipAddress].responses[0].srcHost || null,
                         srcPort: report[ipAddress].responses[0].srcPort || null,
                         domain: report[ipAddress].responses[0].domain || null,
@@ -487,7 +481,6 @@ module.exports.run = function (options, callback) {
                     port: report[ipAddress].responses[0].port,
                     transport: report[ipAddress].responses[0].transport,
                     wsPath: report[ipAddress].responses[0].path || null,
-                    tlsType: report[ipAddress].responses[0].tlsType || null,
                     srcHost: report[ipAddress].responses[0].srcHost || null,
                     srcPort: report[ipAddress].responses[0].srcPort || null,
                     domain: report[ipAddress].responses[0].domain || null,
@@ -549,7 +542,6 @@ module.exports.run = function (options, callback) {
                     port: report[finalPair.ipAddress].responses[0].port,
                     transport: report[finalPair.ipAddress].responses[0].transport,
                     wsPath: report[finalPair.ipAddress].responses[0].path || null,
-                    tlsType: report[finalPair.ipAddress].responses[0].tlsType || null,
                     extensions: blueTypes.userPass(profile.bruteExtensions),
                     meth: finalPair.meth,
                     srcHost: report[finalPair.ipAddress].responses[0].srcHost || null,
@@ -590,7 +582,6 @@ module.exports.run = function (options, callback) {
                     port: report[finalPair.ipAddress].responses[0].port,
                     transport: report[finalPair.ipAddress].responses[0].transport,
                     wsPath: report[finalPair.ipAddress].responses[0].path || null,
-                    tlsType: report[finalPair.ipAddress].responses[0].tlsType || null,
                     extensions: blueTypes.userPass(profile.bruteExtensions),
                     meth: finalPair.meth,
                     srcHost: report[finalPair.ipAddress].responses[0].srcHost || null,
@@ -645,7 +636,6 @@ module.exports.run = function (options, callback) {
                     port: report[ipAddress].responses[0].port,
                     transport: report[ipAddress].responses[0].transport,
                     wsPath: report[ipAddress].responses[0].path || null,
-                    tlsType: report[ipAddress].responses[0].tlsType || null,
                     extensions: finalExtensions,
                     passwords: blueTypes.userPass(profile.brutePassPasses),
                     userAsPass: profile.bruteUserAsPass,

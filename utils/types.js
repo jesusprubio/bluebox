@@ -28,14 +28,7 @@ var net = require('net'),
     sipUtils = require('sip-fake-stack').utils,
     networkUtils = require('./network'),
 
-    TRANSPORTS = ['UDP', 'TCP', 'TLS', 'WS', 'WSS'],
-    // http://www.openssl.org/docs/ssl/ssl.html#DEALING_WITH_PROTOCOL_METHODS
-    TLS_TYPES = ['TLSv1', 'SSLv2', 'SSLv3'];
-//    USER_PASS_INFO = 'Any value is valid as user and pass, so we need some way\n' +
-//        'to the user to specify if it\'s a numerical range or a file\n' +
-//        'ie:\n' +
-//        'range:0100-1500 (note: padding matters here!)\n' +
-//        'file:../artifacts/john.txt';
+    TRANSPORTS = ['UDP', 'TCP', 'TLS', 'WS', 'WSS'];
 
 
 // Helpers
@@ -267,10 +260,6 @@ function portList (value) {
 //      - TODO: Better a callback here?
 // - The error must include hints about a correct input
 
-module.exports.getTlsTypes = function () {
-    return TLS_TYPES;
-};
-
 module.exports.positiveInt = function (value) {
     if (isPositiveInt(value)) {
         return parseInt(value);
@@ -293,14 +282,6 @@ module.exports.networkProtocol = function (value) {
         return finalValue;
     } else {
         throw new Error(protocols.toString());
-    }
-};
-
-module.exports.tlsType = function (value) {
-    if (TLS_TYPES.indexOf(value) !== -1) {
-        return value;
-    } else {
-        throw new Error('ie: ' + TLS_TYPES.toString());
     }
 };
 

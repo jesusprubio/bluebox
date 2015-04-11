@@ -51,11 +51,6 @@ var SteroidsSocket = require('sip-fake-stack').SteroidsSocket,
                 description: 'Websockets protocol (only when websockets)',
                 defaultValue: 'sip'
             },
-            tlsType: {
-                type: 'tlsType',
-                description: 'Version of TLS protocol to use (only when TLS)',
-                defaultValue: 'TLSv1'
-            },
             payload: {
                 type: 'allValid',
                 description: 'Stuff to send',

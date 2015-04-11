@@ -50,11 +50,6 @@ var async  = require('async'),
                 description: 'Websockets path (only when websockets)',
                 defaultValue: 'ws'
             },
-            tlsType: {
-                type: 'tlsType',
-                description: 'Version of TLS protocol to use (only when TLS)',
-                defaultValue: 'TLSv1'
-            },
             srcHost: {
                 type: 'srcHost',
                 description: 'Source host to include in the  SIP request ' +
@@ -111,7 +106,6 @@ module.exports.run = function (options, callback) {
             transport: options.transport || 'UDP',
             timeout: options.timeout || 10000,
             wsPath: options.wsPath || null,
-            tlsType: options.tlsType || 'TLSv1',
             srcHost: options.srcHost || null,
             lport: options.srcPort || null,
             domain: options.domain || null

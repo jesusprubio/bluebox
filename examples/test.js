@@ -18,8 +18,8 @@
 
 'use strict';
 
-//var Bluebox = require('../'),
-var Bluebox = require('bluebox-ng'),
+var Bluebox = require('../'),
+//var Bluebox = require('bluebox-ng'),
 
     bluebox = new Bluebox({}),
     moduleOptions = {

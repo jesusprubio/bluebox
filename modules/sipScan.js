@@ -31,6 +31,7 @@ var async  = require('async'),
                 type: 'ips',
                 description: 'Hosts to explore',
                 defaultValue: '127.0.0.1'
+//                defaultValue: '172.16.190.128'
             },
 			// TODO: Coupled with the client
 			// This order mandatory (between "transport" and "port" to try
@@ -50,11 +51,6 @@ var async  = require('async'),
                 description: 'Websockets path (only when websockets)',
                 defaultValue: 'ws'
             },
-            tlsType: {
-                type: 'tlsType',
-                description: 'Version of TLS protocol to use (only when TLS)',
-                defaultValue: 'TLSv1'
-            },
             meth: {
                 type: 'sipRequests',
                 description: 'Type of SIP packets to do the requests ("random" available)',
@@ -65,6 +61,7 @@ var async  = require('async'),
                 description: 'Source host to include in the  SIP request ' +
                              '("external" and "random" supported)',
                 defaultValue: 'iface:eth0'
+//                defaultValue: 'iface:en0'
             },
             srcPort: {
                 type: 'srcPort',
@@ -130,7 +127,6 @@ module.exports.run = function (options, callback) {
                     transport: options.transport || 'UDP',
                     timeout: options.timeout || 10000,
                     wsPath: options.wsPath || null,
-                    tlsType: options.tlsType || 'TLSv1',
                     srcHost: options.srcHost || null,
                     lport: options.srcPort || null,
                     domain: options.domain || null
@@ -155,9 +151,6 @@ module.exports.run = function (options, callback) {
                 msgString = stackConfig.server + ':' + stackConfig.port + ' / ' +
                     stackConfig.transport;
 
-                if (stackConfig.transport === 'TLS') {
-                    msgString += ' (' + stackConfig.tlsType + ')';
-                }
                 if (stackConfig.transport === 'WS' || stackConfig.transport === 'WSS') {
                     msgString += ' ( WS path: ' + stackConfig.wsPath + ')';
                 }

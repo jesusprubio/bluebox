@@ -89,7 +89,7 @@ function runModule(moduleName, rl) {
             // check in every iteration
             // Default exceptions to get a friendly interaction with the user
             // Tricking the info to shown to cover this case
-            if (option === 'port') {
+            if (option === 'ports') {
                 defaultValue = PORT_FROM_TRANSPORT[chosenTransport];
             }
             if (defaultValue) {
@@ -98,8 +98,7 @@ function runModule(moduleName, rl) {
                 printDefault = 'required';
             }
             // Avoiding to ask for not needed params
-            if ((option === 'tlsType' && chosenTransport !== 'tls') ||
-                (['wsPath', 'wsProto'].indexOf(option) !== -1 &&
+            if ((['wsPath', 'wsProto'].indexOf(option) !== -1 &&
                  ['ws', 'wss'].indexOf(chosenTransport) === -1)) {
                 callback();
             } else {
@@ -264,7 +263,7 @@ printer.info('\t(v' + bluebox.version() + ')\n');
 rl = createPrompt();
 
 // Just in case ;)
-//process.on('uncaughtException', function (err) {
-//    printer.error('"uncaughtException" found:');
-//    printer.error(err);
-//});
+process.on('uncaughtException', function (err) {
+    printer.error('"uncaughtException" found:');
+    printer.error(err);
+});
