@@ -1,5 +1,5 @@
 # Bluebox-ng
-Pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
+VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
 - **IRC(Freenode)**: #assaultjs
 - [**Demo**](https://www.youtube.com/watch?v=M-6k4Md3qEQ)
 
@@ -33,7 +33,7 @@ Pentesting framework written using Node powers. Our 2 cents to make the Node wor
 - Cross-platform support
 
 ## Install
-- Tested with [node.js™](http://nodejs.org/) v0.12.x and [io.js](https://iojs.org/) v1.6.4.
+- Tested with [io.js](https://iojs.org/) v1.6.4 and [node.js™](http://nodejs.org/) v0.12.x.
 - [Nmap](http://nmap.org/) optional.
 `npm i -g bluebox-ng`
 
