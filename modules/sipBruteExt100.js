@@ -190,7 +190,7 @@ module.exports.run = function (options, callback) {
                             auth: hasAuth,
                             data: finalRes[0]
                         };
-                    } else if (resCode === '100' && SipFakeStack.parser.code(res.msg[1]) !== '200') {
+                    } else if (resCode === '100' && SipFakeStack.parser.code(res.data[1]) !== '200') {
                         partialResult = {
                             extension: extension,
                             hasAuth: false,

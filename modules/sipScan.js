@@ -91,7 +91,7 @@ function getFingerPrint(msg) {
     var fingerprint, ser, ver;
 
     fingerprint = SipFakeStack.parser.server(msg) ||
-                  SipFakeStack.sipParser.userAgent(msg) ||
+                  SipFakeStack.parser.userAgent(msg) ||
                   SipFakeStack.parser.organization(msg);
 
     if (fingerprint) {
