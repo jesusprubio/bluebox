@@ -1,6 +1,6 @@
 /*
 Copyright Jesus Perez <jesusprubio gmail com>
-		  Sergio García <s3rgio.gr gmail com>
+          Sergio García <s3rgio.gr gmail com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,43 +24,43 @@ var async   = require('async'),
     namiLib = require('nami'),
     Nami    = namiLib.Nami,
 
-    printer = require('../utils/printer'),	
+    printer = require('../utils/printer'),  
 
-	HELP = {
+    HELP = {
         description : 'Use the Asterisk Manager service (AMI) to get the value of a setup variable',
         options     : {
             target : {
-            	type : 'ip',
+                type : 'ip',
                 description  : 'IP address to brute-force',
                 defaultValue : '127.0.0.1'
             },
             port : {
-            	type         : 'port',
+                type         : 'port',
                 description  : 'Port of the server',
                 defaultValue : 5038
             },
             user : {
-            	type         : 'allValid',
+                type         : 'allValid',
                 description  : 'User to use in the request',
                 defaultValue : 'admin'
             },
             password : {
-            	type         : 'allValid',
+                type         : 'allValid',
                 description  : 'Password to use in the request',
                 defaultValue : 'amp111'
             },
             channel : {
-            	type         : 'allValid',
+                type         : 'allValid',
                 description  : 'Channel to use in the request',
                 defaultValue : 'SIP/100@default'
                },
             variable : {
-            	type         : 'allValid',
+                type         : 'allValid',
                 description  : 'Name of the variable to get',
                 defaultValue : 'extension'
             },
             timeout : {
-            	type         : 'positiveInt',
+                type         : 'positiveInt',
                 description  : 'Time to wait for a response (ms.)',
                 defaultValue : 5000
             }
