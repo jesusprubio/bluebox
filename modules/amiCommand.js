@@ -26,7 +26,6 @@ var async   = require('async'),
 
     printer = require('../utils/printer'),	
 
-
 	HELP = {
         description : 'Use the Asterisk Manager service (AMI) to run a command',
         options     : {
@@ -97,7 +96,7 @@ module.exports.run = function (options, callback) {
        });
    });
 
-   // The module do not supports connection timeout, so
+   // The module does not support connection timeout, so
    // we add it manually ("connected" var), really dirty trick
    setTimeout(function () {
        if (!connected) {
