@@ -20,11 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Private stuff
 
-var async   = require('async'),
-    namiLib = require('nami'),
+var namiLib = require('nami'),
     Nami    = namiLib.Nami,
-
-    printer = require('../utils/printer'),  
 
     HELP = {
         description : 'Use the Asterisk Manager service (AMI) to get actual state of an extension',
@@ -71,43 +68,43 @@ var async   = require('async'),
 
 module.exports.help = HELP;
 
-   module.exports.run = function (options, callback) {
-   var connected = false,
-       ami       = new Nami({
-           host     : options.target,
-           port     : options.port,
-           username : options.user,
-           secret   : options.password
-       });
+module.exports.run = function (options, callback) {
+    var connected = false,
+        ami       = new Nami({
+            host     : options.target,
+            port     : options.port,
+            username : options.user,
+            secret   : options.password
+        });
 
-   ami.logger.setLevel('OFF');
+    ami.logger.setLevel('OFF');
 
-   ami.on('namiConnected', function () {
-       var action = new namiLib.Actions.ExtensionState();
+    ami.on('namiConnected', function () {
+        var action = new namiLib.Actions.ExtensionState();
 
-       connected = true;
-       action.context = options.context;
-       action.exten = options.extension;
-       ami.send(action, function (res) {
-           ami.close();
-           callback(null, res);
-       });
-   });
+        connected = true;
+        action.context = options.context;
+        action.exten = options.extension;
+        ami.send(action, function (res) {
+            ami.close();
+            callback(null, res);
+        });
+    });
 
-   ami.on('namiLoginIncorrect', function () {
-       callback({
-           type : 'login'
-       });
-   });
+    ami.on('namiLoginIncorrect', function () {
+        callback({
+            type : 'login'
+        });
+    });
 
-   // The module do not supports connection timeout, so
-   // we add it manually ("connected" var), really dirty trick
-   setTimeout(function () {
-       if (!connected) {
-           callback({
-               type : 'timeout'
-           });
-       }
-   }, options.timeout);
-   ami.open();
+    // The module does not support connection timeout, so
+    // we add it manually ("connected" var), really dirty trick
+    setTimeout(function () {
+        if (!connected) {
+            callback({
+                type : 'timeout'
+            });
+        }
+    }, options.timeout);
+    ami.open();
 };
