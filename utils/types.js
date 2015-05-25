@@ -37,6 +37,10 @@ function isPositiveInt(value) {
     return (value === 0 || (value || 0) > 0 && value % 1 === 0);
 }
 
+function isFloat(value) {
+    return ((!isNaN(value) && value.toString().indexOf('.') != -1));
+}
+
 function isDomain(value) {
     var reDomain = /^([a-zA-Z0-9\-]{0,63}\.)+[a-zA-Z0-9]{2,}$/;
 
@@ -265,6 +269,14 @@ module.exports.positiveInt = function (value) {
         return parseInt(value);
     } else {
         throw new Error('Any positive integer');
+    }
+};
+
+module.exports.float = function (value) {
+    if (isFloat(value)) {
+        return parseFloat(value);
+    } else {
+        throw new Error('Any float');
     }
 };
 
