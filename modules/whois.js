@@ -18,28 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var whois = require('node-whois');
+// Private stuff
 
+var whois = require('node-whois'),
 
-module.exports = (function () {
-
-    return {
-
-        info : {
-            name        : 'whois',
-            description : 'WHOIS protocol client',
-            options     : {
-                domain : {
-                    description  : 'Domain to explore',
-                    defaultValue : 'google.com',
-                    type         : 'domain'
-                }
+    HELP  = {
+        description : 'WHOIS protocol client',
+        options     : {
+            domain : {
+                type         : 'domain',
+                description  : 'Domain to explore',
+                defaultValue : 'google.com'
             }
-        },
-
-        run : function (options, callback) {
-            whois.lookup(options.domain, callback);
         }
     };
 
-}());
+// Public stuff
+
+module.exports.help = HELP;
+
+module.exports.run = function (options, callback) {
+    whois.lookup(options.domain, callback);
+};
