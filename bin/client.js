@@ -201,7 +201,7 @@ function createPrompt() {
 }
 
 
-// Creating the Assault object
+// Creating the Bluebox object
 bluebox = new Bluebox({});
 
 // Generating the modules list
@@ -223,14 +223,28 @@ commCases = {
         exitFine();
     },
     'help': function (commArrr) {
-        if (commArrr.length > 1 && modulesList.indexOf(commArrr[1]) !== -1) {
-            if (commArrr[1] === 'help') {
-                printer.error('Really? xD');
+        if (commArrr.length > 1) {
+        	if (modulesList.indexOf(commArrr[1]) !== -1) {
+                if (commArrr[1] === 'help') {
+                    printer.error('Really? xD');
+                } else {
+                    printer.json(modulesInfo[commArrr[1]].help);
+                }
             } else {
-                printer.json(modulesInfo[commArrr[1]].help);
+                printer.error('ERROR: Module not found');
             }
         } else {
-            printer.error('ERROR: Module not found');
+            lodash.each(modulesList, function (module) {
+                if (modulesInfo[module]) {
+	                printer.highlight(module); 
+    	            if (modulesInfo[module].help) { // TO-DO: Delete this condition?
+        	        	printer.regular(modulesInfo[module].help.description);
+            	    }
+            	}
+            });
+
+            printer.infoHigh('\n' + 'You can get more info about a module ' +
+                              'using "help MODULE" (ie: "help sipScan")');
         }
         rl.prompt();
     },
