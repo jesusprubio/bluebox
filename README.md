@@ -1,3 +1,5 @@
+UNMAINTAINED!
+
 # Bluebox-ng
 VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
 - **IRC(Freenode)**: #assaultjs
