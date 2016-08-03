@@ -61,12 +61,10 @@
     "node-wifiscanner": "^0.2.0",
     "ping": "^0.1.9",
     "prettyjson": "^1.1.0",
-    "random-port": "^0.1.0",
     "request": "^2.55.0",
     "require-directory": "^2.1.0",
     "shelljs": "^0.4.0",
     "shodan-client": "^1.0.7",
-    "shui": "^0.0.9",
     "sip-fake-stack": "git+https://github.com/jesusprubio/sip-fake-stack#master",
     "snmp-native": "^1.0.18",
     "ssh2": "^0.4.6",
@@ -74,7 +72,6 @@
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^0.0.3",
-    "websocket": "^1.0.17",
     "whois": "^2.3.1"
   },
   "devDependencies": {
@@ -83,7 +80,6 @@
     "eslint-config-airbnb-base": "^3.0.1",
     "eslint-plugin-import": "^1.10.0",
     "eslint-plugin-json": "^1.2.0",
-    "grunt-retire": "^0.3.8",
     "npm-check-updates": "^2.8.0",
     "nsp": "^2.6.1"
   },
