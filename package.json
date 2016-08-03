@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/jesusprubio/bluebox-ng/issues"
   },
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "scripts": {
     "start": "./bin/client.js",
     "lint": "eslint .",
