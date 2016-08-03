@@ -55,7 +55,6 @@
     "netmask": "^1.0.5",
     "node-freegeoip": "0.0.1",
     "node-libnmap": "^0.1.12",
-    "node-whois": "^2.1.0",
     "node-wifiscanner": "^0.2.0",
     "ping": "^0.1.9",
     "prettyjson": "^1.1.0",
@@ -72,7 +71,8 @@
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^0.0.3",
-    "websocket": "^1.0.17"
+    "websocket": "^1.0.17",
+    "whois": "^2.3.1"
   },
   "devDependencies": {
     "eslint": "^2.13.1",
