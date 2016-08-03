@@ -1,11 +1,9 @@
-**UNMAINTAINED! Working in the new version.**
-
 # Bluebox-ng
 VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
-- **IRC(Freenode)**: #assaultjs
 - [**Demo**](https://www.youtube.com/watch?v=M-6k4Md3qEQ)
 
 <img src="https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png" height="150" width="150" >
+
 
 ## Features
 - Auto VoIP/UC penetration test
@@ -34,48 +32,65 @@ VoIP pentesting framework written using Node powers. Our 2 cents to make the Nod
 - Command completion
 - Cross-platform support
 
+
 ## Install
-- Tested with [io.js](https://iojs.org/) v1.6.4 and [node.js™](http://nodejs.org/) v0.12.x.
-- [Nmap](http://nmap.org/) optional.
-`npm i -g bluebox-ng`
+- Install the last Node.js stable version.
+ - https://nodejs.org/download
+ - A better alternative for developers is to use [nvm](https://github.com/creationix/nvm), to test different versions.
+
+- Get a copy of the code and install Node dependencies.
+```sh
+npm i -g bluebox-ng
+```
 
 ### Kali GNU/Linux
 - `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -`
+
 
 ## Use
 - Console client: ```bluebox-ng```
 - As a library:
 ```javascript
-var Bluebox = require('bluebox-ng'),
+const Bluebox = require('bluebox-ng');
 
-    bluebox = new Bluebox({}),
-    moduleOptions = {
-        target: '8.8.8.8'
-    };
+const bluebox = new Bluebox({});
+const moduleOptions = { target: '8.8.8.8' };
 
 console.log('Modules info:');
 console.log(JSON.stringify(bluebox.getModulesInfo(), null, 2));
 
-bluebox.runModule('geoLocate', moduleOptions, function (err, result) {
-    if (err) {
-        console.log('ERROR:');
-        console.log(err);
-    } else {
-        console.log('RESULT:');
-        console.log(result);
-    }
+bluebox.runModule('geoLocate', moduleOptions, (err, result) => {
+  if (err) {
+    console.log('ERROR:');
+    console.log(err);
+  } else {
+    console.log('RESULT:');
+    console.log(result);
+  }
 });
 ```
+
 
 ## Issues
 - https://github.com/jesusprubio/bluebox-ng/issues
 
+
 ## Developer guide
 - Start coding with one of the actual modules similar to the new one as a boilerplate.
 - Use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
-- Conventions:
- - We use [JSHint](http://jshint.com/) and [Crockford's Styleguide](http://javascript.crockford.com/code.html).
- - Please run `grunt contribute` to be sure your code fits with them.
+
+### Conventions:
+ - We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
+- Please run to be sure your code fits with it and the tests keep passing:
+```sh
+npm run-script cont-int
+```
+
+### Commit messages rules:
+ - It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
+ - If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
+ - It should provide enough information for a reviewer to understand the changes and their relation to the rest of the code.
+
 
 ## Core devs
 - Jesús Pérez
@@ -87,8 +102,10 @@ bluebox.runModule('geoLocate', moduleOptions, function (err, result) {
  - [@s3rgiogr](https://twitter.com/s3rgiogr)
  - s3rgio.gr gmail com
 
+
 ## Contributors
 - https://github.com/jesusprubio/bluebox-ng/graphs/contributors
+
 
 ## Thanks to
 - Jose Luis Verdeguer ([@pepeluxx](https://twitter.com/pepeluxx)), my mate playing with VoIP security related stuff.
@@ -104,6 +121,7 @@ bluebox.runModule('geoLocate', moduleOptions, function (err, result) {
 - All developers who have written the Node.js modules used in the project.
 - All VoIP, free software and security hackers that I read everyday.
 - My friend Carlos Pérez, the logo designer.
+
 
 ## License
 This program is free software: you can redistribute it and/or modify

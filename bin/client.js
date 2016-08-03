@@ -1,283 +1,264 @@
 #!/usr/bin/env node
 
-/*
-    Copyright Jesus Perez <jesusprubio gmail com>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright Jesus Perez <jesusprubio gmail com>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var async = require('async'),
-    readline = require('readline'),
-    shell = require('shelljs'),
-    lodash = require('lodash'),
+const readline = require('readline');
 
-    Bluebox = require('../'),
-    printer = require('../utils/printer'),
+const async = require('async');
+const lodash = require('lodash');
+const shell = require('shelljs');
 
-    PROMPT = 'Bluebox-ng> ',
-    PORT_FROM_TRANSPORT = {
-        udp: 5060,
-        tcp: 5060,
-        tls: 5061,
-        ws: 8080,
-        wss: 4443
-    },
-    modulesInfo = {},
-    modulesList = [],
-    exitNext = false,
-    commCases, bluebox, rl;
+const Bluebox = require('../');
+const logger = require('../lib/utils/logger');
+
+const prompt = 'Bluebox-ng> ';
+const portFromTransport = {
+  udp: 5060,
+  tcp: 5060,
+  tls: 5061,
+  ws: 8080,
+  wss: 4443,
+};
+
+let modulesInfo = {};
+let modulesList = [];
+let exitNext = false;
+let bluebox = null;
 
 
 function completer(line) {
-    var completions = modulesList.join(' '),
-        hits;
+  const completions = modulesList.join(' ');
+  const hits = modulesList.filter((c) => c.indexOf(line) === 0);
 
-    hits = modulesList.filter(function (c) {
-        return c.indexOf(line) === 0;
-    });
-
-    return [(hits.length + 1 ? hits : completions), line];
+  return [(hits.length + 1 ? hits : completions), line];
 }
 
 
-function runModule(moduleName, rl) {
-    var moduleInfo = modulesInfo[moduleName].help,
-        moduleOptions = {},
-		chosenTransport = null;
+function runModule(moduleName, readStream) {
+  const moduleInfo = modulesInfo[moduleName].help;
+  const moduleOptions = {};
+  let chosenTransport = null;
 
-    function cb(err, result) {
-        printer.bold('\nRESULT:\n');
-        if (!err) {
-            if (!result || result.length === 0) {
-                printer.highlight('No result');
-            } else {
-                printer.json(result);
-            }
-        } else {
-            printer.error('ERROR: run(): ' + JSON.stringify(err));
-        }
-        printer.regular('\n');
-        rl.prompt();
+  function cb(err, result) {
+    logger.bold('\nRESULT:\n');
+    if (!err) {
+      if (!result || result.length === 0) {
+        logger.highlight('No result');
+      } else {
+        logger.json(result);
+      }
+    } else {
+      logger.error(`ERROR: run(): ${JSON.stringify(err)}`);
     }
+    logger.regular('\n');
+    readStream.prompt();
+  }
 
-    // Asking for the parameters (if any)
-    if (!moduleInfo.options) {
-        printer.infoHigh('\nStarting ...\n');
+  // Asking for the parameters (if any)
+  if (!moduleInfo.options) {
+    logger.infoHigh('\nStarting ...\n');
+    bluebox.runModule(moduleName, moduleOptions, cb);
+
+    return;
+  }
+  async.eachSeries(
+    Object.keys(moduleInfo.options),
+    (option, callback) => {
+      let defaultValue = moduleInfo.options[option].defaultValue;
+      let printDefault;
+
+      // TODO: Move these checks outside here (if possible) to avoid
+      // check in every iteration
+      // Default exceptions to get a friendly interaction with the user
+      // Tricking the info to shown to cover this case
+      if (option === 'ports') { defaultValue = portFromTransport[chosenTransport]; }
+      if (defaultValue) {
+        printDefault = defaultValue;
+      } else {
+        printDefault = 'required';
+      }
+      // Avoiding to ask for not needed params
+      if ((['wsPath', 'wsProto'].indexOf(option) !== -1 &&
+          ['ws', 'wss'].indexOf(chosenTransport) === -1)) {
+        callback();
+      } else {
+        readStream.question(
+          `* ${option}: ${moduleInfo.options[option].description} (${printDefault}): `,
+          (answer) => {
+            let autoAnswer = null;
+            if (answer !== '') {
+              autoAnswer = answer.trim();
+            } else {
+              // Tricking the info to pass to the module to cover this case
+              if (option === 'port') {
+                autoAnswer = portFromTransport[chosenTransport];
+              }
+            }
+            if (option === 'transport') {
+              if (answer === '') {
+                chosenTransport = 'udp';
+              } else {
+                chosenTransport = answer.toLowerCase();
+              }
+            }
+            // The parser will stop if:
+            // - the type doesn't exist
+            // - param not passed & not defaultValue (required)
+            moduleOptions[option] = autoAnswer;
+            callback();
+          }
+        );
+      }
+    },
+    (err) => {
+      if (!err) {
+        logger.infoHigh('\nStarting ...\n');
         bluebox.runModule(moduleName, moduleOptions, cb);
-
-        return;
+      }
     }
-    async.eachSeries(
-        Object.keys(moduleInfo.options),
-        function (option, callback) {
-            var defaultValue = moduleInfo.options[option].defaultValue,
-                printDefault;
-            // TODO: Move these checks outside here (if possible) to avoid
-            // check in every iteration
-            // Default exceptions to get a friendly interaction with the user
-            // Tricking the info to shown to cover this case
-            if (option === 'ports') {
-                defaultValue = PORT_FROM_TRANSPORT[chosenTransport];
-            }
-            if (defaultValue) {
-                printDefault = defaultValue;
-            } else {
-                printDefault = 'required';
-            }
-            // Avoiding to ask for not needed params
-            if ((['wsPath', 'wsProto'].indexOf(option) !== -1 &&
-                 ['ws', 'wss'].indexOf(chosenTransport) === -1)) {
-                callback();
-            } else {
-                rl.question(
-                    '* ' + option +
-                    ': ' + moduleInfo.options[option].description +
-                    ' (' + printDefault + '): ',
-                    function (answer) {
-                        if (answer !== '') {
-                            answer = answer.trim();
-                        } else {
-                            // Tricking the info to pass to the module to cover this case
-                            if (option === 'port') {
-                                answer = PORT_FROM_TRANSPORT[chosenTransport];
-                            }
-                        }
-                        if (option === 'transport') {
-                            if (answer === '') {
-                                chosenTransport = 'udp';
-                            } else {
-                                chosenTransport = answer.toLowerCase();
-                            }
-                        }
-                        // The parser will stop if:
-                        // - the type doesn't exist
-                        // - param not passed & not defaultValue (required)
-                        moduleOptions[option] = answer;
-                        callback();
-                    }
-                );
-            }
-        },
-        function (err) {
-            if (!err) {
-                printer.infoHigh('\nStarting ...\n');
-                bluebox.runModule(moduleName, moduleOptions, cb);
-            }
-        }
-    );
+  );
 }
 
 function exitFine() {
-    printer.bold('\nSee you! ;)');
-    process.exit();
+  logger.bold('\nSee you! ;)');
+  process.exit();
 }
 
-function runCommand(comm, rl) {
-    // Deleting not needed params
-    var splitComm = comm.split(' ');
-
-    if (commCases[splitComm[0]]) {
-        commCases[splitComm[0]](splitComm);
+// Client commands not included as modules
+const commCases = {
+  // To avoid command not found on empty string
+  '': (readStream) => { readStream.prompt(); },
+  quit: () => { exitFine(); },
+  // TODO ???
+  // exit: () => { this.quit(); },
+  exit: () => { exitFine(); },
+  help: (readStream, commArrr) => {
+    if (commArrr.length > 1) {
+      if (modulesList.indexOf(commArrr[1]) !== -1) {
+        if (commArrr[1] === 'help') {
+          logger.error('Really? xD');
+        } else {
+          logger.json(modulesInfo[commArrr[1]].help);
+        }
+      } else {
+        logger.error('ERROR: Module not found');
+      }
     } else {
-        if (modulesList.indexOf(comm) !== -1) {
-            runModule(comm, rl);
-        } else {
-            shell.exec(comm, { silent : true }, function (code, output) {
-                if (code === 127) {
-                    printer.error('ERROR: module/command not found');
-                } else {
-                    printer.regular(output);
-                }
-                rl.prompt();
-            });
+      lodash.each(modulesList, (module) => {
+        if (modulesInfo[module]) {
+          logger.highlight(module);
+          if (modulesInfo[module].help) { // TO-DO: Delete this condition?
+            logger.regular(modulesInfo[module].help.description);
+          }
         }
+      });
+
+      logger.infoHigh('\nYou can get more info about a module ' +
+                      'using "help MODULE" (ie: "help sipScan")');
     }
-}
+    readStream.prompt();
+  },
+  shodanKey: (readStream) => {
+    readStream.question(
+      '* Enter your key: ',
+      (answer) => {
+        if (answer) {
+          const answerTrim = answer.trim();
 
-function createPrompt() {
-    var rl = readline.createInterface(process.stdin, process.stdout, completer);
-
-    rl.setPrompt(PROMPT);
-    rl.prompt();
-
-    // On new line
-    rl.on('line', function (line) {
-        runCommand(line.trim(), rl);
-    });
-
-    // On Ctrl+C, Ctrl+D, etc.
-    rl.on('close', function () {
-        if (!exitNext) {
-            printer.bold('\nPress Ctrl+C again to quit.');
-            exitNext = true;
-            createPrompt();
-            // If more than 5 secs. the user will need
-            // to push the keys combination twice again
-            setTimeout(
-                function () {
-                    exitNext = false;
-                },
-                5000
-            );
+          bluebox.setShodanKey(answerTrim);
+          logger.infoHigh('Using SHODAN key: ');
+          logger.highlight(`${answerTrim}\n`);
         } else {
-            exitFine();
+          logger.error('Empty key');
         }
-    });
+        readStream.prompt();
+      }
+    );
+  },
+};
 
-    return rl;
+
+function runCommand(comm, readStream) {
+  // Deleting not needed params
+  const splitComm = comm.split(' ');
+
+  if (commCases[splitComm[0]]) {
+    commCases[splitComm[0]](readStream, splitComm);
+  } else {
+    if (modulesList.indexOf(comm) !== -1) {
+      runModule(comm, readStream);
+    } else {
+      shell.exec(comm, { silent: true }, (code, output) => {
+        if (code === 127) {
+          logger.error('ERROR: module/command not found');
+        } else {
+          logger.regular(output);
+        }
+        readStream.prompt();
+      });
+    }
+  }
 }
 
+function createprompt() {
+  const rl = readline.createInterface(process.stdin, process.stdout, completer);
+
+  rl.setPrompt(prompt);
+  rl.prompt();
+
+  // On new line
+  rl.on('line', (line) => { runCommand(line.trim(), rl); });
+
+  // On Ctrl+C, Ctrl+D, etc.
+  rl.on('close', () => {
+    if (!exitNext) {
+      logger.bold('\nPress Ctrl+C again to quit.');
+      exitNext = true;
+      createprompt();
+      // If more than 5 secs. the user will need
+      // to push the keys combination twice again
+      setTimeout(() => { exitNext = false; }, 5000);
+    } else { exitFine(); }
+  });
+}
+
+
+// Starting here.
 
 // Creating the Bluebox object
 bluebox = new Bluebox({});
 
 // Generating the modules list
-modulesInfo = bluebox.getModulesInfo();
-lodash.each(modulesInfo, function (v, k) {
-    modulesList.push(k);
-});
-
-// Client commands not included as modules
-commCases = {
-    // To avoid command not found on empty string
-    '': function () {
-        rl.prompt();
-    },
-    'quit': function () {
-        exitFine();
-    },
-    'exit': function () {
-        exitFine();
-    },
-    'help': function (commArrr) {
-        if (commArrr.length > 1) {
-        	if (modulesList.indexOf(commArrr[1]) !== -1) {
-                if (commArrr[1] === 'help') {
-                    printer.error('Really? xD');
-                } else {
-                    printer.json(modulesInfo[commArrr[1]].help);
-                }
-            } else {
-                printer.error('ERROR: Module not found');
-            }
-        } else {
-            lodash.each(modulesList, function (module) {
-                if (modulesInfo[module]) {
-	                printer.highlight(module); 
-    	            if (modulesInfo[module].help) { // TO-DO: Delete this condition?
-        	        	printer.regular(modulesInfo[module].help.description);
-            	    }
-            	}
-            });
-
-            printer.infoHigh('\n' + 'You can get more info about a module ' +
-                              'using "help MODULE" (ie: "help sipScan")');
-        }
-        rl.prompt();
-    },
-    'shodanKey': function () {
-        rl.question(
-            '* Enter your key: ',
-            function (answer) {
-                if (answer) {
-                    answer = answer.trim();
-                    bluebox.setShodanKey(answer);
-                    printer.infoHigh('Using SHODAN key: ');
-                    printer.highlight(answer + '\n');
-                } else {
-                    printer.error('Empty key');
-                }
-                rl.prompt();
-            }
-        );
-    }
-};
+modulesInfo = bluebox.help();
+lodash.each(modulesInfo, (v, k) => { modulesList.push(k); });
 
 // Adding client modules (avoiding the empty string)
 modulesList = modulesList.concat(Object.keys(commCases).splice(1));
 
 // Welcome info is printed
-printer.welcome('\n\tWelcome to Bluebox-ng');
-printer.info('\t(v' + bluebox.version() + ')\n');
+logger.welcome('\n\tWelcome to Bluebox-ng');
+logger.info(`\t(v${bluebox.version()})\n`);
 
 // The prompt is started
-rl = createPrompt();
+createprompt();
 
 // Just in case ;)
-//process.on('uncaughtException', function (err) {
-//    printer.error('"uncaughtException" found:');
-//    printer.error(err);
-//});
+// process.on('uncaughtException', function (err) {
+//   logger.error('"uncaughtException" found:');
+//   logger.error(err);
+// });
