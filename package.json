@@ -84,6 +84,7 @@
     "nsp": "^2.6.1"
   },
   "engines": {
-    "node": "6.x.x"
+    "node": "6.x.x",
+    "npm": "3.x.x"
   }
 }
