@@ -20,7 +20,7 @@ const lodash = require('lodash');
 
 const utils = require('./lib/utils/common');
 const pkgInfo = require('./package.json');
-const debug = require('./lib/utils/debug')(utils.getFileName(__filename));
+const debug = require('./lib/utils/debug')(utils.pathToName(__filename));
 
 
 class Bluebox {
