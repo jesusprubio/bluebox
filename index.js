@@ -20,6 +20,7 @@ const lodash = require('lodash');
 
 const utils = require('./lib/utils/common');
 const pkgInfo = require('./package.json');
+const debug = require('./lib/utils/debug')(utils.getFileName(__filename));
 
 
 class Bluebox {
@@ -31,6 +32,8 @@ class Bluebox {
       requireDir(module, './lib/modules'),
       requireDir(module, './lib/modules/private')
     );
+
+    debug('Started:', { version: pkgInfo.version });
   }
 
 
@@ -45,6 +48,8 @@ class Bluebox {
 
 
   runModule(moduleName, cfg, callback) {
+    debug('Running module:', { name: moduleName, cfg });
+
     if (!this.modules[moduleName]) {
       callback({
         message: 'Module not found',
