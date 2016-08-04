@@ -60,15 +60,16 @@ const Bluebox = require('bluebox-ng');
 const bluebox = new Bluebox({});
 const moduleOptions = { target: '8.8.8.8' };
 
-console.log('Modules info:');
-console.log(JSON.stringify(bluebox.getModulesInfo(), null, 2));
 
-bluebox.runModule('geoLocate', moduleOptions, (err, result) => {
+console.log('Modules info:');
+console.log(JSON.stringify(bluebox.help(), null, 2));
+
+bluebox.runModule('geolocation', moduleOptions, (err, result) => {
   if (err) {
-    console.log('ERROR:');
+    console.log('Error:');
     console.log(err);
   } else {
-    console.log('RESULT:');
+    console.log('Result:');
     console.log(result);
   }
 });
