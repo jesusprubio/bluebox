@@ -258,7 +258,8 @@ logger.info(`\t(v${bluebox.version()})\n`);
 createprompt();
 
 // Just in case ;)
-// process.on('uncaughtException', function (err) {
-//   logger.error('"uncaughtException" found:');
-//   logger.error(err);
-// });
+process.on('uncaughtException', err => {
+  logger.error('"uncaughtException" found:');
+  logger.error(err);
+  createprompt();
+});
