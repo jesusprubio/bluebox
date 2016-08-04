@@ -90,6 +90,12 @@ bluebox.runModule('geoLocate', moduleOptions, (err, result) => {
 npm run-script cont-int
 ```
 
+### Debug
+We use the [visionmedia module](https://github.com/visionmedia/debug), so you have to use this environment variable:
+```sg
+DEBUG=bluebox* npm start
+```
+
 ### Commit messages rules:
  - It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
  - If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
