@@ -34,11 +34,14 @@
   "license": "GPL-3.0",
   "scripts": {
     "start": "./bin/client.js",
+    "test-unit": "tape test/unit/**/*.js | tap-diff",
+    "test-func": "tape test/functional/**/*.js | tap-diff",
+    "test": "npm run test-unit & npm run test-func",
     "lint": "eslint .",
     "deps-ok": "depcheck",
     "deps-sec": "nsp check",
     "deps-old": "ncu",
-    "cont-int": "npm run lint && npm run deps-ok && npm run deps-sec"
+    "cont-int": "npm run lint && npm run deps-ok && npm run deps-sec && npm test"
   },
   "dependencies": {
     "async": "^0.9.0",
@@ -82,7 +85,9 @@
     "eslint-plugin-import": "^1.10.0",
     "eslint-plugin-json": "^1.2.0",
     "npm-check-updates": "^2.8.0",
-    "nsp": "^2.6.1"
+    "nsp": "^2.6.1",
+    "tap-diff": "^0.1.1",
+    "tape": "^4.6.0"
   },
   "engines": {
     "node": "6.x.x",
