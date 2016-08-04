@@ -1,5 +1,9 @@
 # Bluebox-ng
 
+[![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2014.svg)](https://www.blackhat.com/eu-14/arsenal.html)
+[![Continuos integration](https://api.travis-ci.org/jesusprubio/bluebox-ng.svg)](https://travis-ci.org/jesusprubio/bluebox-ng)
+[![Dependencies](https://david-dm.org/jesusprubio/bluebox-ng.svg)](https://david-dm.org/jesusprubio/bluebox-ng)
+
 <img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
 VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
