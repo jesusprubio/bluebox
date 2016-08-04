@@ -1,8 +1,10 @@
 # Bluebox-ng
-VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
-- [**Demo**](https://www.youtube.com/watch?v=M-6k4Md3qEQ)
 
-<img src="https://lh6.googleusercontent.com/-GfcMGzI-qSQ/VDWt9U8GGWI/AAAAAAAAKmU/csRGEN1XtwA/s551-no/blueboxLogo250.png" height="150" width="150" >
+<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" >
+<img src="http://jesusprubio.name/images/projects/bluebox.gif
+" height="150">
+
+VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
 
 
 ## Features
