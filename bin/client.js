@@ -99,7 +99,7 @@ function runModule(moduleName, readStream) {
       } else {
         readStream.question(
           `* ${option}: ${moduleInfo.options[option].description} (${printDefault}): `,
-          (answer) => {
+          answer => {
             let autoAnswer = null;
             if (answer !== '') {
               autoAnswer = answer.trim();
@@ -125,7 +125,7 @@ function runModule(moduleName, readStream) {
         );
       }
     },
-    (err) => {
+    err => {
       if (!err) {
         logger.infoHigh('\nStarting ...\n');
         bluebox.runModule(moduleName, moduleOptions, cb);
@@ -142,7 +142,7 @@ function exitFine() {
 // Client commands not included as modules
 const commCases = {
   // To avoid command not found on empty string
-  '': (readStream) => { readStream.prompt(); },
+  '': readStream => { readStream.prompt(); },
   quit: () => { exitFine(); },
   // TODO ???
   // exit: () => { this.quit(); },
@@ -159,7 +159,7 @@ const commCases = {
         logger.error('ERROR: Module not found');
       }
     } else {
-      lodash.each(modulesList, (module) => {
+      lodash.each(modulesList, module => {
         if (modulesInfo[module]) {
           logger.highlight(module);
           if (modulesInfo[module].help) { // TO-DO: Delete this condition?
@@ -173,10 +173,10 @@ const commCases = {
     }
     readStream.prompt();
   },
-  shodanKey: (readStream) => {
+  shodanKey: readStream => {
     readStream.question(
       '* Enter your key: ',
-      (answer) => {
+      answer => {
         if (answer) {
           const answerTrim = answer.trim();
 
@@ -222,7 +222,7 @@ function createprompt() {
   rl.prompt();
 
   // On new line
-  rl.on('line', (line) => { runCommand(line.trim(), rl); });
+  rl.on('line', line => runCommand(line.trim(), rl));
 
   // On Ctrl+C, Ctrl+D, etc.
   rl.on('close', () => {
