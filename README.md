@@ -1,8 +1,6 @@
 # Bluebox-ng
 
-<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" >
-<img src="http://jesusprubio.name/images/projects/bluebox.gif
-" height="150">
+<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
 VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
 
