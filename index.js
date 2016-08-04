@@ -28,8 +28,8 @@ class Bluebox {
     this.shodanKey = opts.shodanKey || null;
     // Loading all present modules.
     this.modules = lodash.extend(
-        requireDir(module, './lib/modules'),
-        requireDir(module, './lib/modules/private')
+      requireDir(module, './lib/modules'),
+      requireDir(module, './lib/modules/private')
     );
   }
 
@@ -44,7 +44,7 @@ class Bluebox {
   setShodanKey(value) { this.shodanKey = value; }
 
 
-  runModule(moduleName, config, callback) {
+  runModule(moduleName, cfg, callback) {
     if (!this.modules[moduleName]) {
       callback({
         message: 'Module not found',
@@ -57,10 +57,9 @@ class Bluebox {
 
     // Parsing the paremeters passed by the client
     utils.parseOpts(
-      config,
+      cfg,
       blueModule.help.options,
-      (err, finalConfig) => {
-        const confWithKey = finalConfig;
+      (err, finalCfg) => {
         if (err) {
           callback({
             message: 'Parsing the options',
@@ -69,9 +68,23 @@ class Bluebox {
 
           return;
         }
+
+        const confWithKey = finalCfg;
+
         if (moduleName.substr(0, 6) === 'shodan') {
-          confWithKey.key = self.shodanKey;
+          if (this.shodanKey) {
+            confWithKey.key = this.shodanKey;
+          } else {
+            callback({
+              message: 'A SHODAN key is needed to run this module ' +
+                       '(https://account.shodan.io/register)',
+              error: null,
+            });
+
+            return;
+          }
         }
+
         blueModule.run(confWithKey, callback);
       }
     );
