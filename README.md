@@ -50,7 +50,7 @@ npm i -g bluebox-ng
 ```
 
 ### Kali GNU/Linux
-- `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -`
+- `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali2.sh | sudo bash -`
 
 
 ## Use
