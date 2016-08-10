@@ -37,8 +37,8 @@ const portFromTransport = {
 
 let modulesInfo = {};
 let modulesList = [];
-let modulesGeneralOptions = {};
-let modulesSetVars = [];
+const modulesGeneralOptions = {};
+const modulesSetVars = [];
 let exitNext = false;
 let bluebox = null;
 let autoCompType = 'command';
