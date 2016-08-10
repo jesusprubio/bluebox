@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Copyright Jesus Perez <jesusprubio gmail com>
-//
+//           Antonio Carrasco <ancahy2600 gmail com>
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -37,14 +37,30 @@ const portFromTransport = {
 
 let modulesInfo = {};
 let modulesList = [];
+let modulesGeneralOptions = {};
+let modulesSetVars = [];
 let exitNext = false;
 let bluebox = null;
-
+let autoCompType = 'command';
 
 function completer(line) {
-  const completions = modulesList.join(' ');
-  const hits = modulesList.filter((c) => c.indexOf(line) === 0);
+  let completions;
+  let hits;
+  switch (autoCompType) {
+    case 'command':
+      completions = modulesList.join(' ');
+      hits = modulesList.filter((c) => c.indexOf(line) === 0);
 
+      break;
+    case 'variable':
+      completions = modulesSetVars.join(' ');
+      hits = modulesSetVars.filter((c) => c.indexOf(line) === 0);
+
+      break;
+    default:
+      completions = [];
+      hits = 0;
+  }
   return [(hits.length + 1 ? hits : completions), line];
 }
 
@@ -79,8 +95,13 @@ function runModule(moduleName, readStream) {
   async.eachSeries(
     Object.keys(moduleInfo.options),
     (option, callback) => {
-      let defaultValue = moduleInfo.options[option].defaultValue;
+      let defaultValue;
       let printDefault;
+      if (modulesGeneralOptions[option]) {
+        defaultValue = modulesGeneralOptions[option];
+      } else {
+        defaultValue = moduleInfo.options[option].defaultValue;
+      }
 
       // TODO: Move these checks outside here (if possible) to avoid
       // check in every iteration
@@ -190,6 +211,44 @@ const commCases = {
       }
     );
   },
+  setg: readStream => {
+    autoCompType = 'variable';
+    readStream.question(
+      '* variable: ',
+      answerVar => {
+        if (answerVar) {
+          if (modulesSetVars.indexOf(answerVar.trim()) !== -1) {
+            autoCompType = 'value';
+            readStream.question(
+              '* value: ',
+              answerVal => {
+                modulesGeneralOptions[answerVar] = answerVal;
+                logger.infoHigh('Variable stored\n');
+                autoCompType = 'command';
+                readStream.prompt();
+              }
+            );
+          } else {
+            autoCompType = 'command';
+            logger.error(`Variable \'${answerVar}\' is undefined\n`);
+            readStream.prompt();
+          }
+        } else {
+          autoCompType = 'command';
+          logger.error('Empty value\n');
+          readStream.prompt();
+        }
+      }
+    );
+  },
+  getg: readStream => {
+    lodash.each(modulesGeneralOptions, (v, k) => {
+      logger.infoHigh(`${k}: `);
+      logger.info(v);
+    });
+    logger.info('\n');
+    readStream.prompt();
+  },
 };
 
 
@@ -243,9 +302,23 @@ function createprompt() {
 // Creating the Bluebox object
 bluebox = new Bluebox({});
 
-// Generating the modules list
+// Generating the modules list and variables
 modulesInfo = bluebox.help();
-lodash.each(modulesInfo, (v, k) => { modulesList.push(k); });
+
+lodash.each(modulesInfo, (v, k) => {
+  if (Object.keys(v).length === 0) return;
+  modulesList.push(k);
+  if ('options' in v.help) {
+    if (v.help.options !== undefined) {
+      lodash.each(v.help.options, (subv, subk) => {
+        if (modulesSetVars.indexOf(subk) === -1) {
+          modulesSetVars.push(subk);
+        }
+      });
+    }
+  }
+});
+
 
 // Adding client modules (avoiding the empty string)
 modulesList = modulesList.concat(Object.keys(commCases).splice(1));
