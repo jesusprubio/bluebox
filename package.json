@@ -73,6 +73,7 @@
     "snmp-native": "^1.0.18",
     "ssh2": "^0.5.0",
     "subquest": "^1.2.0",
+    "tape": "^4.6.0",
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^1.0.0",
