@@ -6,9 +6,9 @@
 
 [![npm info](https://nodei.co/npm/bluebox-ng.png?downloads=true&downloadRank=true&stars=true)](https://npmjs.org/package/bluebox-ng)
 
-<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
+Pentesting framework using Node.js powers. Specially focused in VoIP/UC.
 
-VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
+<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
 
 ## Features
@@ -32,9 +32,7 @@ VoIP pentesting framework written using Node powers. Our 2 cents to make the Nod
 - Dumb fuzzing
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
-- VirusTotal IP, URL and domain
 - Geolocation
-- Colored output
 - Command completion
 - Cross-platform support
 
@@ -120,19 +118,14 @@ DEBUG=bluebox* npm start
 
 
 ## Thanks to
-- Jose Luis Verdeguer ([@pepeluxx](https://twitter.com/pepeluxx)), my mate playing with VoIP security related stuff.
-- Damián Franco ([@pamojarpan](https://twitter.com/pamojarpan)), help during first steps.
+- Our mentors: [@antonroman](https://twitter.com/antonroman), [@sandrogauci](https://twitter.com/sandrogauci) (SIPVicious was our inspiration), [@pepeluxx](https://twitter.com/pepeluxx), [@markcollier46](https://twitter.com/markcollier46) (["Hacking VoIP Exposed"](http://www.hackingvoip.com/)).
 - [Quobis](http://www.quobis.com), some hours of work through personal projects program.
-- Antón Román ([@antonroman](https://twitter.com/antonroman)), my SIP mentor.
-- Sandro Gauci ([@sandrogauci](https://twitter.com/sandrogauci)), SIPVicious was my inspiration.
-- Kamailio community ([@kamailioproject](https://twitter.com/kamailioproject)), my favourite SIP Server.
-- David Endler and Mark Collier ([@markcollier46](https://twitter.com/markcollier46)), the authors of ["Hacking VoIP Exposed" book](http://www.hackingvoip.com/).
-- John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN API and GHDB.
+- Kamailio community ([@kamailioproject](https://twitter.com/kamailioproject)), our favourite SIP Server.
+- John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
-- [VirusTotal](https://www.virustotal.com/) friends.
 - All developers who have written the Node.js modules used in the project.
-- All VoIP, free software and security hackers that I read everyday.
-- My friend Carlos Pérez, the logo designer.
+- All VoIP, free software and security hackers that we read everyday.
+- Our friend Carlos Pérez, the logo designer.
 
 
 ## License
