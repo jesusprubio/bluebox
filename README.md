@@ -2,6 +2,7 @@
 
 [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2014.svg)](https://www.blackhat.com/eu-14/arsenal.html)
 [![Continuos integration](https://api.travis-ci.org/jesusprubio/bluebox-ng.svg)](https://travis-ci.org/jesusprubio/bluebox-ng)
+[![NSP Status](https://nodesecurity.io/orgs/bluebox-ng/projects/108045b9-2ea5-45be-b4d6-0b8ca1cdb8a7/badge)](https://nodesecurity.io/orgs/bluebox-ng/projects/108045b9-2ea5-45be-b4d6-0b8ca1cdb8a7)
 
 [![npm info](https://nodei.co/npm/bluebox-ng.png?downloads=true&downloadRank=true&stars=true)](https://npmjs.org/package/bluebox-ng)
 
