@@ -124,11 +124,9 @@ function runModule(moduleName, readStream) {
             let autoAnswer = null;
             if (answer !== '') {
               autoAnswer = answer.trim();
-            } else {
+            } else if (option === 'port') {
               // Tricking the info to pass to the module to cover this case
-              if (option === 'port') {
-                autoAnswer = portFromTransport[chosenTransport];
-              }
+              autoAnswer = portFromTransport[chosenTransport];
             }
             if (option === 'transport') {
               if (answer === '') {
@@ -258,19 +256,17 @@ function runCommand(comm, readStream) {
 
   if (commCases[splitComm[0]]) {
     commCases[splitComm[0]](readStream, splitComm);
+  } else if (modulesList.indexOf(comm) !== -1) {
+    runModule(comm, readStream);
   } else {
-    if (modulesList.indexOf(comm) !== -1) {
-      runModule(comm, readStream);
-    } else {
-      shell.exec(comm, { silent: true }, (code, output) => {
-        if (code === 127) {
-          logger.error('ERROR: module/command not found');
-        } else {
-          logger.regular(output);
-        }
-        readStream.prompt();
-      });
-    }
+    shell.exec(comm, { silent: true }, (code, output) => {
+      if (code === 127) {
+        logger.error('ERROR: module/command not found');
+      } else {
+        logger.regular(output);
+      }
+      readStream.prompt();
+    });
   }
 }
 
