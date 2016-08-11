@@ -38,10 +38,10 @@
     "test-func": "tape test/functional/**/*.js | tap-diff",
     "test": "npm run test-unit & npm run test-func",
     "lint": "eslint .",
-    "deps-ok": "depcheck",
-    "deps-sec": "nsp check",
-    "deps-old": "ncu",
-    "cont-int": "npm run lint && npm run deps-ok && npm run deps-sec && npm test"
+    "dep-ok": "depcheck",
+    "dep-sec": "nsp check",
+    "dep-old": "ncu",
+    "cont-int": "npm run lint && npm run dep-ok && npm run dep-sec && npm test"
   },
   "dependencies": {
     "async": "^0.9.0",
