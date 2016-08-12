@@ -34,11 +34,11 @@ const portFromTransport = {
   ws: 8080,
   wss: 4443,
 };
+const modulesGeneralOptions = {};
+const modulesSetVars = [];
 
 let modulesInfo = {};
 let modulesList = [];
-const modulesGeneralOptions = {};
-const modulesSetVars = [];
 let exitNext = false;
 let bluebox = null;
 let autoCompType = 'command';
@@ -46,22 +46,29 @@ let autoCompType = 'command';
 function completer(line) {
   let completions;
   let hits;
+  let tmpLine;
   switch (autoCompType) {
     case 'command':
       completions = modulesList.join(' ');
-      hits = modulesList.filter((c) => c.indexOf(line) === 0);
-
+      if (line.indexOf('help ') !== -1) {
+        tmpLine = line.substring(5);
+        hits = modulesList.filter((c) => c.indexOf(tmpLine) === 0);
+      } else {
+        tmpLine = line;
+        hits = modulesList.filter((c) => c.indexOf(tmpLine) === 0);
+      }
       break;
     case 'variable':
       completions = modulesSetVars.join(' ');
-      hits = modulesSetVars.filter((c) => c.indexOf(line) === 0);
+      tmpLine = line;
+      hits = modulesSetVars.filter((c) => c.indexOf(tmpLine) === 0);
 
       break;
     default:
       completions = [];
       hits = 0;
   }
-  return [(hits.length + 1 ? hits : completions), line];
+  return [(hits.length + 1 ? hits : completions), tmpLine];
 }
 
 
@@ -171,8 +178,10 @@ const commCases = {
       if (modulesList.indexOf(commArrr[1]) !== -1) {
         if (commArrr[1] === 'help') {
           logger.error('Really? xD');
-        } else {
+        } else if (modulesInfo[commArrr[1]] !== undefined) {
           logger.json(modulesInfo[commArrr[1]].help);
+        } else {
+          logger.error('ERROR: Help not found');
         }
       } else {
         logger.error('ERROR: Module not found');
