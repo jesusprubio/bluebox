@@ -77,7 +77,8 @@
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^1.0.0",
-    "whois": "^2.3.1"
+    "whois": "^2.3.1",
+    "ascii-art":"^1.0.3"
   },
   "devDependencies": {
     "depcheck": "^0.6.4",
