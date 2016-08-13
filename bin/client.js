@@ -25,6 +25,7 @@ const shell = require('shelljs');
 
 const Bluebox = require('../');
 const logger = require('../lib/utils/logger');
+var art = require('ascii-art');
 
 const prompt = 'Bluebox-ng> ';
 const portFromTransport = {
@@ -278,7 +279,17 @@ function runCommand(comm, readStream) {
     });
   }
 }
-
+function showRandomImage() {
+  art.image({
+      width : 50,
+      filepath : '../banner-images/bluebox-logo.png',
+      alphabet : 'variant4'
+  }).font('Bluebox-ng', 'Doom', 'cyan', function(ascii){
+      logger.welcome("\n");
+      logger.welcome(ascii);
+      logger.welcome("\n");
+  });
+}
 function createprompt() {
   const rl = readline.createInterface(process.stdin, process.stdout, completer);
 
@@ -329,6 +340,7 @@ lodash.each(modulesInfo, (v, k) => {
 modulesList = modulesList.concat(Object.keys(commCases).splice(1));
 
 // Welcome info is printed
+showRandomImage();
 logger.welcome('\n\tWelcome to Bluebox-ng');
 logger.info(`\t(v${bluebox.version()})\n`);
 
