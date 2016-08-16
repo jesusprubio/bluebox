@@ -78,7 +78,7 @@ test(`"${fileName}" method "run" with invalid param`, assert => {
   const expectedErr = 'Parsing the options: "target" : Any valid IPv4/IPv6 single address';
 
   return bluebox.run('geolocation', opts)
-  // Needed to know if it's going through the expected path.
+  // Needed to be sure it's going through the expected path.
   .then(() => assert.fail('Should fail.'))
   .catch(err => { assert.equal(err.message, expectedErr); });
 });
