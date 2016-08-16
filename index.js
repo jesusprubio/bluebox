@@ -21,6 +21,7 @@ const lodash = require('lodash');
 const utils = require('./lib/utils/common');
 const pkgInfo = require('./package.json');
 const debug = require('./lib/utils/debug')(utils.pathToName(__filename));
+const Promise = require('./lib/utils/Promise');
 
 
 class Bluebox {
@@ -40,59 +41,46 @@ class Bluebox {
   version() { return pkgInfo.version; }
 
 
-  // TODO: Allow to pass a value to get only help of a param
   help() { return this.modules; }
+
+
+  getShodanKey() { return this.shodanKey; }
 
 
   setShodanKey(value) { this.shodanKey = value; }
 
 
-  runModule(moduleName, cfg, callback) {
-    debug('Running module:', { name: moduleName, cfg });
+  run(moduleName, cfg) {
+    return new Promise((resolve, reject) => {
+      debug('Running module:', { name: moduleName, cfg });
 
-    if (!this.modules[moduleName]) {
-      callback({
-        message: 'Module not found',
-        error: null,
-      });
-
-      return;
-    }
-    const blueModule = this.modules[moduleName];
-
-    // Parsing the paremeters passed by the client
-    utils.parseOpts(
-      cfg,
-      blueModule.help.options,
-      (err, finalCfg) => {
-        if (err) {
-          callback({
-            message: 'Parsing the options',
-            error: err,
-          });
-
-          return;
-        }
-
-        const confWithKey = finalCfg;
-
-        if (moduleName.substr(0, 6) === 'shodan') {
-          if (this.shodanKey) {
-            confWithKey.key = this.shodanKey;
-          } else {
-            callback({
-              message: 'A SHODAN key is needed to run this module ' +
-                       '(https://account.shodan.io/register)',
-              error: null,
-            });
-
-            return;
-          }
-        }
-
-        blueModule.run(confWithKey, callback);
+      if (!this.modules[moduleName]) {
+        reject(new Error('Module not found'));
+        return;
       }
-    );
+
+      const blueModule = this.modules[moduleName];
+
+      // Parsing the paremeters passed by the client.
+      let confWithKey;
+      try {
+        confWithKey = utils.parseOpts(cfg, blueModule.help.options);
+      } catch (err) {
+        reject(new Error(`Parsing the options: ${err.message}`));
+      }
+      if (moduleName.substr(0, 6) === 'shodan') {
+        if (!this.shodanKey) {
+          // TODO: Move the string to the cfg file.
+          Promise.reject(new Error('A SHODAN key is needed to run this module ' +
+            '(https://account.shodan.io/register)'));
+        }
+        confWithKey.key = this.shodanKey;
+      }
+
+      // Returning another promise.
+      // return blueModule.run(confWithKey);
+      resolve(blueModule.run(confWithKey));
+    });
   }
 }
 

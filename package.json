@@ -1,6 +1,6 @@
 {
   "name": "bluebox-ng",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Pentesting stuff",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
@@ -34,9 +34,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "start": "./bin/client.js",
-    "test-unit": "tape test/unit/**/*.js | tap-diff",
-    "test-func": "tape test/functional/**/*.js | tap-diff",
-    "test": "npm run test-unit & npm run test-func",
+    "test": "tap test",
     "lint": "eslint .",
     "deps-ok": "depcheck",
     "deps-sec": "nsp check",
@@ -51,6 +49,7 @@
     "dns-axfr": "^0.1.2",
     "exploitsearch": "^1.0.9",
     "handlebars": "^4.0.5",
+    "iplocation": "^2.0.1",
     "jsftp": "^1.5.1",
     "libnmap": "^0.2.33",
     "local-ip": "^1.0.1",
@@ -62,7 +61,6 @@
     "nami": "^0.6.7",
     "native-dns": "^0.7.0",
     "netmask": "^1.0.5",
-    "node-freegeoip": "0.0.1",
     "node-wifiscanner": "^0.2.0",
     "ping": "^0.1.9",
     "prettyjson": "^1.1.0",
@@ -87,8 +85,7 @@
     "eslint-plugin-json": "^1.2.0",
     "npm-check-updates": "^2.8.0",
     "nsp": "^2.6.1",
-    "tap-diff": "^0.1.1",
-    "tape": "^4.6.0"
+    "tap": "^6.3.2"
   },
   "engines": {
     "node": "6.x.x",

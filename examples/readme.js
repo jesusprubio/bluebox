@@ -22,6 +22,7 @@
 const Bluebox = require('../');
 // const Bluebox = require('bluebox-ng');
 
+// TODO: Check without passing {}
 const bluebox = new Bluebox({});
 const moduleOptions = { target: '8.8.8.8' };
 
@@ -29,12 +30,12 @@ const moduleOptions = { target: '8.8.8.8' };
 console.log('Modules info:');
 console.log(JSON.stringify(bluebox.help(), null, 2));
 
-bluebox.runModule('geolocation', moduleOptions, (err, result) => {
-  if (err) {
-    console.log('Error:');
-    console.log(err);
-  } else {
-    console.log('Result:');
-    console.log(result);
-  }
+bluebox.run('geolocation', moduleOptions)
+.then(res => {
+  console.log('Result:');
+  console.log(res);
+})
+.catch(err => {
+  console.log('Error:');
+  console.log(err);
 });

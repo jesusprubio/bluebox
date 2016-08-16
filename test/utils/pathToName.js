@@ -15,14 +15,23 @@
 
 'use strict';
 
-const test = require('tape');
+const test = require('tap').test;
 
-const method = require('../../../../lib/utils/common').pathToName;
+const method = require('../../lib/utils/common').pathToName;
+const errorMsgs = require('../../lib/utils/errorMsgs').pathToName;
 
 
-test(`${method(__filename)} with a valid file name`, tst => {
-  /* One assertion expected. */
-  tst.plan(1);
+/* We can use this function here to get the name of this file
+because we're testing it. */
+test('"pathToName" with a valid file name', assert => {
+  assert.plan(1);
+  assert.equal('index', method('./a/b/c/index.js'));
+});
 
-  tst.equal('index', method('./a/b/c/index.js'));
+
+test('"pathToName" with an invalid file name', {}, assert => {
+  const expectedErr = new RegExp(errorMsgs.badPath);
+
+  assert.plan(1);
+  assert.throws(() => { method('a'); }, expectedErr);
 });
