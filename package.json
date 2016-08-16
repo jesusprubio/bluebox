@@ -39,7 +39,8 @@
     "dep-ok": "depcheck",
     "dep-sec": "nsp check",
     "dep-old": "ncu",
-    "cont-int": "npm run lint && npm run dep-ok && npm run dep-sec && npm test"
+    "cont-int": "npm run lint && npm run dep-ok && npm run dep-sec && npm test",
+    "release": "npm run-script cont-int && npn run-script doc && release-it"
   },
   "dependencies": {
     "async": "^2.0.1",
@@ -87,7 +88,8 @@
     "eslint-plugin-json": "^1.2.0",
     "npm-check-updates": "^2.8.0",
     "nsp": "^2.6.1",
-    "tap": "^6.3.2"
+    "tap": "^6.3.2",
+    "release-it": "^2.4.3"
   },
   "engines": {
     "node": "6.x.x",
