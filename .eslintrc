@@ -5,7 +5,8 @@
 
   "rules": {
     "max-len": [1, 100, 4],
-    "strict": [0]
+    "strict": [0],
+    "import/no-extraneous-dependencies": [0]
   },
 
   "plugins": ["json"]
