@@ -42,7 +42,7 @@
     "dep-sec": "nsp check",
     "dep-old": "ncu",
     "cont-int": "npm run lint && npm run dep-ok && npm run dep-sec && npm test",
-    "release": "npm run-script cont-int && npn run-script doc && release-it"
+    "release": "npm run cont-int && release-it"
   },
   "dependencies": {
     "async": "^2.0.1",
