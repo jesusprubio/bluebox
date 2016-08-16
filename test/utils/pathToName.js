@@ -17,7 +17,7 @@
 
 const test = require('tap').test;
 
-const method = require('../../lib/utils/common').pathToName;
+const method = require('../../lib/utils/utils').pathToName;
 const errorMsgs = require('../../lib/utils/errorMsgs').pathToName;
 
 

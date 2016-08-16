@@ -20,10 +20,10 @@
 const readline = require('readline');
 
 const async = require('async');
-const lodash = require('lodash');
 const shell = require('shelljs');
 
 const Bluebox = require('../');
+const utils = require('../lib/utils/utils');
 const logger = require('../lib/utils/logger');
 
 const prompt = 'Bluebox-ng> ';
@@ -187,7 +187,7 @@ const commCases = {
         logger.error('ERROR: Module not found');
       }
     } else {
-      lodash.each(modulesList, module => {
+      utils.each(modulesList, module => {
         if (modulesInfo[module]) {
           logger.highlight(module);
           if (modulesInfo[module].help) { // TO-DO: Delete this condition?
@@ -249,7 +249,7 @@ const commCases = {
     );
   },
   getg: readStream => {
-    lodash.each(modulesGeneralOptions, (v, k) => {
+    utils.each(modulesGeneralOptions, (v, k) => {
       logger.infoHigh(`${k}: `);
       logger.info(v);
     });
@@ -310,12 +310,12 @@ bluebox = new Bluebox({});
 // Generating the modules list and variables
 modulesInfo = bluebox.help();
 
-lodash.each(modulesInfo, (v, k) => {
+utils.each(modulesInfo, (v, k) => {
   if (Object.keys(v).length === 0) return;
   modulesList.push(k);
   if ('options' in v.help) {
     if (v.help.options !== undefined) {
-      lodash.each(v.help.options, (subv, subk) => {
+      utils.each(v.help.options, (subv, subk) => {
         if (modulesSetVars.indexOf(subk) === -1) {
           modulesSetVars.push(subk);
         }

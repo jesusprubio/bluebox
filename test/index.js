@@ -19,14 +19,12 @@ const test = require('tap').test;
 const lodash = require('lodash');
 const requireDir = require('require-directory');
 
-const pathToName = require('../lib/utils/common').pathToName;
+const pathToName = require('../lib/utils/utils').pathToName;
 const Bluebox = require('../');
 const pkgInfo = require('../package.json');
 
 
 const fileName = pathToName(__filename);
-
-
 // TODO: Check without passing {}
 const bluebox = new Bluebox({});
 

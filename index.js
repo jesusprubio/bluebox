@@ -15,13 +15,11 @@
 
 'use strict';
 
-const requireDir = require('require-directory');
-const lodash = require('lodash');
-
-const utils = require('./lib/utils/common');
 const pkgInfo = require('./package.json');
-const debug = require('./lib/utils/debug')(utils.pathToName(__filename));
-const Promise = require('./lib/utils/Promise');
+const utils = require('./lib/utils/utils');
+const parseOpts = require('./lib/utils/parseOpts');
+
+const debug = utils.debug(utils.pathToName(__filename));
 
 
 class Bluebox {
@@ -29,9 +27,9 @@ class Bluebox {
   constructor(opts) {
     this.shodanKey = opts.shodanKey || null;
     // Loading all present modules.
-    this.modules = lodash.extend(
-      requireDir(module, './lib/modules'),
-      requireDir(module, './lib/modules/private')
+    this.modules = utils.extend(
+      utils.requireDir(module, './lib/modules'),
+      utils.requireDir(module, './lib/modules/private')
     );
 
     debug('Started:', { version: pkgInfo.version });
@@ -64,7 +62,7 @@ class Bluebox {
       // Parsing the paremeters passed by the client.
       let confWithKey;
       try {
-        confWithKey = utils.parseOpts(cfg, blueModule.help.options);
+        confWithKey = parseOpts(cfg, blueModule.help.options);
       } catch (err) {
         reject(new Error(`Parsing the options: ${err.message}`));
       }
@@ -83,6 +81,5 @@ class Bluebox {
     });
   }
 }
-
 
 module.exports = Bluebox;

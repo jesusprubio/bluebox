@@ -17,8 +17,8 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../lib/utils/common').pathToName;
-const method = require('../../lib/utils/common').parseOpts;
+const pathToName = require('../../lib/utils/utils').pathToName;
+const method = require('../../lib/utils/parseOpts');
 
 const fileName = pathToName(__filename);
 
