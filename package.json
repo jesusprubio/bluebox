@@ -1,6 +1,6 @@
 {
   "name": "bluebox-ng",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Pentesting framework using Node.js powers. Specially focused in VoIP/UC.",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
