@@ -6,5 +6,9 @@
   },
   "pathToName": {
     "badPath": "Bad file path or not supported file type"
+  },
+  "parseOpts": {
+    "notFound": "Type not found",
+    "required": "Required option"
   }
 }

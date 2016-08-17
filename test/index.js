@@ -86,7 +86,7 @@ test(`"${fileName}" method "run" with invalid module`, assert => {
 test(`"${fileName}" method "run" with invalid param`, assert => {
   const opts = { target: 'a' };
   // TODO: Get also the second part from the proper file.
-  const expectedErr = `${errMsgs.parseOpts}: "target" : Any valid IPv4/IPv6 single address`;
+  const expectedErr = `${errMsgs.parseOpts} : "target" : Any valid IPv4/IPv6 single address`;
 
   return bluebox.run('geolocation', opts)
   // Needed to be sure it's going through the expected path.

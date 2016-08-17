@@ -65,7 +65,7 @@ class Bluebox {
       try {
         confWithKey = parseOpts(cfg, blueModule.help.options);
       } catch (err) {
-        reject(new Error(`${errMsgs.parseOpts}: ${err.message}`));
+        reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
       }
       if (moduleName.substr(0, 6) === 'shodan') {
         if (!this.shodanKey) {
