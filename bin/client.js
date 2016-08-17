@@ -328,14 +328,14 @@ utils.each(modulesInfo, (v, k) => {
 // Adding client modules (avoiding the empty string)
 modulesList = modulesList.concat(Object.keys(commCases).splice(1));
 
-// Welcome info is printed
+// Welcome info is printed.
 logger.welcome('\n\tWelcome to Bluebox-ng');
 logger.info(`\t(v${bluebox.version()})\n`);
 
-// The prompt is started
+// The prompt is started.
 createprompt();
 
-// Just in case ;)
+// Just in case ;).
 process.on('uncaughtException', err => {
   logger.error('"uncaughtException" found:');
   logger.error(err);

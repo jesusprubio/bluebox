@@ -1,4 +1,9 @@
 {
+  "index": {
+    "notFound": "Module not found",
+    "noKey": "A SHODAN key is needed to run this module (https://account.shodan.io/register)",
+    "parseOpts": "Parsing the options"
+  },
   "pathToName": {
     "badPath": "Bad file path or not supported file type"
   }

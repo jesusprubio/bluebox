@@ -20,6 +20,7 @@ const lodash = require('lodash');
 const requireDir = require('require-directory');
 
 const pathToName = require('../lib/utils/utils').pathToName;
+const errMsgs = require('../lib/utils/errorMsgs').index;
 const Bluebox = require('../');
 const pkgInfo = require('../package.json');
 
@@ -71,9 +72,21 @@ test(`"${fileName}" method "run"`, assert => {
 });
 
 
+test(`"${fileName}" method "run" with invalid module`, assert => {
+  const opts = {};
+  const expectedErr = errMsgs.notFound;
+
+  return bluebox.run('a', opts)
+  // Needed to be sure it's going through the expected path.
+  .then(() => assert.fail('Should fail.'))
+  .catch(err => { assert.equal(err.message, expectedErr); });
+});
+
+
 test(`"${fileName}" method "run" with invalid param`, assert => {
   const opts = { target: 'a' };
-  const expectedErr = 'Parsing the options: "target" : Any valid IPv4/IPv6 single address';
+  // TODO: Get also the second part from the proper file.
+  const expectedErr = `${errMsgs.parseOpts}: "target" : Any valid IPv4/IPv6 single address`;
 
   return bluebox.run('geolocation', opts)
   // Needed to be sure it's going through the expected path.

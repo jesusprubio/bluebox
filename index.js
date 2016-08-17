@@ -18,6 +18,7 @@
 const pkgInfo = require('./package.json');
 const utils = require('./lib/utils/utils');
 const parseOpts = require('./lib/utils/parseOpts');
+const errMsgs = require('./lib/utils/errorMsgs').index;
 
 const debug = utils.debug(utils.pathToName(__filename));
 
@@ -53,7 +54,7 @@ class Bluebox {
       debug('Running module:', { name: moduleName, cfg });
 
       if (!this.modules[moduleName]) {
-        reject(new Error('Module not found'));
+        reject(new Error(errMsgs.notFound));
         return;
       }
 
@@ -64,13 +65,12 @@ class Bluebox {
       try {
         confWithKey = parseOpts(cfg, blueModule.help.options);
       } catch (err) {
-        reject(new Error(`Parsing the options: ${err.message}`));
+        reject(new Error(`${errMsgs.parseOpts}: ${err.message}`));
       }
       if (moduleName.substr(0, 6) === 'shodan') {
         if (!this.shodanKey) {
           // TODO: Move the string to the cfg file.
-          Promise.reject(new Error('A SHODAN key is needed to run this module ' +
-            '(https://account.shodan.io/register)'));
+          Promise.reject(new Error(errMsgs.noKey));
         }
         confWithKey.key = this.shodanKey;
       }
