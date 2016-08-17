@@ -50,7 +50,7 @@ class Bluebox {
 
 
   run(moduleName, cfg) {
-    return new Promise((resolve, reject) => {
+    return new utils.Promise((resolve, reject) => {
       debug('Running module:', { name: moduleName, cfg });
 
       if (!this.modules[moduleName]) {
@@ -70,7 +70,7 @@ class Bluebox {
       if (moduleName.substr(0, 6) === 'shodan') {
         if (!this.shodanKey) {
           // TODO: Move the string to the cfg file.
-          Promise.reject(new Error(errMsgs.noKey));
+          reject(new Error(errMsgs.noKey));
         }
         confWithKey.key = this.shodanKey;
       }
