@@ -18,7 +18,7 @@
 const test = require('tap').test;
 
 const pathToName = require('../../lib/utils/utils').pathToName;
-const errMsgs = require('../../lib/utils/errorMsgs').parseOpts;
+const errMsgs = require('../../lib/utils/errorMsgs');
 const method = require('../../lib/utils/parseOpts');
 
 const fileName = pathToName(__filename);
@@ -28,6 +28,7 @@ test(`"${fileName}" with no parameters`, assert => {
   assert.plan(1);
   assert.deepEqual(method({}, {}), {});
 });
+
 
 test(`"${fileName}" with no parameters (passing someone)`, assert => {
   assert.plan(1);
@@ -59,7 +60,7 @@ test(`"${fileName}" with multiple parameters`, assert => {
 test(`"${fileName}" with type non valid type`, assert => {
   const expectedOpts = { target: { type: 'a' } };
   const passedOpts = { target: '9.9.9.9' };
-  const expectedErr = new RegExp(`"target" : ${errMsgs.notFound} : a`);
+  const expectedErr = new RegExp(`"target" : ${errMsgs.parseOpts.notFound} : a`);
 
   assert.plan(1);
   assert.throws(() => { method(passedOpts, expectedOpts); }, expectedErr);
@@ -68,7 +69,7 @@ test(`"${fileName}" with type non valid type`, assert => {
 
 test(`"${fileName}" without a non optional`, assert => {
   const expectedOpts = { target: { type: 'ip' } };
-  const expectedErr = new RegExp(`"target" : ${errMsgs.required}`);
+  const expectedErr = new RegExp(`"target" : ${errMsgs.parseOpts.required}`);
 
   assert.plan(1);
   assert.throws(() => { method({}, expectedOpts); }, expectedErr);
@@ -86,7 +87,8 @@ test(`"${fileName}" without an optional takes the default`, assert => {
 test(`"${fileName}" with a non valid value`, assert => {
   const expectedOpts = { target: { type: 'ip' }, port: { type: 'port' } };
   const passedOpts = { target: 'a', port: '8888' };
-  const expectedErr = new RegExp('"target" : Any valid IPv4/IPv6 single address');
+  // TODO: Get from the proper file.
+  const expectedErr = new RegExp(`"target" : ${errMsgs.types.ip}`);
 
   assert.plan(1);
   assert.throws(() => { method(passedOpts, expectedOpts); }, expectedErr);

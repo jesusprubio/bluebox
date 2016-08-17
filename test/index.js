@@ -20,7 +20,7 @@ const lodash = require('lodash');
 const requireDir = require('require-directory');
 
 const pathToName = require('../lib/utils/utils').pathToName;
-const errMsgs = require('../lib/utils/errorMsgs').index;
+const errMsgs = require('../lib/utils/errorMsgs');
 const Bluebox = require('../');
 const pkgInfo = require('../package.json');
 
@@ -41,7 +41,6 @@ test(`"${fileName}" method "help"`, assert => {
     requireDir(module, '../lib/modules'),
     requireDir(module, '../lib/modules/private')
   );
-
 
   assert.plan(1);
   assert.deepEqual(bluebox.help(), expectedRes);
@@ -74,7 +73,7 @@ test(`"${fileName}" method "run"`, assert => {
 
 test(`"${fileName}" method "run" with invalid module`, assert => {
   const opts = {};
-  const expectedErr = errMsgs.notFound;
+  const expectedErr = errMsgs.index.notFound;
 
   return bluebox.run('a', opts)
   // Needed to be sure it's going through the expected path.
@@ -85,8 +84,7 @@ test(`"${fileName}" method "run" with invalid module`, assert => {
 
 test(`"${fileName}" method "run" with invalid param`, assert => {
   const opts = { target: 'a' };
-  // TODO: Get also the second part from the proper file.
-  const expectedErr = `${errMsgs.parseOpts} : "target" : Any valid IPv4/IPv6 single address`;
+  const expectedErr = `${errMsgs.index.parseOpts} : "target" : ${errMsgs.types.ip}`;
 
   return bluebox.run('geolocation', opts)
   // Needed to be sure it's going through the expected path.

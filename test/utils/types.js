@@ -19,6 +19,7 @@ const test = require('tap').test;
 
 const pathToName = require('../../lib/utils/utils').pathToName;
 const obj = require('../../lib/utils/types');
+const errMsgs = require('../../lib/utils/errorMsgs').types;
 
 const fileName = pathToName(__filename);
 
@@ -30,7 +31,7 @@ test(`"${fileName}" method "ip"`, assert => {
 
 
 test(`"${fileName}" method "ip" (with invalid value)`, assert => {
-  const expectedErr = new RegExp('Any valid IPv4/IPv6 single address');
+  const expectedErr = new RegExp(errMsgs.ip);
 
   assert.plan(1);
   assert.throws(() => { obj.ip('a'); }, expectedErr);
@@ -44,7 +45,7 @@ test(`"${fileName}" method "ips" (single IP)`, assert => {
 
 
 test(`"${fileName}" method "ips" (single IP with invalid value)`, assert => {
-  const expectedErr = new RegExp('Any valid IPv4/IPv6 single address');
+  const expectedErr = new RegExp(errMsgs.ip);
 
   assert.plan(1);
   assert.throws(() => { obj.ips('a'); }, expectedErr);
