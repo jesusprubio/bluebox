@@ -23,34 +23,77 @@ const vorpal = require('vorpal')();
 const cfg = require('./cfg');
 const Bluebox = require('../');
 const logger = require('../lib/utils/logger');
+const utils = require('../lib/utils/utils');
 
+const debug = utils.debug(utils.pathToName(__filename));
+
+
+debug('Starting ...');
 const bluebox = new Bluebox({});
-// const modulesInfo = bluebox.help();
+debug('Getting all Bluebox modules details ...');
+const modulesInfo = bluebox.help();
+debug('Modules details', modulesInfo);
 
-vorpal
-  .command('say [words...]')
-  .option('-b, --backwards')
-  .option('-t, --twice')
-  .action((args) =>
-    new Promise((resolve, reject) => {
-      let str = args.words.join(' ');
+utils.debug('Defining the commands for the Bluebox modules ...');
+utils.each(utils.keys(modulesInfo), moduleName => {
+  vorpal
+    .command(moduleName)
+    .description(modulesInfo[moduleName].description)
+    .action(() =>
+      new Promise(resolve => {
+        const expectedOpts = modulesInfo[moduleName].options;
+        const parsedOpts = [];
 
-      str = (args.options.backwards) ?
-        str.split('').reverse().join('') :
-        str;
+        // Massaging the data to make Vorpal happy.
+        utils.each(utils.keys(expectedOpts), name => {
+          let message = `* ${name}: ${expectedOpts[name].description}`;
 
-      console.log(str);
-      resolve();
-    })
-  );
+          if (expectedOpts[name].defaultValue) {
+            message += ` (${expectedOpts[name].defaultValue})`;
+          }
 
+          parsedOpts.push({
+            type: 'input',
+            name,
+            message,
+          });
+        });
 
-  // Welcome info is printed.
+        // We need to use "activeCommand" because of a Vorpal limitation
+        // with ES6: https://github.com/dthree/vorpal/issues/14
+        vorpal.activeCommand.prompt(parsedOpts)
+        .then(answers => {
+          bluebox.run(moduleName, answers)
+          .then(res => {
+            logger.bold('\nRESULT:\n');
+            if (!res) {
+              logger.result('No result');
+            } else {
+              logger.json(res);
+            }
+            logger.regular('\n');
+            resolve();
+          })
+          .catch(err => {
+            // We always resolve (instead reject) because we don't
+            // want to stop the full program.
+            logger.error(`Running the module : ${err.message}`);
+            resolve();
+          });
+        })
+        .catch(err => {
+          logger.error(`Getting the options : ${err.message}`);
+          resolve();
+        });
+      })
+    );
+});
+
 logger.welcome('\n\tWelcome to Bluebox-ng');
 logger.info(`\t(v${bluebox.version()})\n`);
 
 
-// Starting the prompt.
+debug('Starting the prompt ...');
 vorpal.delimiter(cfg.prompt).show();
 
 
