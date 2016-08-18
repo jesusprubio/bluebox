@@ -95,8 +95,11 @@ logger.info(`\t(v${bluebox.version()})\n`);
 
 debug('Starting the prompt ...');
 vorpal
+  // Persistent command history.
   .history('bluebox-ng')
+  // Prompt content.
   .delimiter(cfg.prompt)
+  // Starting the prompt.
   .show();
 
 
