@@ -146,6 +146,16 @@ vorpal
 
 
 vorpal
+  .command('globalList')
+  .description('To get the values of all global parameters')
+  .action(() =>
+    new Promise(resolve => {
+      logger.json(globalParams);
+      resolve();
+    }));
+
+
+vorpal
   .command('globalGet')
   .description('To get the value of a global parameter')
   .action(() =>
