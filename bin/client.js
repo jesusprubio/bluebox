@@ -148,11 +148,11 @@ vorpal
 vorpal
   .command('globalList')
   .description('To get the values of all global parameters')
-  .action(() =>
-    new Promise(resolve => {
-      logger.json(globalParams);
-      resolve();
-    }));
+  .action(() => {
+    logger.json(globalParams);
+
+    return Promise.resolve();
+  });
 
 
 vorpal
