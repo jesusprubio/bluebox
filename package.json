@@ -76,6 +76,7 @@
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^1.0.0",
+    "vorpal": "^1.11.4",
     "whois": "^2.3.1"
   },
   "devDependencies": {
