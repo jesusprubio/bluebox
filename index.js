@@ -33,7 +33,7 @@ class Bluebox {
       utils.requireDir(module, './lib/modules/private')
     );
 
-    debug('Started:', { version: pkgInfo.version });
+    debug('Started', { version: pkgInfo.version });
   }
 
 
@@ -63,7 +63,7 @@ class Bluebox {
       // Parsing the paremeters passed by the client.
       let confWithKey;
       try {
-        confWithKey = parseOpts(cfg, blueModule.help.options);
+        confWithKey = parseOpts(cfg, blueModule.options);
       } catch (err) {
         reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
       }
