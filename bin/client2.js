@@ -20,6 +20,8 @@
 
 const vorpal = require('vorpal')();
 
+const cfg = require('./cfg');
+
 vorpal
   .command('say [words...]')
   .option('-b, --backwards')
@@ -37,4 +39,4 @@ vorpal
     })
   );
 
-vorpal.show();
+vorpal.delimiter(cfg.prompt).show();
