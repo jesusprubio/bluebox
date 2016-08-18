@@ -21,6 +21,11 @@
 const vorpal = require('vorpal')();
 
 const cfg = require('./cfg');
+const Bluebox = require('../');
+const logger = require('../lib/utils/logger');
+
+const bluebox = new Bluebox({});
+// const modulesInfo = bluebox.help();
 
 vorpal
   .command('say [words...]')
@@ -39,4 +44,20 @@ vorpal
     })
   );
 
+
+  // Welcome info is printed.
+logger.welcome('\n\tWelcome to Bluebox-ng');
+logger.info(`\t(v${bluebox.version()})\n`);
+
+
+// Starting the prompt.
 vorpal.delimiter(cfg.prompt).show();
+
+
+// Just in case ;).
+// TODO: Needed with vorpal?
+// process.on('uncaughtException', err => {
+//   logger.error('"uncaughtException" found:');
+//   logger.error(err);
+//   createprompt();
+// });
