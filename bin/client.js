@@ -94,7 +94,10 @@ logger.info(`\t(v${bluebox.version()})\n`);
 
 
 debug('Starting the prompt ...');
-vorpal.delimiter(cfg.prompt).show();
+vorpal
+  .history('bluebox-ng')
+  .delimiter(cfg.prompt)
+  .show();
 
 
 // Just in case ;).
