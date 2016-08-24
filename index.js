@@ -69,7 +69,6 @@ class Bluebox {
       }
       if (moduleName.substr(0, 6) === 'shodan') {
         if (!this.shodanKey) {
-          // TODO: Move the string to the cfg file.
           reject(new Error(errMsgs.noKey));
         }
         confWithKey.key = this.shodanKey;
