@@ -17,8 +17,8 @@
 
 const test = require('tap').test;
 
-const method = require('../../lib/utils/utils').pathToName;
-const errorMsgs = require('../../lib/utils/errorMsgs').pathToName;
+const method = require('../../../lib/utils/utils').pathToName;
+const errorMsgs = require('../../../lib/utils/errorMsgs').pathToName;
 
 
 /* We can use this function here to get the name of this file

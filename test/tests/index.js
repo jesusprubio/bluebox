@@ -19,10 +19,10 @@ const test = require('tap').test;
 const lodash = require('lodash');
 const requireDir = require('require-directory');
 
-const pathToName = require('../lib/utils/utils').pathToName;
-const errMsgs = require('../lib/utils/errorMsgs');
-const Bluebox = require('../');
-const pkgInfo = require('../package.json');
+const pathToName = require('../../lib/utils/utils').pathToName;
+const errMsgs = require('../../lib/utils/errorMsgs');
+const Bluebox = require('../../');
+const pkgInfo = require('../../package.json');
 
 
 const fileName = pathToName(__filename);
@@ -38,8 +38,8 @@ test(`"${fileName}" method "version"`, assert => {
 
 test(`"${fileName}" method "help"`, assert => {
   const expectedRes = lodash.extend(
-    requireDir(module, '../lib/modules'),
-    requireDir(module, '../lib/modules/private')
+    requireDir(module, '../../lib/modules'),
+    requireDir(module, '../../lib/modules/private')
   );
 
   assert.plan(1);
