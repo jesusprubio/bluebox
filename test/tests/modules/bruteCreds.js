@@ -67,6 +67,21 @@ server.start()
       server.stop();
     });
   });
+
+
+  test('should get a response for multiple valid and invalid credentials', assert => {
+    opts.port = 6666;
+
+    const expectedErr = `connect ECONNREFUSED ${opts.target}:${opts.port}`;
+
+    return method.run(opts)
+    .then(() => assert.fail('Should fail.'))
+    .catch(err => {
+      assert.equal(err.message, expectedErr);
+
+      server.stop();
+    });
+  });
 });
 
 
