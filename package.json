@@ -65,6 +65,7 @@
     "node-wifiscanner": "^0.2.0",
     "ping": "^0.1.9",
     "prettyjson": "^1.1.0",
+    "product-iterable": "^1.0.3",
     "request": "^2.55.0",
     "require-directory": "^2.1.0",
     "shelljs": "^0.7.3",
