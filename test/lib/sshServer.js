@@ -36,33 +36,13 @@ class Server {
     this.server = new ssh.Server(
       { hostKeys: [key] },
       (client) => {
-        client
-        .on('authentication', ctx => {
+        client.on('authentication', ctx => {
           if (ctx.method === 'password' &&
           ctx.username === cfg.userName && ctx.password === cfg.password) {
             ctx.accept();
           } else {
             ctx.reject();
           }
-        })
-        .on('ready', () => {
-          client.on('session', accept => {
-            const session = accept();
-
-            session.on('pty', accept2 => {
-              accept2();
-
-              session.on('shell', accept3 => {
-                const stream = accept3();
-
-                stream.setEncoding('utf8');
-                // TODO: Move the string to a setup file.
-                stream.write('Hi dude! :)\n');
-                stream.exit(0);
-                stream.end();
-              });
-            });
-          });
         });
       }
     );
