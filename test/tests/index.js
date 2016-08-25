@@ -19,7 +19,7 @@ const test = require('tap').test;
 const lodash = require('lodash');
 const requireDir = require('require-directory');
 
-const pathToName = require('../../lib/utils/utils').pathToName;
+const pathToName = require('../../lib/utils').pathToName;
 const errMsgs = require('../../lib/utils/errorMsgs');
 const Bluebox = require('../../');
 const pkgInfo = require('../../package.json');

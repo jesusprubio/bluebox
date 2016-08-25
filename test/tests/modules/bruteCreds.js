@@ -17,7 +17,7 @@
 
 const test = require('tap').test;
 
-const utils = require('../../../lib/utils/utils');
+const utils = require('../../../lib/utils');
 const method = require('../../../lib/modules/bruteCreds.js');
 const Server = require('../../lib/sshServer');
 

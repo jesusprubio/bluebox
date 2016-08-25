@@ -23,7 +23,7 @@ const vorpal = require('vorpal')();
 const cfg = require('./cfg');
 const Bluebox = require('../');
 const logger = require('../lib/utils/logger');
-const utils = require('../lib/utils/utils');
+const utils = require('../lib/utils');
 
 const Promise = utils.Promise;
 const debug = utils.debug(utils.pathToName(__filename));

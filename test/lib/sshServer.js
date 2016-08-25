@@ -22,7 +22,7 @@ const path = require('path');
 
 const ssh = require('ssh2');
 
-const utils = require('../../lib/utils/utils');
+const utils = require('../../lib/utils');
 
 // Mandatory to start the server.
 const key = fs.readFileSync(path.resolve(__dirname, '../artifacts/keys/key'));

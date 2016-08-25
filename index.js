@@ -16,7 +16,7 @@
 'use strict';
 
 const pkgInfo = require('./package.json');
-const utils = require('./lib/utils/utils');
+const utils = require('./lib/utils');
 const parseOpts = require('./lib/utils/parseOpts');
 const errMsgs = require('./lib/utils/errorMsgs').index;
 

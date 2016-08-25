@@ -18,7 +18,7 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../../lib/utils/utils').pathToName;
+const pathToName = require('../../../lib/utils').pathToName;
 const method = require('../../../lib/protocols/ssh');
 const Server = require('../../lib/sshServer');
 
