@@ -20,6 +20,7 @@ const utils = require('./lib/utils/utils');
 const parseOpts = require('./lib/utils/parseOpts');
 const errMsgs = require('./lib/utils/errorMsgs').index;
 
+const Promise = utils.Promise;
 const debug = utils.debug(utils.pathToName(__filename));
 
 
@@ -50,7 +51,7 @@ class Bluebox {
 
 
   run(moduleName, cfg) {
-    return new utils.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       debug('Running module:', { name: moduleName, cfg });
 
       if (!this.modules[moduleName]) {
@@ -68,14 +69,11 @@ class Bluebox {
         reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
       }
       if (moduleName.substr(0, 6) === 'shodan') {
-        if (!this.shodanKey) {
-          reject(new Error(errMsgs.noKey));
-        }
+        if (!this.shodanKey) { reject(new Error(errMsgs.noKey)); }
         confWithKey.key = this.shodanKey;
       }
 
       // Returning another promise.
-      // return blueModule.run(confWithKey);
       resolve(blueModule.run(confWithKey));
     });
   }
