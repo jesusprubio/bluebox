@@ -236,10 +236,17 @@ vorpal
   .show();
 
 
-// Just in case ;).
-// TODO: Needed with vorpal?
-// process.on('uncaughtException', err => {
-//   logger.error('"uncaughtException" found:');
-//   logger.error(err);
-//   createprompt();
-// });
+// Just in case we lost something, to avoid a full break.
+process.on('uncaughtException', err => {
+  logger.error('"uncaughtException" found:');
+  logger.error(err);
+
+  // Restarting the prompt to let the user continue without a restart.
+  vorpal.show();
+});
+
+process.on('unhandledRejection', reason => {
+  logger.error(`"unhandledRejection : reason : ${reason}`);
+
+  vorpal.show();
+});
