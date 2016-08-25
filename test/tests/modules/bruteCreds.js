@@ -27,7 +27,7 @@ const serverCfg = {
   userName: 'foo',
   password: 'bar',
 };
-// Starting an SSH server to test the module.
+// A SSH server to test the module.
 const server = new Server(serverCfg);
 const opts = {
   target: serverCfg.ip,
@@ -61,15 +61,12 @@ server.start()
 
     return method.run(opts)
     .then(res => {
-      server.stop();
-
       assert.deepEqual(res, [[serverCfg.userName, serverCfg.password]]);
-      server.stop();
     });
   });
 
 
-  test('should get a response for multiple valid and invalid credentials', assert => {
+  test('should fail for an invalid port', assert => {
     opts.port = 6666;
 
     const expectedErr = `connect ECONNREFUSED ${opts.target}:${opts.port}`;
@@ -77,9 +74,9 @@ server.start()
     return method.run(opts)
     .then(() => assert.fail('Should fail.'))
     .catch(err => {
-      assert.equal(err.message, expectedErr);
-
       server.stop();
+
+      assert.equal(err.message, expectedErr);
     });
   });
 });
