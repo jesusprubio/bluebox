@@ -17,13 +17,10 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../../lib/utils').pathToName;
 const method = require('../../../lib/modules/geolocation');
 
-const fileName = pathToName(__filename);
 
-
-test(`"${fileName}" for a public IP address`, assert => {
+test('with a public IP address', assert => {
   const opts = { target: '8.8.8.8' };
 
   return method.run(opts)
@@ -47,7 +44,7 @@ test(`"${fileName}" for a public IP address`, assert => {
 });
 
 
-test(`"${fileName}" for a private IP address`, assert => {
+test('with a private IP address', assert => {
   const opts = { target: '192.168.0.1' };
 
   return method.run(opts)

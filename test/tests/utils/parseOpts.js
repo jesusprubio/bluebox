@@ -17,26 +17,23 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../../lib/utils').pathToName;
 const errMsgs = require('../../../lib/utils/errorMsgs');
 const method = require('../../../lib/utils/parseOpts');
 
-const fileName = pathToName(__filename);
 
-
-test(`"${fileName}" with no parameters`, assert => {
+test('with no parameters', assert => {
   assert.plan(1);
   assert.deepEqual(method({}, {}), {});
 });
 
 
-test(`"${fileName}" with no parameters (passing someone)`, assert => {
+test('with no parameters (passing someone)', assert => {
   assert.plan(1);
   assert.deepEqual(method({ target: '9.9.9.9' }, {}), {});
 });
 
 
-test(`"${fileName}" with single parameter`, assert => {
+test('with single parameter', assert => {
   const expectedOpts = { target: { type: 'ip' } };
   const passedOpts = { target: '9.9.9.9' };
 
@@ -45,7 +42,7 @@ test(`"${fileName}" with single parameter`, assert => {
 });
 
 
-test(`"${fileName}" with multiple parameters`, assert => {
+test('with multiple parameters', assert => {
   const expectedOpts = { target: { type: 'ip' }, port: { type: 'port' } };
   const passedOpts = { target: '9.9.9.9', port: '8888' };
 
@@ -57,7 +54,7 @@ test(`"${fileName}" with multiple parameters`, assert => {
 });
 
 
-test(`"${fileName}" with type non valid type`, assert => {
+test('with type non valid type', assert => {
   const expectedOpts = { target: { type: 'a' } };
   const passedOpts = { target: '9.9.9.9' };
   const expectedErr = new RegExp(`"target" : ${errMsgs.parseOpts.notFound} : a`);
@@ -67,7 +64,7 @@ test(`"${fileName}" with type non valid type`, assert => {
 });
 
 
-test(`"${fileName}" without a non optional`, assert => {
+test('without a non optional', assert => {
   const expectedOpts = { target: { type: 'ip' } };
   const expectedErr = new RegExp(`"target" : ${errMsgs.parseOpts.required}`);
 
@@ -76,7 +73,7 @@ test(`"${fileName}" without a non optional`, assert => {
 });
 
 
-test(`"${fileName}" without an optional takes the default`, assert => {
+test('without an optional takes the default', assert => {
   const expectedOpts = { target: { type: 'ip', defaultValue: '8.8.8.8' } };
 
   assert.plan(1);
@@ -84,7 +81,7 @@ test(`"${fileName}" without an optional takes the default`, assert => {
 });
 
 
-test(`"${fileName}" with a non valid value`, assert => {
+test('with a non valid value', assert => {
   const expectedOpts = { target: { type: 'ip' }, port: { type: 'port' } };
   const passedOpts = { target: 'a', port: '8888' };
   // TODO: Get from the proper file.

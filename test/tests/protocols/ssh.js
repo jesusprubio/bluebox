@@ -18,11 +18,9 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../../lib/utils').pathToName;
 const method = require('../../../lib/protocols/ssh');
 const Server = require('../../lib/sshServer');
 
-const fileName = pathToName(__filename);
 const serverCfg = {
   ip: '127.0.0.1',
   port: 1337,
@@ -43,35 +41,35 @@ server.start()
 .then(() => {
   /* We need the server ready before starting the tests. */
 
-  test(`"${fileName}" protocol should get response for valid credentials`, assert => {
+  test('with valid credentials', assert => {
     clientCfg.credPair = [serverCfg.userName, serverCfg.password];
 
     return method(clientCfg).then(res => { assert.deepEqual(res, clientCfg.credPair); });
   });
 
 
-  test(`"${fileName}" protocol should get null for invalid username`, assert => {
+  test('with invalid username', assert => {
     clientCfg.credPair = [serverCfg.userName, 'kase'];
 
     return method(clientCfg).then(res => { assert.equal(res, null); });
   });
 
 
-  test(`"${fileName}" protocol should get null for invalid password`, assert => {
+  test('with invalid password', assert => {
     clientCfg.credPair = ['ola', serverCfg.password];
 
     return method(clientCfg).then(res => { assert.equal(res, null); });
   });
 
 
-  test(`"${fileName}" protocol should get null for invalid both credentials`, assert => {
+  test('with invalid both credentials', assert => {
     clientCfg.credPair = ['ola', 'kase'];
 
     return method(clientCfg).then(res => { assert.equal(res, null); });
   });
 
 
-  test(`"${fileName}" protocol should fail for another error`, assert => {
+  test('with another error', assert => {
     clientCfg.credPair = [serverCfg.userName, serverCfg.password];
     clientCfg.port = 9999;
     const expectedErr = `connect ECONNREFUSED ${clientCfg.target}:${clientCfg.port}`;

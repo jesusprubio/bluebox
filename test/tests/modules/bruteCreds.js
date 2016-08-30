@@ -40,7 +40,7 @@ const opts = {
 
 server.start()
 .then(() => {
-  test('should get a response for single valid credential', assert => {
+  test('with single valid credential', assert => {
     opts.passwords = [serverCfg.password];
 
     return method.run(opts)
@@ -48,7 +48,7 @@ server.start()
   });
 
 
-  test('should get empty response for single invalid credential', assert => {
+  test('with single invalid credential', assert => {
     opts.passwords = ['ola'];
 
     return method.run(opts)
@@ -56,7 +56,7 @@ server.start()
   });
 
 
-  test('should get a response for multiple valid and invalid credentials', assert => {
+  test('with multiple valid and invalid credentials', assert => {
     opts.passwords = ['ola', 'bar'];
 
     return method.run(opts)
@@ -66,7 +66,7 @@ server.start()
   });
 
 
-  test('should fail for an invalid port', assert => {
+  test('with an invalid port', assert => {
     opts.port = 6666;
 
     const expectedErr = `connect ECONNREFUSED ${opts.target}:${opts.port}`;
@@ -92,7 +92,7 @@ serverCfg2.password = 'foo';
 const server2 = new Server(serverCfg2);
 server2.start()
 .then(() => {
-  test('should get a response for non valid credentials but "userAsPass" is valid', assert => {
+  test('with non valid credentials but "userAsPass" is valid', assert => {
     // Any non valid is ok here.
     opts.port = serverCfg2.port;
     opts.passwords = ['ola'];

@@ -17,29 +17,27 @@
 
 const test = require('tap').test;
 const lodash = require('lodash');
-const requireDir = require('require-directory');
 
-const pathToName = require('../../lib/utils').pathToName;
-const errMsgs = require('../../lib/utils/errorMsgs');
+const utils = require('../../lib/utils');
 const Bluebox = require('../../');
 const pkgInfo = require('../../package.json');
+const errMsgs = require('../../lib/utils/errorMsgs');
 
 
-const fileName = pathToName(__filename);
 // TODO: Check without passing {}
 const bluebox = new Bluebox({});
 
 
-test(`"${fileName}" method "version"`, assert => {
+test('method "version"', assert => {
   assert.plan(1);
   assert.deepEqual(bluebox.version(), pkgInfo.version);
 });
 
 
-test(`"${fileName}" method "help"`, assert => {
+test('method "help"', assert => {
   const expectedRes = lodash.extend(
-    requireDir(module, '../../lib/modules'),
-    requireDir(module, '../../lib/modules/private')
+    utils.requireDir(module, '../../lib/modules'),
+    utils.requireDir(module, '../../lib/modules/private')
   );
 
   assert.plan(1);
@@ -47,7 +45,7 @@ test(`"${fileName}" method "help"`, assert => {
 });
 
 
-test(`"${fileName}" method "run"`, assert => {
+test('method "run"', assert => {
   const opts = { target: '8.8.8.8' };
 
   return bluebox.run('geolocation', opts)
@@ -71,7 +69,7 @@ test(`"${fileName}" method "run"`, assert => {
 });
 
 
-test(`"${fileName}" method "run" with invalid module`, assert => {
+test('method "run" with invalid module', assert => {
   const opts = {};
   const expectedErr = errMsgs.index.notFound;
 
@@ -82,7 +80,7 @@ test(`"${fileName}" method "run" with invalid module`, assert => {
 });
 
 
-test(`"${fileName}" method "run" with invalid param`, assert => {
+test('method "run" with invalid param', assert => {
   const opts = { target: 'a' };
   const expectedErr = `${errMsgs.index.parseOpts} : "target" : ${errMsgs.types.ip}`;
 
@@ -94,7 +92,7 @@ test(`"${fileName}" method "run" with invalid param`, assert => {
 
 
 // TODO: Uncomment when the module is working.
-// test(`"${fileName}" method "run" (Shodan command without key)`, assert => {
+// test('method "run" (Shodan command without key)', assert => {
 //   const opts = { target: '8.8.8.8' };
 //   const expectedErr = 'A SHODAN key is needed to run this module ' +
 //     '(https://account.shodan.io/register)';

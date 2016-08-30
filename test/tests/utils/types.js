@@ -17,20 +17,17 @@
 
 const test = require('tap').test;
 
-const pathToName = require('../../../lib/utils').pathToName;
 const obj = require('../../../lib/utils/types');
 const errMsgs = require('../../../lib/utils/errorMsgs').types;
 
-const fileName = pathToName(__filename);
 
-
-test(`"${fileName}" method "ip"`, assert => {
+test('method "ip"', assert => {
   assert.plan(1);
   assert.equal(obj.ip('8.8.8.8'), '8.8.8.8');
 });
 
 
-test(`"${fileName}" method "ip" (with invalid value)`, assert => {
+test('method "ip" (with invalid value)', assert => {
   const expectedErr = new RegExp(errMsgs.ip);
 
   assert.plan(1);
@@ -38,13 +35,13 @@ test(`"${fileName}" method "ip" (with invalid value)`, assert => {
 });
 
 
-test(`"${fileName}" method "ips" (single IP)`, assert => {
+test('method "ips" (single IP)', assert => {
   assert.plan(1);
   assert.deepEqual(obj.ips('8.8.8.8'), ['8.8.8.8']);
 });
 
 
-test(`"${fileName}" method "ips" (single IP with invalid value)`, assert => {
+test('method "ips" (single IP with invalid value)', assert => {
   const expectedErr = new RegExp(errMsgs.ip);
 
   assert.plan(1);
@@ -52,7 +49,7 @@ test(`"${fileName}" method "ips" (single IP with invalid value)`, assert => {
 });
 
 
-test(`"${fileName}" method "ips" (IPv4 range)`, assert => {
+test('method "ips" (IPv4 range)', assert => {
   assert.plan(1);
   assert.deepEqual(obj.ips('192.168.0.1-3'), [
     '192.168.0.1',

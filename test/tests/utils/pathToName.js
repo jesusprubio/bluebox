@@ -23,13 +23,13 @@ const errorMsgs = require('../../../lib/utils/errorMsgs').pathToName;
 
 /* We can use this function here to get the name of this file
 because we're testing it. */
-test('"pathToName" with a valid file name', assert => {
+test('with a valid file name', assert => {
   assert.plan(1);
   assert.equal('index', method('./a/b/c/index.js'));
 });
 
 
-test('"pathToName" with an invalid file name', {}, assert => {
+test('with an invalid file name', {}, assert => {
   const expectedErr = new RegExp(errorMsgs.badPath);
 
   assert.plan(1);
