@@ -52,7 +52,7 @@ utils.each(utils.keys(modulesInfo), moduleName => {
     .command(moduleName)
     .description(modulesInfo[moduleName].description)
     .action(() =>
-      new Promise(resolve => {
+      new Promise((resolve, reject) => {
         const expectedOpts = modulesInfo[moduleName].options;
         const parsedOpts = [];
 
@@ -108,7 +108,7 @@ utils.each(utils.keys(modulesInfo), moduleName => {
             // We always resolve (instead reject) because we don't
             // want to break the full app.
             logger.error(`Running the module : ${err.message}`);
-            resolve();
+            reject();
           });
         })
         .catch(err => {
