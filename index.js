@@ -50,32 +50,29 @@ class Bluebox {
   setShodanKey(value) { this.shodanKey = value; }
 
 
+  // Should always return a promise.
   run(moduleName, cfg) {
-    return new Promise((resolve, reject) => {
-      debug('Running module:', { name: moduleName, cfg });
+    debug('Running module:', { name: moduleName, cfg });
 
-      if (!this.modules[moduleName]) {
-        reject(new Error(errMsgs.notFound));
-        return;
-      }
+    if (!this.modules[moduleName]) {
+      return Promise.reject(new Error(errMsgs.notFound));
+    }
 
-      const blueModule = this.modules[moduleName];
+    const blueModule = this.modules[moduleName];
 
-      // Parsing the paremeters passed by the client.
-      let confWithKey;
-      try {
-        confWithKey = parseOpts(cfg, blueModule.options);
-      } catch (err) {
-        reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
-      }
-      if (moduleName.substr(0, 6) === 'shodan') {
-        if (!this.shodanKey) { reject(new Error(errMsgs.noKey)); }
-        confWithKey.key = this.shodanKey;
-      }
+    // Parsing the paremeters passed by the client.
+    let confWithKey;
+    try {
+      confWithKey = parseOpts(cfg, blueModule.options);
+    } catch (err) {
+      return Promise.reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
+    }
+    if (moduleName.substr(0, 6) === 'shodan') {
+      if (!this.shodanKey) { return Promise.reject(new Error(errMsgs.noKey)); }
+      confWithKey.key = this.shodanKey;
+    }
 
-      // Returning another promise.
-      resolve(blueModule.run(confWithKey));
-    });
+    return blueModule.run(confWithKey);
   }
 }
 
