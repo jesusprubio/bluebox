@@ -50,7 +50,6 @@
     "dns-axfr": "^0.1.2",
     "exploitsearch": "^1.0.9",
     "handlebars": "^4.0.5",
-    "iplocation": "^2.0.1",
     "jsftp": "^1.5.1",
     "ldapjs": "^1.0.0",
     "libnmap": "jas-/node-libnmap",
@@ -62,7 +61,6 @@
     "nami": "^0.7.1",
     "native-dns": "^0.7.0",
     "netmask": "^1.0.5",
-    "node-wifiscanner": "^0.2.0",
     "ping": "^0.1.9",
     "prettyjson": "^1.1.0",
     "product-iterable": "^1.0.3",
@@ -72,13 +70,12 @@
     "shodan-client": "^2.0.0",
     "sip-fake-stack": "jesusprubio/sip-fake-stack",
     "snmp-native": "^1.0.18",
-    "ssh2": "^0.5.0",
     "subquest": "^1.2.0",
     "tcp-ping": "^0.1.1",
     "tftp-client": "^0.2.1",
     "traceroute": "^1.0.0",
     "vorpal": "^1.11.4",
-    "whois": "^2.3.1"
+    "wushu": "github:jesusprubio/wushu.js"
   },
   "devDependencies": {
     "depcheck": "^0.6.4",

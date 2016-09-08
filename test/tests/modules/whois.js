@@ -21,9 +21,11 @@ const method = require('../../../lib/modules/whois');
 
 
 test('with a valid domain', assert => {
+  assert.plan(3);
+
   const opts = { domain: 'google.com' };
 
-  return method.run(opts)
+  method.run(opts)
   .then(res => {
     const lines = res.split('\n');
 

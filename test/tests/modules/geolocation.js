@@ -21,49 +21,23 @@ const method = require('../../../lib/modules/geolocation');
 
 
 test('with a public IP address', assert => {
-  const opts = { target: '8.8.8.8' };
+  assert.plan(3);
 
-  return method.run(opts)
+  method.run({ target: '8.8.8.8' })
   .then(res => {
-    const expected = {
-      ip: opts.target,
-      country_code: 'US',
-      country_name: 'United States',
-      region_code: 'CA',
-      region_name: 'California',
-      city: 'Mountain View',
-      time_zone: 'America/Los_Angeles',
-      zip_code: '94035',
-      latitude: 37.386,
-      longitude: -122.0838,
-      metro_code: 807,
-    };
-
-    assert.deepEqual(res, expected);
+    assert.equal(res.country_code, 'US');
+    assert.equal(res.country_name, 'United States');
   });
 });
 
 
 test('with a private IP address', assert => {
-  const opts = { target: '192.168.0.1' };
+  assert.plan(3);
 
-  return method.run(opts)
+  method.run({ target: '192.168.0.1' })
   .then(res => {
-    const expected = {
-      ip: opts.target,
-      country_code: '',
-      country_name: '',
-      region_code: '',
-      region_name: '',
-      city: '',
-      time_zone: '',
-      zip_code: '',
-      latitude: 0,
-      longitude: 0,
-      metro_code: 0,
-    };
-
-    assert.deepEqual(res, expected, 'should be equivalent to empty stuff');
+    assert.equal(res.country_code, '');
+    assert.equal(res.country_name, '');
   });
 });
 

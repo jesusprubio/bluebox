@@ -41,37 +41,43 @@ const opts = {
 server.start()
 .then(() => {
   test('with single valid credential', assert => {
+    assert.plan(1);
+
     opts.passwords = [serverCfg.password];
 
-    return method.run(opts)
+    method.run(opts)
     .then(res => assert.deepEqual(res, [[serverCfg.userName, serverCfg.password]]));
   });
 
 
   test('with single invalid credential', assert => {
+    assert.plan(1);
+
     opts.passwords = ['ola'];
 
-    return method.run(opts)
+    method.run(opts)
     .then(res => assert.deepEqual(res, []));
   });
 
 
   test('with multiple valid and invalid credentials', assert => {
+    assert.plan(1);
+
     opts.passwords = ['ola', 'bar'];
 
-    return method.run(opts)
-    .then(res => {
-      assert.deepEqual(res, [[serverCfg.userName, serverCfg.password]]);
-    });
+    method.run(opts)
+    .then(res => assert.deepEqual(res, [[serverCfg.userName, serverCfg.password]]));
   });
 
 
   test('with an invalid port', assert => {
+    assert.plan(1);
+
     opts.port = 6666;
 
     const expectedErr = `connect ECONNREFUSED ${opts.target}:${opts.port}`;
 
-    return method.run(opts)
+    method.run(opts)
     .then(() => assert.fail('Should fail.'))
     .catch(err => {
       server.stop();
@@ -93,12 +99,14 @@ const server2 = new Server(serverCfg2);
 server2.start()
 .then(() => {
   test('with non valid credentials but "userAsPass" is valid', assert => {
+    assert.plan(1);
+
     // Any non valid is ok here.
     opts.port = serverCfg2.port;
     opts.passwords = ['ola'];
     opts.userAsPass = true;
 
-    return method.run(opts)
+    method.run(opts)
     .then(res => {
       server2.stop();
 

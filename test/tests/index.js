@@ -30,76 +30,66 @@ const bluebox = new Bluebox({});
 
 test('method "version"', assert => {
   assert.plan(1);
+
   assert.deepEqual(bluebox.version(), pkgInfo.version);
 });
 
 
 test('method "help"', assert => {
+  assert.plan(1);
+
   const expectedRes = lodash.extend(
     utils.requireDir(module, '../../lib/modules'),
     utils.requireDir(module, '../../lib/modules/private')
   );
 
-  assert.plan(1);
   assert.deepEqual(bluebox.help(), expectedRes);
 });
 
 
 test('method "run"', assert => {
-  const opts = { target: '8.8.8.8' };
+  assert.plan(2);
 
-  return bluebox.run('geolocation', opts)
+  bluebox.run('geolocation', { target: '8.8.8.8' })
   .then(res => {
-    const expected = {
-      ip: opts.target,
-      country_code: 'US',
-      country_name: 'United States',
-      region_code: 'CA',
-      region_name: 'California',
-      city: 'Mountain View',
-      time_zone: 'America/Los_Angeles',
-      zip_code: '94035',
-      latitude: 37.386,
-      longitude: -122.0838,
-      metro_code: 807,
-    };
-
-    assert.deepEqual(res, expected);
+    assert.equal(res.country_code, 'US');
+    assert.equal(res.country_name, 'United States');
   });
 });
 
 
 test('method "run" with invalid module', assert => {
-  const opts = {};
-  const expectedErr = errMsgs.index.notFound;
+  assert.plan(1);
 
-  return bluebox.run('a', opts)
+  bluebox.run('a', {})
   // Needed to be sure it's going through the expected path.
   .then(() => assert.fail('Should fail.'))
-  .catch(err => { assert.equal(err.message, expectedErr); });
+  .catch(err => assert.equal(err.message, errMsgs.index.notFound));
 });
 
 
 test('method "run" with invalid param', assert => {
-  const opts = { target: 'a' };
+  assert.plan(1);
+
   const expectedErr = `${errMsgs.index.parseOpts} : "target" : ${errMsgs.types.ip}`;
 
-  return bluebox.run('geolocation', opts)
+  bluebox.run('geolocation', { target: 'a' })
   // Needed to be sure it's going through the expected path.
   .then(() => assert.fail('Should fail.'))
-  .catch(err => { assert.equal(err.message, expectedErr); });
+  .catch(err => assert.equal(err.message, expectedErr));
 });
 
 
 // TODO: Uncomment when the module is working.
 // test('method "run" (Shodan command without key)', assert => {
+//  assert.plan(1);
 //   const opts = { target: '8.8.8.8' };
 //   const expectedErr = 'A SHODAN key is needed to run this module ' +
 //     '(https://account.shodan.io/register)';
 //
-//   return bluebox.run('shodanHost', opts)
+//   bluebox.run('shodanHost', opts)
 //   .then(() => assert.fail('Should fail.'))
-//   .catch(err => { assert.equal(err.message, expectedErr); });
+//   .catch(err => assert.equal(err.message, expectedErr));
 // });
 // test(`"${fileName}" method "run" (Shodan command without key)`, assert => {
 

@@ -41,7 +41,7 @@ debug('Getting all Bluebox modules details ...');
 const modulesInfo = bluebox.help();
 debug('Modules details', modulesInfo);
 
-utils.debug('Defining the commands for the Bluebox modules ...');
+debug('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), moduleName => {
   // We need this to do a trick to include the global parameters.
   // The Bluebox library manages the module parameters default values
