@@ -89,6 +89,7 @@ bluebox.run('geolocation', moduleOptions)
 ```sh
 npm run-script cont-int
 ```
+- We don't implement tests for the modules which call ["wushu.js"](https://github.com/jesusprubio/wushu.js) methods directly. We're already testing them there.
 
 ### Debug
 We use the [visionmedia module](https://github.com/visionmedia/debug), so you have to use this environment variable:
