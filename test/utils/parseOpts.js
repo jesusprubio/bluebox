@@ -17,8 +17,8 @@
 
 const test = require('tap').test;
 
-const errMsgs = require('../../../lib/utils/errorMsgs');
-const method = require('../../../lib/utils/parseOpts');
+const errMsgs = require('../../lib/utils/errorMsgs');
+const method = require('../../lib/utils/parseOpts');
 
 
 test('with no parameters', assert => {

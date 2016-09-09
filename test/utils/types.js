@@ -17,8 +17,8 @@
 
 const test = require('tap').test;
 
-const obj = require('../../../lib/utils/types');
-const errMsgs = require('../../../lib/utils/errorMsgs').types;
+const obj = require('../../lib/utils/types');
+const errMsgs = require('../../lib/utils/errorMsgs').types;
 
 
 test('method "ip"', assert => {

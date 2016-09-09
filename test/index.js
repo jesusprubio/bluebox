@@ -18,10 +18,10 @@
 const test = require('tap').test;
 const lodash = require('lodash');
 
-const utils = require('../../lib/utils');
-const Bluebox = require('../../');
-const pkgInfo = require('../../package.json');
-const errMsgs = require('../../lib/utils/errorMsgs');
+const utils = require('../lib/utils');
+const Bluebox = require('../');
+const pkgInfo = require('../package.json');
+const errMsgs = require('../lib/utils/errorMsgs');
 
 
 // TODO: Check without passing {}
@@ -39,8 +39,8 @@ test('method "help"', assert => {
   assert.plan(1);
 
   const expectedRes = lodash.extend(
-    utils.requireDir(module, '../../lib/modules'),
-    utils.requireDir(module, '../../lib/modules/private')
+    utils.requireDir(module, '../lib/modules'),
+    utils.requireDir(module, '../lib/modules/private')
   );
 
   assert.deepEqual(bluebox.help(), expectedRes);

@@ -34,7 +34,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "start": "node ./bin/client",
-    "test": "tap test/tests",
+    "test": "tap test",
     "lint": "eslint .",
     "dep-ok": "depcheck",
     "dep-sec": "nsp check",
