@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Copyright 	Jesus Perez <jesusprubio gmail com>
-#		Aan Wahyu <cacaddv gmail com>	
+# Copyright   Jesus Perez <jesusprubio gmail com>
+#             Aan Wahyu <cacaddv gmail com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
