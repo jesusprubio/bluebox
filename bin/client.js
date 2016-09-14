@@ -55,7 +55,7 @@ utils.each(utils.keys(modulesInfo), moduleName => {
     .command(moduleName)
     .description(modulesInfo[moduleName].description)
     .action(() =>
-      new Promise((resolve, reject) => {
+      new Promise(resolve => {
         const expectedOpts = modulesInfo[moduleName].options;
         const parsedOpts = [];
 
@@ -109,13 +109,14 @@ utils.each(utils.keys(modulesInfo), moduleName => {
           })
           .catch(err => {
             // We always resolve (instead reject) because we don't
-            // want to break the full app.
+            // want to print the error with vorpal (doesn't allow colors).
             logger.error(`Running the module : ${err.message}`);
-            reject();
+            resolve();
           });
         })
         .catch(err => {
           logger.error(`Getting the options : ${err.message}`);
+          // console.log('1111111111111111');
           resolve();
         });
       }));
