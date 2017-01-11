@@ -23,7 +23,6 @@ module.exports.options = {
   target: {
     type: 'ip',
     description: 'Host to attack',
-    // TODO: REMOVE
     defaultValue: '127.0.0.1',
   },
   port: {

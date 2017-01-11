@@ -14,8 +14,7 @@
 const BlueboxCli = require('../../').Cli;
 // const BlueboxCli = require('bluebox-ng').Cli;
 
-// TODO: Check without passing {}
-const cli = new BlueboxCli({});
+const cli = new BlueboxCli();
 const moduleOptions = { target: '8.8.8.8' };
 
 

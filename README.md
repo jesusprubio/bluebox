@@ -67,7 +67,7 @@ To run it from other Node code.
 ```javascript
 const BlueboxCli = require('bluebox-ng').Cli;
 
-const cli = new BlueboxCli({});
+const cli = new BlueboxCli();
 const moduleOptions = { target: '8.8.8.8' };
 
 console.log('Modules info:');

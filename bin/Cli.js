@@ -18,7 +18,7 @@ const dbg = utils.dbg(__filename);
 
 class BlueboxCli {
 
-  constructor(opts) {
+  constructor(opts = {}) {
     this.shodanKey = opts.shodanKey || null;
     // Loading all present modules.
     this.modules = utils.extend(
