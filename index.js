@@ -1,81 +1,41 @@
 /*
-  Copyright Jesus Perez <jesusprubio gmail com>
+  Copyright Jesús Pérez <jesusprubio@gmail.com>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  This code may only be used under the GPLv3 license found at
+  http://www.gnu.org/licenses/gpl-3.0.txt.
 */
 
 'use strict';
 
 const pkgInfo = require('./package.json');
 const utils = require('./lib/utils');
-const parseOpts = require('./lib/utils/parseOpts');
-const errMsgs = require('./lib/utils/errorMsgs').index;
 
-const Promise = utils.Promise;
-const debug = utils.debug(utils.pathToName(__filename));
+// Root methods.
+const bluebox = utils.requireDir(module, './lib/index');
 
+// Grouped methods.
+bluebox.wifi = utils.requireDir(module, './lib/wifi');
+bluebox.dns = utils.requireDir(module, './lib/dns');
 
-class Bluebox {
+// We only want to expose some of them.
+bluebox.utils = {
+  validator: utils.validator,
+  ProductIterable: utils.ProductIterable,
+  requireDir: utils.requireDir,
+  localIp: utils.localIp,
+  ipInRange: utils.ipInRange,
+  netCalc: utils.netCalc,
+};
 
-  constructor(opts) {
-    this.shodanKey = opts.shodanKey || null;
-    // Loading all present modules.
-    this.modules = utils.extend(
-      utils.requireDir(module, './lib/modules'),
-      utils.requireDir(module, './lib/modules/private')
-    );
+// The only only allowed here because it's never going to be required individually.
+bluebox.version = () => pkgInfo.version;
 
-    debug('Started', { version: pkgInfo.version });
-  }
+// Full external objects. They're not going to be required individually, it would have
+// more sense to require the single dependency instead.
+bluebox.shodan = require('shodan-client');
 
-
-  version() { return pkgInfo.version; }
-
-
-  help() { return this.modules; }
-
-
-  getShodanKey() { return this.shodanKey; }
-
-
-  setShodanKey(value) { this.shodanKey = value; }
+// The full client also is exposed to use it programatically.
+bluebox.Cli = require('./bin/Cli');
 
 
-  // Should always return a promise.
-  run(moduleName, cfg) {
-    debug('Running module:', { name: moduleName, cfg });
-
-    if (!this.modules[moduleName]) {
-      return Promise.reject(new Error(errMsgs.notFound));
-    }
-
-    const blueModule = this.modules[moduleName];
-
-    // Parsing the paremeters passed by the client.
-    let confWithKey;
-    try {
-      confWithKey = parseOpts(cfg, blueModule.options);
-    } catch (err) {
-      return Promise.reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
-    }
-    if (moduleName.substr(0, 6) === 'shodan') {
-      if (!this.shodanKey) { return Promise.reject(new Error(errMsgs.noKey)); }
-      confWithKey.key = this.shodanKey;
-    }
-
-    return blueModule.run(confWithKey);
-  }
-}
-
-module.exports = Bluebox;
+module.exports = bluebox;

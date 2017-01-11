@@ -12,7 +12,7 @@
   ],
   "main": "index",
   "bin": {
-    "bluebox-ng": "bin/client.js"
+    "bluebox-ng": "bin"
   },
   "repository": {
     "type": "git",
@@ -33,41 +33,59 @@
   },
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node ./bin/client",
-    "test": "tap test",
+    "start": "node bin",
+    "test": "tap test/cli",
     "lint": "eslint .",
-    "dep-ok": "depcheck",
+    "dep-ok": "depcheck --ignores=release-it",
     "dep-sec": "nsp check",
     "dep-old": "ncu",
-    "cont-int": "npm run lint && npm run dep-ok && npm run dep-sec && npm test",
+    "posttest": "npm run lint && npm run dep-ok && npm run dep-sec",
     "release": "npm run cont-int && release-it"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "bluebird": "^3.4.1",
     "cli-color": "^1.1.0",
     "debug": "^2.2.0",
+    "dns-axfr": "^0.1.5",
+    "exploitsearch": "^2.0.2",
+    "icanhazip": "^1.0.3",
+    "ip-range-check": "0.0.2",
+    "iplocation": "^2.0.1",
+    "is-local-ip": "^1.0.1",
+    "jsftp": "^1.5.5",
+    "libnmap": "^0.3.9",
     "lodash": "^4.14.1",
     "netmask": "^1.0.5",
+    "network-calculator": "^1.2.0",
+    "node-wifiscanner": "^0.2.1",
+    "nodejs-traceroute": "^1.1.0",
+    "ping": "^0.2.1",
     "prettyjson": "^1.1.0",
     "product-iterable": "^1.0.3",
+    "quick-local-ip": "^1.0.7",
     "require-directory": "^2.1.0",
+    "shodan-client": "^3.0.2",
+    "ssh2": "^0.5.4",
+    "subquest": "^1.2.0",
+    "tcp-ping": "^0.1.1",
+    "validator": "^6.2.1",
     "vorpal": "^1.11.4",
-    "wushu": "github:jesusprubio/wushu.js"
+    "whois": "^2.3.6"
   },
   "devDependencies": {
-    "async": "^2.0.1",
     "depcheck": "^0.6.4",
-    "eslint": "^3.2.2",
-    "eslint-config-airbnb-base": "^5.0.1",
-    "eslint-plugin-import": "^1.10.0",
+    "eslint": "^3.6.0",
+    "eslint-config-airbnb-base": "^8.0.0",
+    "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-json": "^1.2.0",
     "npm-check-updates": "^2.8.0",
-    "nsp": "^2.6.1",
-    "tap": "^6.3.2",
-    "release-it": "^2.4.3"
+    "nsp": "^2.1.0",
+    "release-it": "^2.5.3",
+    "tap": "^8.0.1"
   },
   "engines": {
-    "node": "6.x.x",
-    "npm": "3.x.x"
+    "node": ">=7",
+    "npm": ">=3"
   }
 }

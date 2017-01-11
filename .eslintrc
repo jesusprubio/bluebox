@@ -1,12 +1,9 @@
 {
   "extends": "airbnb-base",
 
-  "//": "They use Babel and it adds 'use strict' automatically.",
-
   "rules": {
     "max-len": [1, 100, 4],
-    "strict": [0],
-    "import/no-extraneous-dependencies": [0]
+    "strict": [0]
   },
 
   "plugins": ["json"]

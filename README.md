@@ -52,18 +52,28 @@ npm i -g bluebox-ng
 
 
 ## Use
-- Console client: ```bluebox-ng```
-- As a library:
-```javascript
-const Bluebox = require('bluebox-ng');
 
-const bluebox = new Bluebox({});
+### Client
+
+#### Console
+The pentesting environment.
+```sh
+bluebox-ng
+```
+
+#### Programatically
+To run it from other Node.js code.
+
+```javascript
+const BlueboxCli = require('bluebox-ng').Cli;
+
+const cli = new BlueboxCli({});
 const moduleOptions = { target: '8.8.8.8' };
 
 console.log('Modules info:');
-console.log(JSON.stringify(bluebox.help(), null, 2));
+console.log(JSON.stringify(cli.help(), null, 2));
 
-bluebox.run('geolocation', moduleOptions)
+cli.run('geolocation', moduleOptions)
 .then(res => {
   console.log('Result:');
   console.log(res);
@@ -74,44 +84,65 @@ bluebox.run('geolocation', moduleOptions)
 });
 ```
 
+### Framework
+You can also add your own features to the pentesting environment following this tips:
+- Add a new module inside "bin/lib/modules/".
+- Use the most similar one as boilerplate.
+- The methods included in the next section will help you.
+- New ones can call another modules (the "run" method is always a promise).
+- Now it should appear in the pentesting environment.
 
-## Issues
-- https://github.com/jesusprubio/bluebox-ng/issues
+
+### Library
+You can also use externally the methods used in the modules as any other Node library:
+
+```javascript
+const bluebox = require('bluebox-ng');
+
+bluebox.geo('8.8.8.8')
+.then(res => {
+  console.log('Result:');
+  console.log(res);
+})
+.catch(err => {
+  console.log('Error:');
+  console.log(err);
+});
+```
+- Full API documentation [here](./doc/api.md).
 
 
 ## Developer guide
-- Start coding with one of the actual modules similar to the new one as a boilerplate.
+
 - Use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
 
+### Tests:
+We still don't have a proper Docker setup. So, for now, the test have to be run locally. Please check its code before it, they often need a valid target service.
+```
+./node_modules/.bin/tap test/wifi
+node test/wifi/*
+./node_modules/.bin/tap test/wifi/scanAps.js
+node test/wifi/scanAps.js
+```
+
 ### Conventions:
- - We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
+- We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
 - Please run to be sure your code fits with it and the tests keep passing:
 ```sh
-npm run-script cont-int
+npm run posttest
 ```
-- We don't implement tests for the modules which call ["wushu.js"](https://github.com/jesusprubio/wushu.js) methods directly. We're already testing them there.
+#### Commit messages rules:
+- It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
+- If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
+- It should provide enough information for a reviewer to understand the changes and their relation to the rest of the code.
+
 
 ### Debug
 We use the [visionmedia module](https://github.com/visionmedia/debug), so you have to use this environment variable:
 ```sg
 DEBUG=bluebox* npm start
+DEBUG=bluebox-ng:Cli* npm start
 ```
-
-### Commit messages rules:
- - It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
- - If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
- - It should provide enough information for a reviewer to understand the changes and their relation to the rest of the code.
-
-
-## Core devs
-- Jesús Pérez
- - [@jesusprubio](https://twitter.com/jesusprubio)
- - jesusprubio gmail com
- - [http://jesusprubio.name/](http://jesusprubio.name/)
-
-- Sergio García
- - [@s3rgiogr](https://twitter.com/s3rgiogr)
- - s3rgio.gr gmail com
 
 
 ## Contributors
@@ -122,7 +153,6 @@ DEBUG=bluebox* npm start
 - Our mentors: [@antonroman](https://twitter.com/antonroman), [@sandrogauci](https://twitter.com/sandrogauci) (SIPVicious was our inspiration), [@pepeluxx](https://twitter.com/pepeluxx), [@markcollier46](https://twitter.com/markcollier46) (["Hacking VoIP Exposed"](http://www.hackingvoip.com/)).
 - [Quobis](http://www.quobis.com), some hours of work through personal projects program.
 - Kamailio community ([@kamailioproject](https://twitter.com/kamailioproject)), our favourite SIP Server.
-- John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
 - All developers who have written the Node.js modules used in the project.
 - All VoIP, free software and security hackers that we read everyday.

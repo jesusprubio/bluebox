@@ -1,7 +1,6 @@
 test
-example
-
-node_modules
+bin/example
+finalReport*
 
 .dockerignore
 .eslintrc
@@ -10,13 +9,23 @@ node_modules
 .travis.yml
 .Dockerfile
 
+*.csv
+*.dat
+*.iml
 *.log
-output
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+*.xml
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Icon?
-ehthumbs.db
-Thumbs.db
+.idea
+.project
+.strong-pm
+coverage
+node_modules
+npm-debug.log
+*.lock

@@ -1,20 +1,25 @@
 # Reports
 finalReport*
 
-# Node modules
-node_modules
-
-# Logs and databases
+*.csv
+*.dat
+*.iml
 *.log
-output
-
-# OS files
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+*.xml
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Icon?
-ehthumbs.db
-Thumbs.db
+.idea
+.project
+.strong-pm
+coverage
+node_modules
+npm-debug.log
+*.lock
+.vscode
 

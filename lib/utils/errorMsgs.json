@@ -1,30 +1,5 @@
 {
-  "index": {
-    "notFound": "Module not found",
-    "noKey": "A SHODAN key is needed to run this module (https://account.shodan.io/register)",
-    "parseOpts": "Parsing the options"
-  },
-  "pathToName": { "badPath": "Bad file path or not supported file type" },
-  "parseOpts": {
-    "notFound": "Type not found",
-    "required": "Required option"
-  },
-  "types": {
-    "positiveInt": "Any positive integer",
-    "float": "Any float",
-    "port": "Any valid port (0..65535)",
-    "domain": "Any valid domain, ie: google.com, www.google.com",
-    "host": "Any valid host (domain or IPv4/IPv6 single address)",
-    "ip": "Any valid IPv4/IPv6 single address",
-    "yesNo": "valid: yes | no",
-    "nmap" : {
-      "targets" : "Single hostname ipv4 (still not ipv6), a CIDR or a numerical range, ie: 192.168.0.0/24, 192.168.1.1-5",
-      "ports" : "ie: 21,22,80,443,3306,60000-65535"
-    },
-    "readFile": "Reading file",
-    "ipsCidr": "ie: 192.168.0.0/24, 2001:0C00::/32",
-    "ipsCidrV6": "IPv6 still not supported here",
-    "ipsRange": "ie: 192.168.0.1-5 (only last block supported for now)",
-    "portRange": "ie: 5060-5065"
-  }
+  "paramReq" : "Required parameter",
+  "paramBad" : "Bad parameter",
+  "badPath": "Bad file path or not supported file type"
 }
