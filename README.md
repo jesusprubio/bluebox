@@ -84,8 +84,8 @@ cli.run('geolocation', moduleOptions)
 });
 ```
 
-### Framework
-You can also add your own features to the pentesting environment following this tips:
+#### Framework
+You can add your own features to the pentesting environment following this tips:
 - Add a new module inside `bin/lib/modules`.
 - Use the most similar one as boilerplate.
 - The methods included in the next section will help you.
