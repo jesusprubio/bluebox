@@ -56,13 +56,13 @@ npm i -g bluebox-ng
 ### Client
 
 #### Console
-The pentesting environment.
+To start the pentesting environment.
 ```sh
 bluebox-ng
 ```
 
 #### Programatically
-To run it from other Node.js code.
+To run it from other Node code.
 
 ```javascript
 const BlueboxCli = require('bluebox-ng').Cli;
@@ -86,10 +86,10 @@ cli.run('geolocation', moduleOptions)
 
 ### Framework
 You can also add your own features to the pentesting environment following this tips:
-- Add a new module inside "bin/lib/modules/".
+- Add a new module inside `bin/lib/modules`.
 - Use the most similar one as boilerplate.
 - The methods included in the next section will help you.
-- New ones can call another modules (the "run" method is always a promise).
+- New ones can call another modules (the `run` method is always a promise).
 - Now it should appear in the pentesting environment.
 
 
@@ -129,7 +129,7 @@ node test/wifi/scanAps.js
 - We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
 - Please run to be sure your code fits with it and the tests keep passing:
 ```sh
-npm run posttest
+npm test
 ```
 #### Commit messages rules:
 - It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
