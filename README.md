@@ -53,10 +53,11 @@ npm i -g bluebox-ng
 
 ## Use
 
-### Client
+### Framework
+A pentesting environment.
 
 #### Console
-To start the pentesting environment.
+To start the console client.
 ```sh
 bluebox-ng
 ```
@@ -83,8 +84,8 @@ cli.run('geolocation', { rhost: '8.8.8.8' })
 });
 ```
 
-#### Framework
-You can add your own features to the pentesting environment following this tips:
+#### New modules
+You can add your own features to this environment following this tips:
 - Add a new module inside `bin/lib/modules`.
 - Use the most similar one as boilerplate.
 - The methods included in the next section will help you.
