@@ -20,7 +20,7 @@
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
 const method = require('../../lib/utils').pathToName;
-const errorMsgs = require('../../bin/lib/utils/errorMsgs').pathToName;
+const errorMsgs = require('../../bin/lib/errorMsgs').pathToName;
 
 
 // We can use this function here to get the name of this file

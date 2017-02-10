@@ -9,9 +9,9 @@ Returns the actual version of the library.
 
 `1.0.0`
 
-## `trace(ip) -> Promise`
+## `trace(rhost) -> Promise`
 Display the route of your packages. A wrapper for [nodejs-traceroute](https://github.com/zulhilmizainuddin/nodejs-traceroute).
-- `ip` (string) - IP address.
+- `rhost` (string) - IP address.
 
 ```
 [
@@ -25,9 +25,9 @@ Display the route of your packages. A wrapper for [nodejs-traceroute](https://gi
 ]
 ```
 
-## `ping(ips, opts) -> Promise`
+## `ping(rhosts, opts) -> Promise`
 Ping protocol client. A wrapper for [node-ping](https://github.com/danielzzz/node-ping).
-- `ips` (string Array) - IP addresses.
+- `rhosts` (string Array) - IP addresses.
 - `opts` is an object with:
  - `attempts` (number) - Number of times to try. (default: 3)
 
@@ -40,37 +40,15 @@ Ping protocol client. A wrapper for [node-ping](https://github.com/danielzzz/nod
 }
 ```
 
-## `pingTcp(ip, opts) -> Promise`
-Ping protocol client. A wrapper for [tcp-ping](https://www.npmjs.com/package/tcp-ping
-).
-- `ip` (string) - IP address.
-- `opts` is an object with:
- - `port` (number) - Port to ping. (default: 80)
- - `timeout` (number) - Time to wait for a response (in ms.). (default: 5000)
- - `attempts` (number) - Number of times to try. (default: 3)
-
-```
-{
-  port: 443,
-  attempts: 3,
-  avg: 25.635144999999998,
-  max: 26.480348,
-  min: 24.407738,
-  results:
-   [ { seq: 0, time: 26.480348 },
-     { seq: 1, time: 26.017349 },
-     { seq: 2, time: 24.407738 } ]
-}
-```
 
 ## `externalIp() -> Promise`
 Get your external IP Address. A wrapper for [icanhazip](https://github.com/runvnc/icanhazip).
 
 `78.22.182.183`
 
-## `geo(ip) -> Promise`
+## `geo(rhost) -> Promise`
 Geolocate a host using [freegeoip.net](https://freegeoip.net/). A wrapper for [iplocation](https://github.com/roryrjb/iplocation).
-- `ip` (string) - IP address.
+- `rhost` (string) - IP address.
 
 ```
 {
@@ -106,50 +84,60 @@ Sponsoring Registrar IANA ID: 1262
 ...
 ```
 
-## `nmap(range, opts) -> Promise`
-Manage the [Nmap](https://nmap.org/) binary. A wrapper for [libnmap](https://github.com/jas-/node-libnmap).
-- `range` (string) - Valid IPv4/v6 IP range (ie: '10.0.2.0/25','192.168.10.80-120', 'fe80::42:acff:fe11:fd4e/64').
-- `opts` is an object with the options allowed in the original module. Please [check here](https://github.com/jas-/node-libnmap#options).
+## `webShoot(url, opts) -> Promise`
+WHOIS protocol client. A wrapper for [whois](https://github.com/hjr265/node-whois).
+- `url` (string) - Valid URI.
+- `opts` is an object with:
+  - `path` (string) - Path (global) of the picture to generate (default: same folder from where the Node process was launched).
+  - `ua` (string) - User agent to use (default: browser standard).
 
 ```
 {
-  '127.0.0.1': {
-    item: {
-      scanner: 'nmap',
-      args: 'nmap --host-timeout=120s -T4 -oX - -p1-1024 127.0.0.1',
-      start: '1472831198',
-      startstr: 'Fri Sep  2 17:46:38 2016',
-      version: '6.47',
-      xmloutputversion: '1.04'
-    },
-    scaninfo: [ [Object] ],
-    verbose: [ [Object] ],
-    debugging: [ [Object] ],
-    host: [ [Object] ],
-    runstats: [ [Object] ]
-  },
-  'scanme.nmap.org': {
-    item: {
-      scanner: 'nmap',
-      args: 'nmap --host-timeout=120s -T4 -oX - -p1-1024 scanme.nmap.org',
-      start: '1472831198',
-      startstr: 'Fri Sep  2 17:46:38 2016',
-      version: '6.47',
-      xmloutputversion: '1.04'
-    },
-    scaninfo: [ [Object] ],
-
-  ...
-  }
+  path: "/home/test/pic.png",
 }
 ```
 
-## `brute(ip, opts) -> Promise`
-Brute-force a service.
-- `ip` (string) - IP address.
+## `map.net(rhosts, opts) -> Promise`
+Network mapping at transport level, for now it only support full TCP scan. Possible status:
+"open", "closed (timeout)", "closed (refused)", "closed (unreachable)".
+- `rhosts` (string) - Valid IPv4 IP range (ie: '10.0.2.0/25','192.168.10.80-120).
 - `opts` is an object with:
-  - `protocol` (string) - Application protocol to use. Options: 'ssh', 'ftp'. (default: 'ssh')
-  - `port` (string) - Port to attack. (default: depending protocol, ie: 'ssh' -> 22)
+ - `rports` (number) - Ports to ping in each host. (default: [21, 22, 80, 443])
+ - `timeout` (number) - Time to wait for a response (in ms.). (default: 5000)
+ - `concurrency` (number) - Max number of simultaneous socket opened. (default: 500)
+ - `banner` (boolean) - Capture the service banner. (default: true)
+
+```
+[
+  { ip: '127.0.0.1', port: 443, status: 'closed (refused)' },
+  { ip: '127.0.0.1', port: 80, status: 'closed (refused)' },
+  { ip: '127.0.0.1', port: 22, status: 'closed (refused)' },
+  { ip: '127.0.0.1', port: 21, status: 'closed (refused)' }
+]
+```
+
+## `map.services(rhosts, opts) -> Promise`
+Network mapping at app/protocol level.
+- `rhosts` (array) - With valid IPv4 rhosts.
+- `opts` is an object with:
+ - `proto` (string) - Application protocol to use. Options: 'ping' (TCP), 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239). (default: 'sip')
+ - `rports` (number) - Ports to inspect in each host. (default: depending protocol, ie: 'http': [80, 443, 8008, 8080])
+ - `timeout` (number) - Time to wait for a response (in ms.). (default: 5000)
+ - `concurrency` (number) - Max number of simultaneous socket opened. (default: 500)
+
+```
+[
+  { ip: '127.0.0.1', port: 80, data: { headers: { 'Server' : 'X-Powered-By', ... },
+  { ip: '127.0.0.1', port: 21, data: 'ProFTPD 1.3.4c Server (ProFTPD)' }
+]
+```
+
+## `brute(rhost, opts) -> Promise`
+Brute-force a service.
+- `rhost` (string) - IP address.
+- `opts` is an object with:
+  - `proto` (string) - Application protocol to use. Options: 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239), 'mysql', 'mongo', 'ldap', 'snmp'. (default: 'sip')
+  - `ports` (string) - Port to attack. (default: depending protocol, ie: 'ssh' -> 22)
   - `users` (Array) - Username list. (default: ['0000', '0001', '0002'])
   - `passwords` (Array) - Password list. (default: ['0000', '0001', '0002'])
   - `userAsPass` (boolean) - Add the user to the password list. (default: false)
@@ -200,9 +188,9 @@ Ping protocol client. A wrapper for [exploitsearch.js](https://github.com/jesusp
 ## `shodan.* -> Object`
 A wrapper for [shodan-client.js](https://github.com/jesusprubio/shodan-client.js#api).
 
-## `dns.reverse(ip) -> Promise`
+## `dns.reverse(rhost) -> Promise`
 Reverse resolution.
-- `ip` (string) - IP address.
+- `rhost` (string) - IP address.
 
 ```
 [ 'google-public-dns-a.google.com' ]`
@@ -237,19 +225,19 @@ Multiple records type resolution.
 }
 ```
 
-## `dns.axfr(server, domain) -> Promise`
+## `dns.axfr(domain, server) -> Promise`
 [Zone transfer](https://en.wikipedia.org/wiki/DNS_zone_transfer). A wrapper for [dns-axfr](https://github.com/jpenalbae/dns-axfr).
-- `server` (string) - Server to use. Fully qualified domain name (ie. example.com) or IP address.
 - `domain` (string) - Domain to inspect. Fully qualified domain name.
+- `server` (string) - Server to use. Fully qualified domain name (ie. example.com) or IP address.
 
 ```
 TODO
 ```
 
-## `dns.brute(server, domain, opts) -> Promise`
+## `dns.brute(domain, server, opts) -> Promise`
 Subdomain brute-force. A wrapper for [subquest](https://github.com/skepticfx/subquest).
-- `server` (string) - Server to use. IP address.
-- `domain` (string) - Domain to inspect. Fully qualified domain name.
+- `domain` (string) - Domain to inspect, fully qualified domain name.
+- `server` (string) - Server to use, IP address.
 - `opts` is an object with:
  - `rateLimit` (number) - Max. number of request at the same time. (default: 10)
  - `dictionary` (string) - Words to make the attack (in ms.). (default: top_100). We're using "subquest" module, so please check [here](https://github.com/skepticfx/subquest/tree/master/dictionary) the options.

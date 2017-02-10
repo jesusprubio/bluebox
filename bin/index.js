@@ -12,20 +12,25 @@
 'use strict';
 
 const vorpal = require('vorpal')();
+const vHn = require('vorpal-hacker-news');
+const vLess = require('vorpal-less');
+const vGrep = require('vorpal-grep');
+// TODO
+// const vRepl = require('vorpal-repl');
+// const vTour = require('vorpal-tour');
 
-const cfg = require('./cfg');
+const cfg = require('./cfg/cli');
 const BlueboxCli = require('../').Cli;
-const logger = require('./lib/utils/logger');
-const utils = require('./lib/utils');
+const logger = require('./lib/logger');
+const utils = require('./lib');
 
 const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
-
 // Global paramameters to avoid the user having to rewrite them
 // in each module run. They are proposed as the default value.
 // They name should be equal to the one to module expected option
 // which should rewrite.
-const globalParams = {};
+const globals = {};
 
 
 dbg('Starting ...');
@@ -40,24 +45,26 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
   // The Bluebox library manages the module parameters default values
   // for us. But we need this trick to allow the global parameters.
   const defaults = {};
+  dbg(`Loading "${moduleName}" module ...`);
 
   vorpal
     .command(moduleName)
-    .description(modulesInfo[moduleName].description)
+    .description(modulesInfo[moduleName].desc)
     .action(() =>
       new Promise((resolve) => {
-        const expectedOpts = modulesInfo[moduleName].options;
+        const expectedOpts = modulesInfo[moduleName].opts;
         const parsedOpts = [];
+        dbg('Expected options:', { moduleName, expectedOpts });
 
         // Massaging the data to make Vorpal happy.
         utils.each(utils.keys(expectedOpts), (name) => {
-          let message = `* ${name}: ${expectedOpts[name].description}`;
+          let message = `* ${name}: ${expectedOpts[name].desc}`;
           let finalDefault = null;
 
-          if (globalParams[name]) {
-            finalDefault = globalParams[name];
-          } else if (expectedOpts[name].defaultValue) {
-            finalDefault = expectedOpts[name].defaultValue;
+          if (globals[name]) {
+            finalDefault = globals[name];
+          } else if (expectedOpts[name].default) {
+            finalDefault = expectedOpts[name].default;
           }
           if (finalDefault) {
             defaults[name] = finalDefault;
@@ -72,11 +79,13 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
           });
         });
 
+        dbg('Parsed options:', parsedOpts);
+
         // We need to use "activeCommand" because of a Vorpal limitation
         // with ES6: https://github.com/dthree/vorpal/issues/14
         vorpal.activeCommand.prompt(parsedOpts)
         .then((answers) => {
-          const finalAnswers = [];
+          const finalAnswers = {};
 
           utils.each(utils.keys(answers), (key) => {
             if (answers[key] === '') {
@@ -86,6 +95,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             }
           });
 
+          logger.infoHigh('Running the module ...');
           cli.run(moduleName, finalAnswers)
           .then((res) => {
             logger.bold('\nRESULT:\n');
@@ -100,90 +110,31 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
           .catch((err) => {
             // We always resolve (instead reject) because we don't
             // want to print the error with vorpal (doesn't allow colors).
-            logger.error(`Running the module : ${err.message}`);
+            logger.error('Running the module:');
+            logger.infoHigh(err.stack);
             resolve();
           });
         })
-        .catch((err) => {
-          logger.error(`Getting the options : ${err.message}`);
-          // console.log('1111111111111111');
-          resolve();
-        });
+        // .catch((err) => {
+        //   logger.error(`Getting the options : ${err.message}`);
+        //   resolve();
+        // });
       }));
 });
 
-// Client specific commands.
-vorpal
-  .command('shodanSetKey')
-  .description('To add you SHODAN API key')
-  .action(() =>
-    new Promise((resolve) => {
-      vorpal.activeCommand.prompt([
-        {
-          type: 'input',
-          name: 'key',
-          message: 'Your key: ',
-        },
-      ])
-      .then((answers) => {
-        if (answers.key) {
-          cli.setShodanKey(answers.key);
-        } else {
-          logger.error('Empty key');
-        }
-        resolve();
-      })
-      .catch((err) => {
-        logger.error(`Getting the key : ${err.message}`);
-        resolve();
-      });
-    }));
-
 
 vorpal
-  .command('globalList')
+  .command('env')
   .description('To get the values of all global parameters')
   .action(() => {
-    logger.json(globalParams);
+    logger.json(globals);
 
     return Promise.resolve();
   });
 
 
 vorpal
-  .command('globalGet')
-  .description('To get the value of a global parameter')
-  .action(() =>
-    new Promise((resolve) => {
-      vorpal.activeCommand.prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Name of the param: ',
-        },
-      ])
-      .then((answers) => {
-        if (answers.name) {
-          if (globalParams[answers.name]) {
-            logger.result(globalParams[answers.name]);
-          } else {
-            logger.error('Global parameter not found');
-          }
-        } else {
-          logger.error('Empty name');
-        }
-
-        resolve();
-      })
-      .catch((err) => {
-        logger.error(`Getting the key : ${err.message}`);
-        resolve();
-      });
-    }));
-
-
-vorpal
-  .command('globalSet')
+  .command('set')
   .description('To add a global parameter to use through all the modules')
   .action(() =>
     new Promise((resolve) => {
@@ -205,7 +156,7 @@ vorpal
         } else if (!answers.value) {
           logger.error('Empty value');
         } else {
-          globalParams[answers.name] = answers.value;
+          globals[answers.name] = answers.value;
           logger.json(answers);
         }
 
@@ -219,7 +170,8 @@ vorpal
 
 
 logger.welcome('\n\tWelcome to Bluebox-ng');
-logger.info(`\t(v${cli.version})\n`);
+logger.info(`\t(v${cli.version})`);
+logger.bold('\nPlease run "help" or "help | grep whatever" to start the game ;)');
 
 dbg('Starting the prompt ...');
 vorpal
@@ -227,21 +179,27 @@ vorpal
   .history('bluebox-ng')
   // Prompt content.
   .delimiter(cfg.prompt)
+  .use(vHn)
+  .use(vLess)
+  .use(vGrep)
+  // TODO
+  // .use(vRepl)
   // Starting the prompt.
   .show();
 
 
+// TODO: Confirm not needed due to vorpal
 // Just in case we lost something, to avoid a full break.
-process.on('uncaughtException', (err) => {
-  logger.error('"uncaughtException" found:');
-  logger.error(err);
+// process.on('uncaughtException', (err) => {
+//   logger.error('"uncaughtException" found:');
+//   logger.error(err);
 
-  // Restarting the prompt to let the user continue without a restart.
-  vorpal.show();
-});
+//   // Restarting the prompt to let the user continue without a restart.
+//   vorpal.show();
+// });
 
-process.on('unhandledRejection', (reason) => {
-  logger.error(`"unhandledRejection : reason : ${reason}`);
+// process.on('unhandledRejection', (reason) => {
+//   logger.error(`"unhandledRejection : reason : ${reason}`);
 
-  vorpal.show();
-});
+//   vorpal.show();
+// });

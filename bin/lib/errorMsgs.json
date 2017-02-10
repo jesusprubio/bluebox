@@ -1,0 +1,25 @@
+{
+  "index": {
+    "notFound": "Module not found",
+    "noKey": "A SHODAN key is needed to run this module (https://account.shodan.io/register)",
+    "parseOpts": "Parsing the options"
+  },
+  "parseOpts": {
+    "notFound": "Type not found",
+    "required": "Required option"
+  },
+  "types": {
+    "natural": "Any positive integer",
+    "port": "Any valid port (0..65535)",
+    "domain": "Any valid domain, ie: google.com, www.google.com",
+    "host": "Any valid host (domain or IPv4/IPv6 single address)",
+    "ip": "Any valid IPv4/IPv6 single address",
+    "url": "Any valid URL",
+    "bool": "valid: true | false",
+    "readFile": "Reading file",
+    "ipsCidr": "ie: 192.168.0.0/24, 2001:0C00::/32",
+    "ipsCidrV6": "IPv6 still not supported here",
+    "ipsRange": "ie: 192.168.0.1-5 (only last block supported for now)",
+    "portRange": "ie: 5060-5065"
+  }
+}

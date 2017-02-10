@@ -1,0 +1,28 @@
+{
+  "rhosts": {
+    "type": "ips",
+    "desc": "Host to inspect",
+    "default": "127.0.0.1"
+  },
+  "rports": {
+    "type": "rports",
+    "desc": "Ports to inspect on chosen IPs",
+    "default": 22
+  },
+  "delay": {
+    "type": "natural",
+    "desc": "Delay between batches of requests (depending of the 'concurrency'), in ms).",
+    "TODO": "Fix ->0",
+    "default": 10
+  },
+  "concurrency": {
+    "type": "natural",
+    "desc": "Number of requests to do at the same time. Only works if 'delay' is not 0",
+    "default": 100
+  },
+  "timeout": {
+    "type": "natural",
+    "desc": "Time to wait for a response, in ms.",
+    "default": 5000
+  }
+}

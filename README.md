@@ -6,7 +6,7 @@
 
 [![npm info](https://nodei.co/npm/bluebox-ng.png?downloads=true&downloadRank=true&stars=true)](https://npmjs.org/package/bluebox-ng)
 
-Pentesting framework using Node.js powers. Specially focused in VoIP/UC.
+Pentesting framework using Node.js powers, no external dependencies. Specially focused in VoIP/UC.
 
 <img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
@@ -68,12 +68,11 @@ To run it from other Node code.
 const BlueboxCli = require('bluebox-ng').Cli;
 
 const cli = new BlueboxCli();
-const moduleOptions = { target: '8.8.8.8' };
 
 console.log('Modules info:');
 console.log(JSON.stringify(cli.help(), null, 2));
 
-cli.run('geolocation', moduleOptions)
+cli.run('geolocation', { rhost: '8.8.8.8' })
 .then(res => {
   console.log('Result:');
   console.log(res);

@@ -10,46 +10,62 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const method = require('../../../lib/utils/protocols/ftp');
+const methods = require('../../../lib/utils/protocols/ftp');
 
-// Defined in the Docker env.
 const serverCfg = {
   ip: '127.0.0.1',
   userName: 'js',
   password: 'js',
 };
 // We're in local environment, should be fast.
-const opts = { timeout: 5000 };
+// const opts = { timeout: 1000 };
 
+
+test('with valid target', (assert) => {
+  assert.plan(1);
+
+  // methods.scan(serverCfg.ip, opts)
+  methods.scan(serverCfg.ip)
+  .then(res => assert.equal(res, '220 ProFTPD 1.3.4c Server (ProFTPD) [::ffff:127.0.0.1]'));
+});
 
 test('with invalid username', (assert) => {
   assert.plan(1);
 
-  const credPair = ['ola', serverCfg.password];
-
-  method(serverCfg.ip, credPair, opts)
+  // methods.scan(serverCfg.ip, opts)
+  methods.auth(serverCfg.ip, ['ola', 'kase'])
   .then(res => assert.equal(res, null));
 });
 
 
-test('with invalid password', (assert) => {
-  assert.plan(1);
+// test('with invalid username', (assert) => {
+//   assert.plan(1);
 
-  const credPair = [serverCfg.userName, 'kase'];
+//   const credPair = ['ola', serverCfg.password];
 
-  method(serverCfg.ip, credPair, opts)
-  .then(res => assert.equal(res, null));
-});
+//   methods.auth(serverCfg.ip, credPair, opts)
+//   .then(res => assert.equal(res, null));
+// });
 
 
-test('with valid credentials', (assert) => {
-  assert.plan(1);
+// test('with invalid password', (assert) => {
+//   assert.plan(1);
 
-  const credPair = [serverCfg.userName, serverCfg.password];
+//   const credPair = [serverCfg.userName, 'kase'];
 
-  method(serverCfg.ip, credPair, opts)
-  .then(res => assert.deepEqual(res, credPair));
-});
+//   method(serverCfg.ip, credPair, opts)
+//   .then(res => assert.equal(res, null));
+// });
+
+
+// test('with valid credentials', (assert) => {
+//   assert.plan(1);
+
+//   const credPair = [serverCfg.userName, serverCfg.password];
+
+//   method(serverCfg.ip, credPair, opts)
+//   .then(res => assert.deepEqual(res, credPair));
+// });
 
 
 // TODO: we have some another TODO in the tested file we need to solve

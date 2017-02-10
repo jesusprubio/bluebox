@@ -10,7 +10,7 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const method = require('../../../lib/utils/protocols/ssh');
+const methods = require('../../../lib/utils/protocols/ssh');
 
 // Defined in the Docker env.
 const serverCfg = {
@@ -22,44 +22,51 @@ const serverCfg = {
 const opts = { timeout: 5000 };
 
 
-test('with invalid username', (assert) => {
+test('(scan) with valid ip', (assert) => {
+  assert.plan(1);
+
+  methods.scan(serverCfg.ip)
+  .then(res => assert.equal(res, null));
+});
+
+test('(auth) with invalid username', (assert) => {
   assert.plan(1);
 
   const credPair = ['ola', serverCfg.password];
 
-  method(serverCfg.ip, credPair, opts)
+  methods.auth(serverCfg.ip, credPair, opts)
   .then(res => assert.equal(res, null));
 });
 
 
-test('with invalid password', (assert) => {
+test('(auth) with invalid password', (assert) => {
   assert.plan(1);
 
   const credPair = [serverCfg.userName, 'kase'];
 
-  method(serverCfg.ip, credPair, opts)
+  methods.auth(serverCfg.ip, credPair, opts)
   .then(res => assert.equal(res, null));
 });
 
 
-test('with valid credentials', (assert) => {
+test('(auth) with valid credentials', (assert) => {
   assert.plan(1);
 
   const credPair = [serverCfg.userName, serverCfg.password];
 
-  method(serverCfg.ip, credPair, opts)
+  methods.auth(serverCfg.ip, credPair, opts)
   .then(res => assert.deepEqual(res, credPair));
 });
 
 
-test('with non reached port', (assert) => {
+test('(auth) with non reached port', (assert) => {
   assert.plan(1);
 
   const credPair = [serverCfg.userName, serverCfg.password];
   opts.port = 9999;
   const expectedErr = `connect ECONNREFUSED ${serverCfg.ip}:${opts.port}`;
 
-  method(serverCfg.ip, credPair, opts)
+  methods.auth(serverCfg.ip, credPair, opts)
   .then(() => assert.fail('Should fail.'))
   .catch(err => assert.equal(err.message, expectedErr));
 });

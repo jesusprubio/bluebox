@@ -1,0 +1,25 @@
+{
+  "rhost": {
+    "type": "ip",
+    "desc": "Host to attack",
+    "default": "127.0.0.1"
+  },
+  "rport": {
+    "type": "port",
+    "desc": "Port to use on chosen IPs",
+    "default": 5038
+  },
+  "user": {
+    "desc": "Valid username",
+    "default": "admin"
+  },
+  "password": {
+    "desc": "Valid password",
+    "default": "amp111"
+  },
+  "timeout": {
+    "type": "natural",
+    "desc": "Time to wait for a response, in ms.",
+    "default": 5000
+  }
+}

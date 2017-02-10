@@ -1,0 +1,42 @@
+{
+  "rhost": {
+    "type": "ip",
+    "desc": "Host to attack",
+    "default": "127.0.0.1"
+  },
+  "rport": {
+    "type": "port",
+    "desc": "Port to attack on chosen IPs",
+    "default": 22
+  },
+  "users": {
+    "type": "enumeration",
+    "desc": "Users (ie: 'admin,john'), range (ie: 'range:0000-0100') or file with them to test",
+    "default": "file:./artifacts/dics/john.txt"
+  },
+  "passwords": {
+    "type": "enumeration",
+    "desc": "Passwords (or file with them) to test",
+    "default": "file:./artifacts/dics/john.txt"
+  },
+  "userAsPass": {
+    "type": "bool",
+    "desc": "Test the same user as password for each one.",
+    "default": true
+  },
+  "delay": {
+    "type": "natural",
+    "desc": "Delay between batches of requests (depending of the 'concurrency'), in ms).",
+    "default": 0
+  },
+  "concurrency": {
+    "type": "natural",
+    "desc": "Number of requests to do at the same time. Only works if 'delay' is not 0",
+    "default": 100
+  },
+  "timeout": {
+    "type": "natural",
+    "desc": "Time to wait for a response, in ms.",
+    "default": 5000
+  }
+}

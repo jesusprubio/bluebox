@@ -9,6 +9,7 @@ finalReport*
 .travis.yml
 .Dockerfile
 
+*.png
 *.csv
 *.dat
 *.iml

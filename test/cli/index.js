@@ -10,10 +10,10 @@
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 const lodash = require('lodash');
 
-const utils = require('../../bin/lib/utils');
+const utils = require('../../bin/lib');
 const Cli = require('../../bin/Cli');
 const pkgInfo = require('../../package.json');
-const errMsgs = require('../../bin/lib/utils/errorMsgs');
+const errMsgs = require('../../bin/lib/errorMsgs');
 
 
 // TODO: Check without passing {}
@@ -42,7 +42,7 @@ test('method "help"', (assert) => {
 test('method "run"', (assert) => {
   assert.plan(2);
 
-  cli.run('geolocation', { target: '8.8.8.8' })
+  cli.run('geolocation', { rhost: '8.8.8.8' })
   .then((res) => {
     assert.equal(res.country_code, 'US');
     assert.equal(res.country_name, 'United States');
@@ -65,7 +65,7 @@ test('method "run" with invalid param', (assert) => {
 
   const expectedErr = `${errMsgs.index.parseOpts} : "target" : ${errMsgs.types.ip}`;
 
-  cli.run('geolocation', { target: 'a' })
+  cli.run('geolocation', { rhost: 'a' })
   // Needed to be sure it's going through the expected path.
   .then(() => assert.fail('Should fail.'))
   .catch(err => assert.equal(err.message, expectedErr));
@@ -75,7 +75,7 @@ test('method "run" with invalid param', (assert) => {
 // TODO: Uncomment when the module is working.
 // test('method "run" (Shodan command without key)', (assert) => {
 //  assert.plan(1);
-//   const opts = { target: '8.8.8.8' };
+//   const opts = { rhost: '8.8.8.8' };
 //   const expectedErr = 'A SHODAN key is needed to run this module ' +
 //     '(https://account.shodan.io/register)';
 //

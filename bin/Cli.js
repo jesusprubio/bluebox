@@ -8,9 +8,9 @@
 'use strict';
 
 const pkgInfo = require('../package.json');
-const utils = require('./lib/utils');
-const parseOpts = require('./lib/utils/parseOpts');
-const errMsgs = require('./lib/utils/errorMsgs').index;
+const utils = require('./lib');
+const parseOpts = require('./lib/parseOpts');
+const errMsgs = require('./lib/errorMsgs').index;
 
 const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
@@ -18,26 +18,41 @@ const dbg = utils.dbg(__filename);
 
 class BlueboxCli {
 
-  constructor(opts = {}) {
-    this.shodanKey = opts.shodanKey || null;
-    // Loading all present modules.
-    this.modules = utils.extend(
-      utils.requireDir(module, './lib/modules'),
-      utils.requireDir(module, './lib/modules/private')
-    );
+  // constructor(opts = {}) {
+  constructor() {
     this.version = pkgInfo.version;
+
+    dbg('Loading modules ...');
+    const modulesRaw = utils.requireDir(module, './modules');
+    dbg('Creating our module names from their paths ...');
+    this.modules = {};
+    utils.each(Object.keys(modulesRaw), (path) => {
+      utils.each(Object.keys(modulesRaw[path]), (subPath) => {
+        // TODO: Refactor, this has to be easier.
+        // Only 3 levels allowed for now.
+        // To get the ones without a subfolder.
+        if (modulesRaw[path][subPath].impl) {
+          this.modules[`${path}/${subPath}`] = modulesRaw[path][subPath];
+        } else {
+          utils.each(Object.keys(modulesRaw[path][subPath]), (lastPath) => {
+            if (modulesRaw[path][subPath][lastPath].impl) {
+              this.modules[`${path}/${subPath}/${lastPath}`] = modulesRaw[path][subPath][lastPath];
+            } else {
+              utils.each(Object.keys(modulesRaw[path][subPath][lastPath]), (oneMore) => {
+                this.modules[`${path}/${subPath}/${lastPath}/${oneMore}`] =
+                  modulesRaw[path][subPath][lastPath][oneMore];
+              });
+            }
+          });
+        }
+      });
+    });
 
     dbg('Started', { version: pkgInfo.version });
   }
 
 
   help() { return this.modules; }
-
-
-  getShodanKey() { return this.shodanKey; }
-
-
-  setShodanKey(value) { this.shodanKey = value; }
 
 
   // Should always return a promise.
@@ -51,18 +66,14 @@ class BlueboxCli {
     const blueModule = this.modules[moduleName];
 
     // Parsing the paremeters passed by the client.
-    let confWithKey;
+    let opts;
     try {
-      confWithKey = parseOpts(cfg, blueModule.options);
+      opts = parseOpts(cfg, blueModule.opts);
     } catch (err) {
       return Promise.reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
     }
-    if (moduleName.substr(0, 6) === 'shodan') {
-      if (!this.shodanKey) { return Promise.reject(new Error(errMsgs.noKey)); }
-      confWithKey.key = this.shodanKey;
-    }
 
-    return blueModule.run(confWithKey);
+    return blueModule.impl(opts);
   }
 }
 

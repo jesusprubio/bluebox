@@ -20,7 +20,8 @@ const serverCfg = {
   password: 'js',
 };
 const opts = {
-  port: 22,
+  protocol: 'http',
+  port: 8080,
   users: [serverCfg.userName],
   userAsPass: false,
   timeout: 5000,
@@ -57,17 +58,18 @@ test('with valid "ip" and multiple valid and invalid credentials', (assert) => {
 });
 
 
-test('with non valid credentials but "userAsPass" is valid', (assert) => {
-  assert.plan(1);
+// TODO: It needs a different user in the server.
+// test('with non valid credentials but "userAsPass" is valid', (assert) => {
+//   assert.plan(1);
 
-  opts.users = ['js'];
-  // Any non valid is ok here, the correct is "js".
-  opts.passwords = ['ola'];
-  opts.userAsPass = true;
+//   opts.users = ['js'];
+//   // Any non valid is ok here, the correct is "js".
+//   opts.passwords = ['ola'];
+//   opts.userAsPass = true;
 
-  method(serverCfg.ip, opts)
-  .then(res => assert.deepEqual(res, [[opts.users[0], opts.users[0]]]));
-});
+//   method(serverCfg.ip, opts)
+//   .then(res => assert.deepEqual(res, [[opts.users[0], opts.users[0]]]));
+// });
 
 
 test('without parameters', (assert) => {
@@ -155,9 +157,8 @@ test('with valid "ip" and non-reachable port', (assert) => {
   assert.plan(1);
 
   opts.port = 6666;
-  const expectedErr = `connect ECONNREFUSED ${serverCfg.ip}:${opts.port}`;
 
   method(serverCfg.ip, opts)
   .then(() => assert.fail('Should fail.'))
-  .catch(err => assert.equal(err.message, expectedErr));
+  .catch(err => assert.match(err.message, 'ECONNREFUSED'));
 });

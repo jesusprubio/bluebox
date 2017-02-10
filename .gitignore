@@ -1,6 +1,7 @@
 # Reports
 finalReport*
 
+*.png
 *.csv
 *.dat
 *.iml

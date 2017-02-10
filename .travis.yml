@@ -4,4 +4,4 @@ node_js:
   - "6"
   - "7"
 
-script: npm test
+script: npm run posttest

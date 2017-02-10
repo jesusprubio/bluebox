@@ -15,13 +15,12 @@ const BlueboxCli = require('../../').Cli;
 // const BlueboxCli = require('bluebox-ng').Cli;
 
 const cli = new BlueboxCli();
-const moduleOptions = { target: '8.8.8.8' };
 
 
 console.log('Modules info:');
 console.log(JSON.stringify(cli.help(), null, 2));
 
-cli.run('geolocation', moduleOptions)
+cli.run('geolocation', { rhost: '8.8.8.8' })
 .then((res) => {
   console.log('Result:');
   console.log(res);
