@@ -120,7 +120,7 @@ Network mapping at transport level, for now it only support full TCP scan. Possi
 Network mapping at app/protocol level.
 - `rhosts` (array) - With valid IPv4 rhosts.
 - `opts` is an object with:
- - `proto` (string) - Application protocol to use. Options: 'ping' (TCP), 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239). (default: 'sip')
+ - `proto` (string) - Application protocol to use. Options: 'ping', 'pingTcp', 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239). (default: 'sip')
  - `rports` (number) - Ports to inspect in each host. (default: depending protocol, ie: 'http': [80, 443, 8008, 8080])
  - `timeout` (number) - Time to wait for a response (in ms.). (default: 5000)
  - `concurrency` (number) - Max number of simultaneous socket opened. (default: 500)
@@ -136,10 +136,10 @@ Network mapping at app/protocol level.
 Brute-force a service.
 - `rhost` (string) - IP address.
 - `opts` is an object with:
-  - `proto` (string) - Application protocol to use. Options: 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239), 'mysql', 'mongo', 'ldap', 'snmp'. (default: 'sip')
+  - `proto` (string) - Application protocol to use. Options: 'sip', 'ssh', 'ftp', 'tftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239), 'mysql', 'mongo', 'ldap', 'snmp'. (default: 'sip')
   - `ports` (string) - Port to attack. (default: depending protocol, ie: 'ssh' -> 22)
   - `users` (Array) - Username list. (default: ['0000', '0001', '0002'])
-  - `passwords` (Array) - Password list. (default: ['0000', '0001', '0002'])
+  - `passwords` (Array) - Password list. (default: ['0000', '0001', '0002']). Not required in some case, ie: tftp.
   - `userAsPass` (boolean) - Add the user to the password list. (default: false)
   - `concurrency` (number) - Max number of requests to do in parallel. (default: 100)
   - `delay` (number) - Time to wait between batches of requests depending of th concurrency, in ms.. If this option is set then "concurrency" will become always 1. (default: 0)

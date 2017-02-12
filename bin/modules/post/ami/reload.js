@@ -10,7 +10,7 @@
 const nami = require('nami');
 
 const post = require('../../..').post;
-const commonOpts = require('../../../lib/commonOpts/ami');
+const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
 module.exports.desc = 'Restart the server';

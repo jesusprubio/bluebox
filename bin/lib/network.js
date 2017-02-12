@@ -8,7 +8,7 @@
 'use strict';
 
 const Netmask = require('netmask').Netmask;
-const utils = require('./');
+const utils = require('.');
 
 const reservedIpsRegex = /(^127\.)|(^192\.168\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^::1$)/; // eslint-disable-line max-len
 
@@ -23,7 +23,8 @@ function addZeros(block) {
 
 
 // We export the full Object: https://github.com/rs/node-netmask
-// TODO: review this, maybe better to encapsulate what we need ...
+// TODO: review this, maybe better to encapsulate what we need.
+// or even better to contribute there with what we have.
 module.exports.Netmask = Netmask;
 
 

@@ -10,7 +10,7 @@
 'use strict';
 
 const brute = require('../../..').bruteCreds;
-const commonOpts = require('../../../lib/commonOpts/bruteCreds');
+const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
 
 
 module.exports.desc = 'SSH credentials brute force';

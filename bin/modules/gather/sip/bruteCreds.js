@@ -9,8 +9,8 @@
 'use strict';
 
 const brute = require('../../..').bruteCreds;
-const bruteComOpts = require('../../../lib/commonOpts/bruteCreds');
-const sipComOpts = require('../../../lib/commonOpts/sip');
+const bruteComOpts = require('../../../cfg/commonOpts/bruteCreds');
+const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
 
 // Note that SIP ones take precedence, "rport" affected in this case.

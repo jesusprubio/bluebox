@@ -9,8 +9,8 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const obj = require('../../../bin/lib/types');
-const errMsgs = require('../../../bin/lib/errorMsgs').types;
+const obj = require('../../../bin/lib/parsers');
+const errMsgs = require('../../../bin/cfg/errorMsgs').types;
 
 
 test('method "ip"', (assert) => {

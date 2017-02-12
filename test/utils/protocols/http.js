@@ -10,7 +10,7 @@
 
 // const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-// const methods = require('../../../lib/utils/protocols/http');
+// const methods = require('../../../lib/protocols/http');
 
 // const serverCfg = {
 //   ip: '127.0.0.1',

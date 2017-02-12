@@ -10,8 +10,8 @@
 // Helper for the file "index.js" (entry point).
 
 const parsers = require('./parsers');
-const utils = require('./');
-const errMsgs = require('./errorMsgs').parseOpts;
+const utils = require('.');
+const errMsgs = require('../cfg/errorMsgs').parseOpts;
 
 const dbg = utils.dbg(__filename);
 

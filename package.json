@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "async": "^2.1.4",
+    "async-iterators": "^0.2.2",
     "bluebird": "^3.4.1",
     "cli-color": "^1.1.0",
     "debug": "^2.2.0",

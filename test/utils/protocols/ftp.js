@@ -10,7 +10,7 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const methods = require('../../../lib/utils/protocols/ftp');
+const methods = require('../../../lib/protocols/ftp');
 
 const serverCfg = {
   ip: '127.0.0.1',

@@ -24,7 +24,7 @@ module.exports.opts = {
   },
   path: {
     desc: 'Path to store the output file (relative to from where Bluebox was launched)',
-    default: './',
+    default: '.',
   },
   // timeout: {
   //   types: 'natural',

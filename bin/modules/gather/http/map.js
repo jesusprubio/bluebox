@@ -7,15 +7,19 @@
 
 'use strict';
 
-const brute = require('../../..').bruteCreds;
-const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
+const map = require('../../../..').map.services;
+const commonOpts = require('../../../cfg/commonOpts/scan');
 const utils = require('../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 21;
+optsCopy.transport = {
+  types: 'httpTransport',
+  desc: 'Transport protocol to use: http/https',
+  default: 'http',
+};
 
 
-module.exports.desc = 'FTP credentials brute force';
+module.exports.desc = 'HTTP service mapper';
 
 
 module.exports.opts = optsCopy;
@@ -23,7 +27,7 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'ftp';
+  finalOpts.proto = 'http';
 
-  return brute(opts.rhost, finalOpts);
+  return map(opts.rhosts, finalOpts);
 };

@@ -7,15 +7,15 @@
 
 'use strict';
 
-const brute = require('../../..').bruteCreds;
-const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
+const map = require('../../../..').map.services;
+const commonOpts = require('../../../cfg/commonOpts/scan');
 const utils = require('../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 21;
+optsCopy.rports.default = [22];
 
 
-module.exports.desc = 'FTP credentials brute force';
+module.exports.desc = 'AMI service mapper';
 
 
 module.exports.opts = optsCopy;
@@ -23,7 +23,7 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'ftp';
+  finalOpts.proto = 'ssh';
 
-  return brute(opts.rhost, finalOpts);
+  return map(opts.rhost, finalOpts);
 };

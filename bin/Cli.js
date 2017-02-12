@@ -10,7 +10,7 @@
 const pkgInfo = require('../package.json');
 const utils = require('./lib');
 const parseOpts = require('./lib/parseOpts');
-const errMsgs = require('./lib/errorMsgs').index;
+const errMsgs = require('./cfg/errorMsgs').index;
 
 const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);

@@ -10,7 +10,7 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-// const methods = require('../../../lib/utils/protocols/ami');
+// const methods = require('../../../lib/protocols/ami');
 
 // const serverCfg = {
 //   ip: '209.44.123.42',

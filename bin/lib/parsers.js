@@ -22,26 +22,32 @@ const path = require('path');
 
 const Netmask = require('netmask').Netmask;
 const sipUtils = require('sip-fake-stack').utils;
-const utils = require('./');
+const utils = require('.');
 const networkUtils = require('./network');
-const errMsgs = require('./errorMsgs').types;
+const errMsgs = require('../cfg/errorMsgs').types;
 const transports = require('../cfg/parsers');
 
+const dbg = utils.dbg(__filename);
 
-module.exports.ip = (value) => {
+
+function ip(value) {
   if (net.isIP(value)) { return value; }
 
   // We return instead throw for convenience.
   throw new Error(errMsgs.ip);
-};
+}
+
+module.exports.ip = ip;
 
 
-module.exports.port = (value) => {
+function port(value) {
   // Passed as numbers and "validator"" always needs strings.
   if (utils.validator.isPort(value.toString())) { return value; }
 
   throw new Error(errMsgs.port);
-};
+}
+
+module.exports.port = port;
 
 
 module.exports.natural = (value) => {
@@ -52,11 +58,10 @@ module.exports.natural = (value) => {
 
 
 module.exports.bool = (value) => {
-  console.log('ENTRAAAAAAAA-----BOOOOOLLLLLL');
   // Passed as booleans and "validator"" always needs strings.
   if (utils.validator.isBoolean(value.toString())) { return value; }
 
-  throw new Error(errMsgs.port);
+  throw new Error(errMsgs.bool);
 };
 
 
@@ -80,7 +85,6 @@ function padNumber(number, padding) {
 
 module.exports.enumeration = (value) => {
   let finalValues = [];
-  console.log('ENTRAAAAAAAA000000');
 
   if (value.slice(0, 6) === 'range:') {
     const slicedValue = value.slice(6);
@@ -91,10 +95,10 @@ module.exports.enumeration = (value) => {
       finalValues.push(padNumber(i, splitted[0].length));
     }
   } else if (value.slice(0, 5) === 'file:') {
-    console.log('ENTRAAAAAAAA-----------');
     const slicedValue = value.slice(5);
 
-    const data = fs.readFileSync(path.resolve(__dirname, '../', slicedValue));
+    // TODO: Return an iterator instead to avoid huge memory fingerprints.
+    const data = fs.readFileSync(path.resolve(__dirname, '..', slicedValue));
     if (!data) {
       throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
     }
@@ -141,7 +145,7 @@ module.exports.lport = (value) => {
     return networkUtils.randomPort();
   }
 
-  return this.port(value);
+  return port(value);
 };
 
 
@@ -248,7 +252,7 @@ module.exports.ips = (value) => {
   if (value.slice(0, 5) === 'file:') {
     const slicedValue = value.slice(5);
 
-    const data = fs.readFileSync(path.resolve(__dirname, '../', slicedValue));
+    const data = fs.readFileSync(path.resolve(__dirname, '..', slicedValue));
     if (!data) {
       throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
     }
@@ -260,7 +264,7 @@ module.exports.ips = (value) => {
     return ipsRange(value);
   }
 
-  return [this.ip(value)];
+  return [ip(value)];
 };
 
 
@@ -280,17 +284,24 @@ function portRange(value) {
 }
 
 function portList(value) {
-  const splitedPorts = value.split(',');
   let finalPorts = [];
+  let split = value.split(',');
 
-  utils.each(splitedPorts, (singlePort) => {
+  split = utils.map(split, p => p.trim());
+  dbg('"portList" reached', { split });
+
+  utils.each(split, (singlePort) => {
+    dbg('Port', { singlePort });
     if (singlePort.split('-').length === 2) {
+      dbg('A range');
       finalPorts = finalPorts.concat(portRange(singlePort));
     } else {
-      finalPorts.push(this.port(singlePort));
+      dbg('Single');
+      finalPorts.push(port(singlePort));
     }
   });
 
+  dbg('Final:', { finalPorts });
   return finalPorts;
 }
 
@@ -303,7 +314,7 @@ module.exports.ports = (value) => {
     return portRange(finalValue);
   }
 
-  return [this.port(finalValue)];
+  return [port(finalValue)];
 };
 
 

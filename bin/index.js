@@ -20,7 +20,7 @@ const vGrep = require('vorpal-grep');
 // const vTour = require('vorpal-tour');
 
 const cfg = require('./cfg/cli');
-const BlueboxCli = require('../').Cli;
+const BlueboxCli = require('..').Cli;
 const logger = require('./lib/logger');
 const utils = require('./lib');
 
@@ -63,10 +63,11 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
 
           if (globals[name]) {
             finalDefault = globals[name];
-          } else if (expectedOpts[name].default) {
+          } else if (expectedOpts[name].default !== undefined) {
             finalDefault = expectedOpts[name].default;
           }
-          if (finalDefault) {
+          // We need to accept falsys here (like "0" or "false")
+          if (finalDefault !== null) {
             defaults[name] = finalDefault;
             message += ` (${finalDefault})`;
           }
@@ -95,7 +96,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             }
           });
 
-          logger.infoHigh('Running the module ...');
+          logger.infoHigh('\nRunning the module ...\n');
           cli.run(moduleName, finalAnswers)
           .then((res) => {
             logger.bold('\nRESULT:\n');
@@ -115,10 +116,10 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             resolve();
           });
         })
-        // .catch((err) => {
-        //   logger.error(`Getting the options : ${err.message}`);
-        //   resolve();
-        // });
+        .catch((err) => {
+          logger.error(`Getting the options : ${err.message}`);
+          resolve();
+        });
       }));
 });
 

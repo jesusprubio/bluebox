@@ -13,7 +13,7 @@ const lodash = require('lodash');
 const utils = require('../../bin/lib');
 const Cli = require('../../bin/Cli');
 const pkgInfo = require('../../package.json');
-const errMsgs = require('../../bin/lib/errorMsgs');
+const errMsgs = require('../../bin/cfg/errorMsgs');
 
 
 // TODO: Check without passing {}

@@ -1,11 +1,11 @@
 {
   "rport": {
-    "type": "port",
+    "types": "port",
     "desc": "Port to scan on chosen IPs",
     "default": 5060
   },
   "transport": {
-    "type": "sipTransport",
+    "types": "sipTransport",
     "desc": "Underlying protocol",
     "default": "UDP"
   },
@@ -14,17 +14,17 @@
     "default": "ws"
   },
   "meth": {
-    "type": "sipRequest",
+    "types": "sipRequest",
     "desc": "Type of SIP packets to do the requests ('random' available)",
     "default": "REGISTER"
   },
   "lhost": {
-    "type": "lhost",
+    "types": "lhost",
     "desc": "Source host to include in the  SIP request ('external' and 'random' supported)",
     "default": "iface:eth0"
   },
   "lport": {
-    "type": "lport",
+    "types": "lport",
     "desc": "Source port to include in the  SIP request ('random'' supported)",
     "default": "real"
   },

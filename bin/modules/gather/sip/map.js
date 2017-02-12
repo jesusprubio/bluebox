@@ -8,14 +8,19 @@
 'use strict';
 
 const map = require('../../../..').map.services;
-const commonOpts = require('../../../cfg/commonOpts/scan');
+const scanComOpts = require('../../../cfg/commonOpts/scan');
+const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
 
+
+// Note that SIP ones take precedence.
+const commonOpts = utils.defaults(sipComOpts, scanComOpts);
+
 const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rports.default = [5038];
+optsCopy.rports.default = [5060, 5061];
 
 
-module.exports.desc = 'AMI service mapper';
+module.exports.desc = 'SIP service mapper';
 
 
 module.exports.opts = optsCopy;
@@ -23,7 +28,7 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'ami';
+  finalOpts.proto = 'sip';
 
   return map(opts.rhost, finalOpts);
 };

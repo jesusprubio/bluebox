@@ -1,11 +1,11 @@
 {
   "rhost": {
-    "type": "ip",
+    "types": "ip",
     "desc": "Host to attack",
     "default": "127.0.0.1"
   },
   "rport": {
-    "type": "port",
+    "types": "port",
     "desc": "Port to use on chosen IPs",
     "default": 5038
   },
@@ -18,7 +18,7 @@
     "default": "amp111"
   },
   "timeout": {
-    "type": "natural",
+    "types": "natural",
     "desc": "Time to wait for a response, in ms.",
     "default": 5000
   }

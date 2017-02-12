@@ -9,7 +9,7 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const errMsgs = require('../../../bin/lib/errorMsgs');
+const errMsgs = require('../../../bin/cfg/errorMsgs');
 const method = require('../../../bin/lib/parseOpts');
 
 

@@ -10,7 +10,7 @@
 
 const test = require('tap').test; // eslint-disable-line import/no-extraneous-dependencies
 
-const methods = require('../../../lib/utils/protocols/ssh');
+const methods = require('../../../lib/protocols/ssh');
 
 // Defined in the Docker env.
 const serverCfg = {
