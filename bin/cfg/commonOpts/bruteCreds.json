@@ -11,13 +11,13 @@
   },
   "users": {
     "types": "enumeration",
-    "desc": "User (ie: 'admin'), range (ie: 'range:0000-0100') or file with them to test",
-    "default": "file:./artifacts/dics/john.txt"
+    "desc": "User (ie: 'admin'), range or file with them (ie: file:./artifacts/dics/john.txt) to test",
+    "default": "range:0000-0100"
   },
   "passwords": {
     "types": "enumeration",
     "desc": "Passwords (or file with them) to test",
-    "default": "file:./artifacts/dics/john.txt"
+    "default": "range:0000-0100"
   },
   "userAsPass": {
     "types": "bool",
