@@ -1,7 +1,7 @@
 {
   "rhosts": {
     "types": "ips",
-    "desc": "Host to inspect (IP), range (ie: '192.168.0.1-256') of a file with them (file:./bin/artifacts/whatever)",
+    "desc": "Host to inspect (IP), range (ie: '192.168.0.1-256') of a file with them (file:./whatever/galicianIps.txt)",
     "default": "192.168.0.0/24"
   },
   "rports": {

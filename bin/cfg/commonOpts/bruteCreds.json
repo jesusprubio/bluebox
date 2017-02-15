@@ -11,12 +11,12 @@
   },
   "users": {
     "types": "enum",
-    "desc": "User (ie: 'admin'), range or file with them (ie: file:./bin/artifacts/dics/john.txt) to test",
+    "desc": "User (ie: 'admin'), range or file with them (ie: file:./john.txt). Some built-in dics are supported ('misc/dicNames')",
     "default": "range:000-100"
   },
   "passwords": {
     "types": "enum",
-    "desc": "Passwords (or file with them) to test",
+    "desc": "Passwords (or file with them, same that for 'users') to test",
     "default": "range:000-100"
   },
   "userAsPass": {

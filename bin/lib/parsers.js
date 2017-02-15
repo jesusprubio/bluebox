@@ -16,6 +16,7 @@
 'use strict';
 
 
+const fs = require('fs');
 const net = require('net');
 const path = require('path');
 
@@ -28,6 +29,10 @@ const errMsgs = require('../cfg/errorMsgs').types;
 const transports = require('../cfg/parsers');
 
 const dbg = utils.dbg(__filename);
+
+
+const dicNames = fs.readdirSync(path.resolve(__dirname, '..', 'artifacts', 'dics'));
+module.exports.dics = utils.map(dicNames, dicName => path.basename(dicName, '.txt'));
 
 
 function ip(value) {
@@ -168,10 +173,18 @@ module.exports.enum = (value) => {
     return iterRanges(init, last, padding);
   } else if (value.slice(0, 5) === 'file:') {
     dbg('File detected');
-    const sliced = value.slice(5);
+    const passedName = value.slice(5);
 
-    // // The same here, we can't use arrays if the file is too huge (as expected).
-    return iterFile(path.resolve(process.cwd(), sliced));
+    // The same here, we can't use arrays if the file is too huge (as expected).
+    // If the user passes a relative path.
+    let filePath = path.resolve(process.cwd(), passedName);
+
+    // If the user passes a built-in dictionary name.
+    if (utils.includes(dicNames, `${passedName}.txt`)) {
+      filePath = path.resolve(__dirname, '..', 'artifacts', 'dics', `${passedName}.txt`);
+    }
+
+    return iterFile(path.resolve(process.cwd(), filePath));
     // TODO: Manage errors.
     // if (!data) {
     //   throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
@@ -192,7 +205,6 @@ function transport(proto, value) {
 
   throw new Error(protocols.toString());
 }
-
 
 module.exports.httpTransport = value => transport('http', value);
 
@@ -372,7 +384,6 @@ module.exports.ips = (value) => {
     const sliced = value.slice(5);
     dbg('IPs file detected');
 
-    // // The same here, we can't use arrays if the file is too huge (as expected).
     return iterFile(path.resolve(process.cwd(), sliced));
     // TODO: Manage errors.
     // if (!data) {

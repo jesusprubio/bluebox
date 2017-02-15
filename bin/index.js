@@ -59,6 +59,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
         const expectedOpts = modulesInfo[moduleName].opts;
         const parsedOpts = [];
         dbg('Expected options:', { moduleName, expectedOpts });
+        logger.subtitle(`\n${modulesInfo[moduleName].desc}\n`);
 
         // Massaging the data to make Vorpal happy.
         utils.each(utils.keys(expectedOpts), (name) => {
@@ -151,6 +152,16 @@ vorpal
   .description('To get the values of all global parameters.')
   .action(() => {
     logger.json(globals);
+
+    return Promise.resolve();
+  });
+
+
+vorpal
+  .command('misc/dicNames')
+  .description('Get built-in dictionaries names to use in another modules.')
+  .action(() => {
+    logger.json(cli.dics);
 
     return Promise.resolve();
   });
