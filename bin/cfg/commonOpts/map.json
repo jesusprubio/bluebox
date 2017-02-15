@@ -17,11 +17,11 @@
   "concurrency": {
     "types": "natural",
     "desc": "Number of requests to do at the same time.",
-    "default": 100
+    "default": 10000
   },
   "timeout": {
     "types": "natural",
     "desc": "Time to wait for a response, in ms.",
-    "default": 5000
+    "default": 3000
   }
 }
