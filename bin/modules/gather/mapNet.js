@@ -16,16 +16,14 @@ module.exports.desc = 'Network (host/port) scanner. Only full TCP supported for 
 
 module.exports.opts = {
   rhosts: {
-    // TODO: Improve this.
     desc: 'Valid IPv4 range (ie: "10.0.2.0/25", "192.168.10.80-120")',
-    // default: 'scanme.nmap.org',
-    default: '127.0.0.1',
+    default: 'scanme.nmap.org',
   },
   rports: {
     desc: 'Port (or list of) to scan on chosen IPs',
-    // TODO: Rethink this!!, specific for VoIP maybe better
-    // default: '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,8088,27017'
-    default: '21,22,80,443',
+    // Specific VoIP ports.
+    default: '21,22,23,80,69,389,443,3306,4443,4444,5038,5060-5070,8080,8088,27017',
+    // default: '21,22,80,443',
   },
   concurrency: {
     types: 'natural',

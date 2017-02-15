@@ -8,7 +8,7 @@
 'use strict';
 
 const map = require('../../../..').map.services;
-const commonOpts = require('../../../cfg/commonOpts/scan');
+const commonOpts = require('../../../cfg/commonOpts/map');
 const utils = require('../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);

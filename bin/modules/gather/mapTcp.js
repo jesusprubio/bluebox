@@ -9,7 +9,7 @@
 'use strict';
 
 const map = require('../../..').map.services;
-const scanComOpts = require('../../cfg/commonOpts/scan');
+const scanComOpts = require('../../cfg/commonOpts/map');
 
 
 module.exports.desc = 'Ping TCP mapper';
@@ -22,5 +22,5 @@ module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
   finalOpts.proto = 'pingTcp';
 
-  return map(opts.rhost, finalOpts);
+  return map(opts.rhosts, finalOpts);
 };
