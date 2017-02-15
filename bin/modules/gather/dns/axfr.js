@@ -11,7 +11,7 @@
 const axfr = require('../../../..').dns.axfr;
 
 
-module.exports.desc = 'DNS zone transfer';
+module.exports.desc = 'DNS zone transfer.';
 
 
 module.exports.opts = {

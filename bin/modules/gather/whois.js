@@ -11,7 +11,7 @@
 const whois = require('../../..').whois;
 
 
-module.exports.desc = 'WHOIS protocol client';
+module.exports.desc = 'WHOIS protocol client.';
 
 
 module.exports.opts = {

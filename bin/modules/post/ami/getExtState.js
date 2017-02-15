@@ -24,7 +24,7 @@ optsCopy.extension = {
 };
 
 
-module.exports.desc = 'Get actual status of an extension';
+module.exports.desc = 'Get actual status of an extension.';
 
 
 module.exports.opts = optsCopy;

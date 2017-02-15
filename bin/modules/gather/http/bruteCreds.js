@@ -21,7 +21,7 @@ optsCopy.transport = {
 };
 
 
-module.exports.desc = 'HTTP credentials brute force';
+module.exports.desc = 'HTTP credentials brute force.';
 
 
 module.exports.opts = optsCopy;

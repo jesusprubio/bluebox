@@ -16,7 +16,7 @@ optsCopy.rport.default = 389;
 optsCopy.users.description = `${optsCopy.users.description}, ie: cn=admin,dc=quobislab,dc=com`;
 
 
-module.exports.desc = 'LDAP credentials brute force';
+module.exports.desc = 'LDAP credentials brute force.';
 
 
 module.exports.opts = optsCopy;

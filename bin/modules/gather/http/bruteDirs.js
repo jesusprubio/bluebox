@@ -21,7 +21,7 @@ const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
 
 
-module.exports.desc = 'HTTP directories brute force';
+module.exports.desc = 'HTTP directories brute force.';
 
 
 module.exports.opts = {

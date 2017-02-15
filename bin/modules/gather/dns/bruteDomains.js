@@ -11,7 +11,7 @@
 const brute = require('../../../../').dns.brute;
 
 
-module.exports.desc = 'DNS subdomain brute force';
+module.exports.desc = 'DNS subdomain brute force.';
 
 
 module.exports.opts = {

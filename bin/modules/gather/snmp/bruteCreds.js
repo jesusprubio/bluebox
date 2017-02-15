@@ -26,7 +26,7 @@ delete optsCopy.passwords;
 delete optsCopy.userAsPass;
 
 
-module.exports.desc = 'SNMP communities brute force';
+module.exports.desc = 'SNMP communities brute force.';
 
 
 module.exports.opts = optsCopy;

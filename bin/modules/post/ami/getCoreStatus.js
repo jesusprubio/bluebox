@@ -13,7 +13,7 @@ const post = require('../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'Get info about the core of the server status';
+module.exports.desc = 'Get info about the core of the server status.';
 
 
 module.exports.opts = commonOpts;

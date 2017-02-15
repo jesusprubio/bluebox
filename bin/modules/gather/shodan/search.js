@@ -10,7 +10,7 @@
 const search = require('../../../..').shodan.search;
 
 
-module.exports.desc = 'Find potential targets in SHODAN computer search engine';
+module.exports.desc = 'Find potential targets in SHODAN computer search engine.';
 
 
 module.exports.opts = {

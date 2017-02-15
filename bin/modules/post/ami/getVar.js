@@ -25,7 +25,7 @@ optsCopy.variable = {
 };
 
 
-module.exports.desc = 'Get the value of a config variable';
+module.exports.desc = 'Get the value of a config variable.';
 
 
 module.exports.opts = optsCopy;

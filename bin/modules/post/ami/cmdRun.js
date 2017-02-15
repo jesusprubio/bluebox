@@ -21,7 +21,7 @@ optsCopy.comm = {
 };
 
 
-module.exports.desc = 'Run a command the server';
+module.exports.desc = 'Run a command the server.';
 
 
 module.exports.opts = optsCopy;

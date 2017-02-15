@@ -20,7 +20,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rports.default = [5060, 5061];
 
 
-module.exports.desc = 'SIP service mapper';
+module.exports.desc = 'SIP service mapper.';
 
 
 module.exports.opts = optsCopy;

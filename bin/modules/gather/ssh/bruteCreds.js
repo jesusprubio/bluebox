@@ -13,7 +13,7 @@ const brute = require('../../..').bruteCreds;
 const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
 
 
-module.exports.desc = 'SSH credentials brute force';
+module.exports.desc = 'SSH credentials brute force.';
 
 
 // To avoid to repeat them in all modules from "brute/creds".

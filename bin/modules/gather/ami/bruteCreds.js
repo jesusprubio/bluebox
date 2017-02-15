@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rport.default = 5038;
 
 
-module.exports.desc = 'AMI credentials brute force';
+module.exports.desc = 'AMI credentials brute force.';
 
 
 module.exports.opts = optsCopy;

@@ -17,7 +17,7 @@ const utils = require('../../../lib');
 const commonOpts = utils.defaults(sipComOpts, bruteComOpts);
 
 
-module.exports.desc = 'SIP credentials (extension/password) brute force';
+module.exports.desc = 'SIP credentials (extension/password) brute force.';
 
 
 module.exports.opts = commonOpts;

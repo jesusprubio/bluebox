@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rport.default = 3306;
 
 
-module.exports.desc = 'MYSQL credentials brute force';
+module.exports.desc = 'MYSQL credentials brute force.';
 
 
 module.exports.opts = optsCopy;

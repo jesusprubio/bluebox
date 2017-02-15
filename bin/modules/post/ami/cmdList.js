@@ -13,7 +13,7 @@ const post = require('../../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'List AMI supported commands';
+module.exports.desc = 'List AMI supported commands.';
 
 
 module.exports.opts = commonOpts;

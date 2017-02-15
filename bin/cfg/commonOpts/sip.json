@@ -11,21 +11,21 @@
   },
   "wsPath": {
     "desc": "Websockets path (only when websockets)",
-    "default": "ws"
+    "default": ""
   },
   "meth": {
     "types": "sipRequest",
-    "desc": "Type of SIP packets to do the requests ('random' available)",
+    "desc": "Type of SIP packets to do the requests ('random' supported)",
     "default": "REGISTER"
   },
   "lhost": {
-    "types": "lhost",
-    "desc": "Source host to include in the  SIP request ('external' and 'random' supported)",
-    "default": "iface:eth0"
+    "types": "ipRandom",
+    "desc": "Source host (IP) to include in the  SIP request ('random' supported)",
+    "default": "random"
   },
   "lport": {
     "types": "lport",
-    "desc": "Source port to include in the  SIP request ('random'' supported)",
+    "desc": "Source port to include in the  SIP request ('real' and 'random' supported)",
     "default": "real"
   },
   "domain": {

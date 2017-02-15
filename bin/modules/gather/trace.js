@@ -11,7 +11,7 @@
 const trace = require('../../..').trace;
 
 
-module.exports.desc = 'Display the route of your packages';
+module.exports.desc = 'Display the route of your packages.';
 
 
 module.exports.opts = {

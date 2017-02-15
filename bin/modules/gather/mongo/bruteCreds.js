@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rport.default = 27017;
 
 
-module.exports.desc = 'MongoDB credentials brute force';
+module.exports.desc = 'MongoDB credentials brute force.';
 
 
 module.exports.opts = optsCopy;

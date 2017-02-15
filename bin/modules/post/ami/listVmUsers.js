@@ -13,7 +13,7 @@ const post = require('../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'List users with voice mail';
+module.exports.desc = 'List users with voice mail.';
 
 
 module.exports.opts = commonOpts;

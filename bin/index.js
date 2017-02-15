@@ -19,10 +19,14 @@ const vGrep = require('vorpal-grep');
 // const vRepl = require('vorpal-repl');
 // const vTour = require('vorpal-tour');
 
+const logger = require('./lib/logger');
+
+logger.infoHigh(`Loading modules ... ${logger.emoji('rocket')}`);
+
 const cfg = require('./cfg/cli');
 const BlueboxCli = require('..').Cli;
-const logger = require('./lib/logger');
 const utils = require('./lib');
+
 
 const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
@@ -34,6 +38,7 @@ const globals = {};
 
 
 dbg('Starting ...');
+
 const cli = new BlueboxCli({});
 dbg('Getting all Bluebox modules details ...');
 const modulesInfo = cli.help();
@@ -45,7 +50,6 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
   // The Bluebox library manages the module parameters default values
   // for us. But we need this trick to allow the global parameters.
   const defaults = {};
-  dbg(`Loading "${moduleName}" module ...`);
 
   vorpal
     .command(moduleName)
@@ -96,12 +100,16 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             }
           });
 
-          logger.infoHigh('\nRunning the module ...\n');
+          logger.infoHigh(`\nRunning the module ... ${logger.emoji('beer')}\n`);
+          logger.time('time');
           cli.run(moduleName, finalAnswers)
           .then((res) => {
-            logger.bold('\nRESULT:\n');
-            if (!res) {
-              logger.result('No result');
+            logger.infoHigh(`\nModule run finished ${logger.emoji('airplane_arriving')}`);
+            logger.timeEnd('time');
+            logger.title(`\nResult ${logger.emoji('sparkles')}`);
+            if (!res || (utils.isArray(res) && res.length === 0) ||
+                (utils.isObject(res) && Object.keys(res).lenght === 0)) {
+              logger.result(`Empty ${logger.emoji('poop')}`);
             } else {
               logger.json(res);
             }
@@ -109,6 +117,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             resolve();
           })
           .catch((err) => {
+            logger.timeEnd('time');
             // We always resolve (instead reject) because we don't
             // want to print the error with vorpal (doesn't allow colors).
             logger.error('Running the module:');
@@ -124,9 +133,22 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
 });
 
 
+// We overwrite the built-in exit command to print a bye message, save the session (if needed), etc.
+const exit = vorpal.find('exit');
+if (exit) { exit.remove(); }
+vorpal
+  .command('exit')
+  .alias('quit')
+  .description('Quit the app.')
+  .action(() => {
+    logger.subtitle(`\nQuiting ... ${logger.emoji('wave')}\n`);
+    process.exit(0);
+  });
+
+
 vorpal
   .command('env')
-  .description('To get the values of all global parameters')
+  .description('To get the values of all global parameters.')
   .action(() => {
     logger.json(globals);
 
@@ -136,7 +158,7 @@ vorpal
 
 vorpal
   .command('set')
-  .description('To add a global parameter to use through all the modules')
+  .description('To add a global parameter to use through all the modules.')
   .action(() =>
     new Promise((resolve) => {
       vorpal.activeCommand.prompt([
@@ -170,15 +192,19 @@ vorpal
     }));
 
 
-logger.welcome('\n\tWelcome to Bluebox-ng');
+logger.infoHigh(`Starting the framework in interactive mode ... ${logger.emoji('computer')}\n`);
+logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}  ${logger.emoji('skull')}`);
 logger.info(`\t(v${cli.version})`);
-logger.bold('\nPlease run "help" or "help | grep whatever" to start the game ;)');
+logger.subtitle(`\n${logger.emoji('eyes')}  Please run "help" or ` +
+                '"help | grep whatever" to start the game\n');
 
 dbg('Starting the prompt ...');
 vorpal
   // Persistent command history.
   .history('bluebox-ng')
   // Prompt content.
+  // TODO: Ugly effect with colors or emojis here.
+  // .delimiter(`${logger.emoji('phone')}  ${cfg.prompt}`)
   .delimiter(cfg.prompt)
   .use(vHn)
   .use(vLess)
@@ -189,18 +215,17 @@ vorpal
   .show();
 
 
-// TODO: Confirm not needed due to vorpal
 // Just in case we lost something, to avoid a full break.
-// process.on('uncaughtException', (err) => {
-//   logger.error('"uncaughtException" found:');
-//   logger.error(err);
+process.on('uncaughtException', (err) => {
+  logger.error('"uncaughtException" found:');
+  logger.error(err);
 
-//   // Restarting the prompt to let the user continue without a restart.
-//   vorpal.show();
-// });
+  // Restarting the prompt to let the user continue without a restart.
+  vorpal.show();
+});
 
-// process.on('unhandledRejection', (reason) => {
-//   logger.error(`"unhandledRejection : reason : ${reason}`);
+process.on('unhandledRejection', (reason) => {
+  logger.error(`"unhandledRejection : reason : ${reason}`);
 
-//   vorpal.show();
-// });
+  vorpal.show();
+});

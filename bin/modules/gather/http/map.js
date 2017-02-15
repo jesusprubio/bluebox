@@ -19,7 +19,7 @@ optsCopy.transport = {
 };
 
 
-module.exports.desc = 'HTTP service mapper';
+module.exports.desc = 'HTTP service mapper.';
 
 
 module.exports.opts = optsCopy;

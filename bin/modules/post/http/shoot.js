@@ -12,7 +12,7 @@ const path = require('path');
 const shoot = require('../../../..').webShoot;
 
 
-module.exports.desc = 'Take a screenshoot of a website';
+module.exports.desc = 'Take a screenshoot of a website.';
 
 
 module.exports.opts = {

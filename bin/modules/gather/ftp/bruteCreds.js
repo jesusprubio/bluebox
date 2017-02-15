@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rport.default = 21;
 
 
-module.exports.desc = 'FTP credentials brute force';
+module.exports.desc = 'FTP credentials brute force.';
 
 
 module.exports.opts = optsCopy;

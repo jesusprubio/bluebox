@@ -10,7 +10,7 @@
 const scan = require('../../../..').wifi.scanAps;
 
 
-module.exports.desc = 'Wifi access point scanner';
+module.exports.desc = 'Wifi access point scanner.';
 
 
 module.exports.impl = () => scan();

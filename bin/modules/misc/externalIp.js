@@ -11,7 +11,7 @@
 const getIp = require('../../..').externalIp;
 
 
-module.exports.desc = 'Get your external IP address (icanhazip.com)';
+module.exports.desc = 'Get your external IP address.';
 
 
 module.exports.impl = () => getIp();

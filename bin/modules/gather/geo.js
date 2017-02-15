@@ -10,7 +10,7 @@
 const geo = require('../../..').geo;
 
 
-module.exports.desc = 'Geolocate a host (freegeoip.net)';
+module.exports.desc = 'Geolocate a host.';
 
 
 module.exports.opts = {

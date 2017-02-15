@@ -13,7 +13,7 @@ const post = require('../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'Get SIP registry info';
+module.exports.desc = 'Get SIP registry info.';
 
 
 module.exports.opts = commonOpts;

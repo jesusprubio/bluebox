@@ -12,7 +12,7 @@ const utils = require('../../lib');
 const credsJson = require('../../../bin/artifacts/voipCreds');
 
 
-module.exports.desc = 'Show common VoIP system default credentials';
+module.exports.desc = 'Show common VoIP system default credentials.';
 
 
 module.exports.impl = () => utils.Promise.resolve(credsJson);

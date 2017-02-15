@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rports.default = [5038];
 
 
-module.exports.desc = 'AMI service mapper';
+module.exports.desc = 'AMI service mapper.';
 
 
 module.exports.opts = optsCopy;

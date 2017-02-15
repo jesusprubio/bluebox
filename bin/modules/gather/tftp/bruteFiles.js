@@ -26,7 +26,7 @@ optsCopy.names = {
   default: 'file:./bin/artifacts/dics/tftp.txt',
 };
 
-module.exports.desc = 'TFTP files brute force';
+module.exports.desc = 'TFTP files brute force.';
 
 
 module.exports.opts = optsCopy;

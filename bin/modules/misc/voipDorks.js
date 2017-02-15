@@ -12,7 +12,7 @@ const utils = require('../../lib');
 const dorksJson = require('../../artifacts/voipDorks');
 
 
-module.exports.desc = 'Find potential VoIP targets using a Google dork';
+module.exports.desc = 'Find potential VoIP targets using a Google dork.';
 
 
 // TODO: Allow Make the request and parse the response

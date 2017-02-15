@@ -11,7 +11,7 @@
 const request = require('../../../..').dns.resolve;
 
 
-module.exports.desc = 'DNS resolution for all the record types';
+module.exports.desc = 'DNS resolution for all the record types.';
 
 
 module.exports.opts = {

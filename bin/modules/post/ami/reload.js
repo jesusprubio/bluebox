@@ -13,7 +13,7 @@ const post = require('../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'Restart the server';
+module.exports.desc = 'Restart the server.';
 
 
 module.exports.opts = commonOpts;

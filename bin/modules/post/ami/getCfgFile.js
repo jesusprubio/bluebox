@@ -20,7 +20,7 @@ optsCopy.filename = {
 };
 
 
-module.exports.desc = 'Get a config file of the server';
+module.exports.desc = 'Get a config file of the server.';
 
 
 module.exports.opts = optsCopy;

@@ -13,7 +13,7 @@ const post = require('../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 
 
-module.exports.desc = 'Get info about the dial plan';
+module.exports.desc = 'Get info about the dial plan.';
 
 
 module.exports.opts = commonOpts;

@@ -20,7 +20,7 @@ delete optsCopy.users;
 delete optsCopy.rports;
 
 
-module.exports.desc = 'Ping mapper';
+module.exports.desc = 'Ping mapper.';
 
 
 module.exports.opts = optsCopy;

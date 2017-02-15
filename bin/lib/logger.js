@@ -9,9 +9,8 @@
 
 const clc = require('cli-color');
 const prettyjson = require('prettyjson');
+const emoji = require('node-emoji');
 
-// TODO:
-// - https://github.com/dthree/vorpal/wiki/api-%7C-vorpal.ui#uiredrawdone
 
 /* eslint-disable no-console */
 module.exports.regular = str => console.log(str);
@@ -20,17 +19,22 @@ module.exports.info = str => console.log(clc.xterm(55)(str));
 
 module.exports.infoHigh = str => console.log(clc.xterm(63)(str));
 
-module.exports.highlight = str => console.log(clc.xterm(202)(str));
-
 module.exports.result = str => console.log(clc.xterm(46)(str));
 
 module.exports.json = json => console.log(prettyjson.render(json));
 
 module.exports.error = str => console.log(clc.red.bold(str));
 
-module.exports.bold = str => console.log(clc.bold(str));
+// module.exports.clear = () => process.stdout.write(clc.reset());
 
-module.exports.clear = () => process.stdout.write(clc.reset());
+module.exports.title = str => console.log(clc.bold.xterm(202)(str));
 
-module.exports.welcome = str => console.log(clc.bold.xterm(202)(str));
+module.exports.subtitle = str => console.log(clc.bold(str));
+
+module.exports.time = label => console.time(clc.xterm(63)(label));
+
+module.exports.timeEnd = label => console.timeEnd(clc.xterm(63)(label));
 /* eslint-enable no-console */
+
+module.exports.emoji = label => emoji.get(label);
+

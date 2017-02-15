@@ -11,7 +11,7 @@
 const request = require('../../../..').dns.reverse;
 
 
-module.exports.desc = 'DNS inverse resolution';
+module.exports.desc = 'DNS inverse resolution.';
 
 
 module.exports.opts = {
