@@ -41,7 +41,7 @@ dbg('Starting ...');
 
 const cli = new BlueboxCli({});
 dbg('Getting all Bluebox modules details ...');
-const modulesInfo = cli.help();
+const modulesInfo = cli.modules;
 dbg('Modules details', modulesInfo);
 
 dbg('Defining the commands for the Bluebox modules ...');
@@ -120,8 +120,8 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             logger.timeEnd('time');
             // We always resolve (instead reject) because we don't
             // want to print the error with vorpal (doesn't allow colors).
-            logger.error('Running the module:');
-            logger.infoHigh(err.stack);
+            logger.error('\nRunning the module:');
+            logger.info(err.stack);
             resolve();
           });
         })

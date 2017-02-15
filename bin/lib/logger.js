@@ -23,7 +23,7 @@ module.exports.result = str => console.log(clc.xterm(46)(str));
 
 module.exports.json = json => console.log(prettyjson.render(json));
 
-module.exports.error = str => console.log(clc.red.bold(str));
+module.exports.error = str => console.log(clc.red(str));
 
 // module.exports.clear = () => process.stdout.write(clc.reset());
 

@@ -7,7 +7,7 @@
 
 'use strict';
 
-const brute = require('../../..').bruteCreds;
+const brute = require('../../..').brute;
 const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
 const utils = require('../../../lib');
 

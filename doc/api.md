@@ -97,27 +97,9 @@ WHOIS protocol client. A wrapper for [whois](https://github.com/hjr265/node-whoi
 }
 ```
 
-## `map.net(rhosts, opts) -> Promise`
-Network mapping at transport level, for now it only support full TCP scan. Possible status:
-"open", "closed (timeout)", "closed (refused)", "closed (unreachable)".
-- `rhosts` (string) - Valid IPv4 IP range (ie: '10.0.2.0/25','192.168.10.80-120).
-- `opts` is an object with:
- - `rports` (number) - Ports to ping in each host. (default: [21, 22, 80, 443])
- - `timeout` (number) - Time to wait for a response (in ms.). (default: 5000)
- - `concurrency` (number) - Max number of simultaneous socket opened. (default: 500)
- - `banner` (boolean) - Capture the service banner. (default: true)
 
-```
-[
-  { ip: '127.0.0.1', port: 443, status: 'closed (refused)' },
-  { ip: '127.0.0.1', port: 80, status: 'closed (refused)' },
-  { ip: '127.0.0.1', port: 22, status: 'closed (refused)' },
-  { ip: '127.0.0.1', port: 21, status: 'closed (refused)' }
-]
-```
-
-## `map.services(rhosts, opts) -> Promise`
-Network mapping at app/protocol level.
+## `map(rhosts, opts) -> Promise`
+Network mapping.
 - `rhosts` (Iterator) - With valid IPv4 rhosts.
 - `opts` is an object with:
  - `proto` (string) - Application protocol to use. Options: 'ping', 'pingTcp', 'sip', 'ssh', 'ftp', 'http', ['ami'](https://wiki.asterisk.org/wiki/pages/viewpage.action?pageId=4817239). (default: 'sip')

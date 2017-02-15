@@ -7,7 +7,7 @@
 
 'use strict';
 
-const geo = require('../../..').geo;
+const geo = require('../../../..').geo;
 
 
 module.exports.desc = 'Geolocate a host.';

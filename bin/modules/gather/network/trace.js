@@ -8,19 +8,19 @@
 
 'use strict';
 
-const whois = require('../../..').whois;
+const trace = require('../../../..').trace;
 
 
-module.exports.desc = 'WHOIS protocol client.';
+module.exports.desc = 'Display the route of your packages.';
 
 
 module.exports.opts = {
   rhost: {
-    types: ['domain', 'ip'],
-    desc: 'Domain/IP address to explore',
-    default: 'google.com',
+    types: 'ip',
+    desc: 'Host to explore',
+    default: '8.8.8.8',
   },
 };
 
 
-module.exports.impl = opts => whois(opts.rhost);
+module.exports.impl = opts => trace(opts.rhost);

@@ -14,7 +14,6 @@ const utils = require('./lib/utils');
 const bluebox = utils.requireDir(module, './lib/index');
 
 // Grouped methods.
-bluebox.map = utils.requireDir(module, './lib/map');
 bluebox.dns = utils.requireDir(module, './lib/dns');
 bluebox.wifi = utils.requireDir(module, './lib/wifi');
 

@@ -7,7 +7,7 @@
 
 'use strict';
 
-const map = require('../../../..').map.services;
+const map = require('../../../..').map;
 const scanComOpts = require('../../../cfg/commonOpts/map');
 const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
