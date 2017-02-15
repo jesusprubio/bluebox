@@ -26,12 +26,12 @@
   },
   "delay": {
     "types": "natural",
-    "desc": "Delay between batches of requests, in ms.",
+    "desc": "Delay between requests, in ms.",
     "default": 0
   },
   "concurrency": {
     "types": "natural",
-    "desc": "Number of requests to do at the same time",
+    "desc": "Max number of active requests.",
     "default": 10000
   },
   "timeout": {
