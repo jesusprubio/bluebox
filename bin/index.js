@@ -21,7 +21,7 @@ const vGrep = require('vorpal-grep');
 
 const logger = require('./lib/logger');
 
-logger.infoHigh(`Loading modules ... ${logger.emoji('rocket')}`);
+logger.infoHigh(`${logger.emoji('rocket')}  Loading modules ...`);
 
 const cfg = require('./cfg/cli');
 const BlueboxCli = require('..').Cli;
@@ -101,16 +101,16 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             }
           });
 
-          logger.infoHigh(`\nRunning the module ... ${logger.emoji('beer')}\n`);
+          logger.infoHigh(`\n${logger.emoji('beer')}  Running the module ...\n`);
           logger.time('time');
           cli.run(moduleName, finalAnswers)
           .then((res) => {
-            logger.infoHigh(`\nModule run finished ${logger.emoji('airplane_arriving')}`);
+            logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Module run finished`);
             logger.timeEnd('time');
-            logger.title(`\nResult ${logger.emoji('sparkles')}`);
+            logger.title(`\n${logger.emoji('sparkles')}  Result`);
             if (!res || (utils.isArray(res) && res.length === 0) ||
                 (utils.isObject(res) && Object.keys(res).lenght === 0)) {
-              logger.result(`Empty ${logger.emoji('poop')}`);
+              logger.result(`${logger.emoji('poop')} Empty`);
             } else {
               logger.json(res);
             }
@@ -142,7 +142,7 @@ vorpal
   .alias('quit')
   .description('Quit the app.')
   .action(() => {
-    logger.subtitle(`\nQuiting ... ${logger.emoji('wave')}\n`);
+    logger.subtitle(`\n${logger.emoji('wave')}  See you!\n`);
     process.exit(0);
   });
 
@@ -203,7 +203,7 @@ vorpal
     }));
 
 
-logger.infoHigh(`Starting the framework in interactive mode ... ${logger.emoji('computer')}\n`);
+logger.infoHigh(`${logger.emoji('computer')}  Starting the framework in interactive mode ...\n`);
 logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}  ${logger.emoji('skull')}`);
 logger.info(`\t(v${cli.version})`);
 logger.subtitle(`\n${logger.emoji('eyes')}  Please run "help" or ` +
