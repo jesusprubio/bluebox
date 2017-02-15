@@ -10,28 +10,28 @@
     "default": 22
   },
   "users": {
-    "types": "enumeration",
-    "desc": "User (ie: 'admin'), range or file with them (ie: file:./artifacts/dics/john.txt) to test",
-    "default": "range:0000-0100"
+    "types": "enum",
+    "desc": "User (ie: 'admin'), range or file with them (ie: file:./bin/artifacts/dics/john.txt) to test",
+    "default": "range:000-100"
   },
   "passwords": {
-    "types": "enumeration",
+    "types": "enum",
     "desc": "Passwords (or file with them) to test",
-    "default": "range:0000-0100"
+    "default": "range:000-100"
   },
   "userAsPass": {
     "types": "bool",
     "desc": "Test the same user as password for each one",
-    "default": true
+    "default": false
   },
   "delay": {
     "types": "natural",
-    "desc": "Delay between batches of requests (depending of the 'concurrency'), in ms.",
+    "desc": "Delay between batches of requests, in ms.",
     "default": 0
   },
   "concurrency": {
     "types": "natural",
-    "desc": "Number of requests to do at the same time. Only works if 'delay' is not 0",
+    "desc": "Number of requests to do at the same time",
     "default": 100
   },
   "timeout": {

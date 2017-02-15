@@ -17,9 +17,9 @@
 
 
 const net = require('net');
-const fs = require('fs');
 const path = require('path');
 
+const LineByLine = require('n-readlines');
 const Netmask = require('netmask').Netmask;
 const sipUtils = require('sip-fake-stack').utils;
 const utils = require('.');
@@ -59,7 +59,9 @@ module.exports.natural = (value) => {
 
 module.exports.bool = (value) => {
   // Passed as booleans and "validator"" always needs strings.
-  if (utils.validator.isBoolean(value.toString())) { return value; }
+  // Could come as a boolean or as a string.
+  const finalValue = value.toString();
+  if (utils.validator.isBoolean(finalValue)) { return utils.validator.toBoolean(finalValue); }
 
   throw new Error(errMsgs.bool);
 };
@@ -83,32 +85,102 @@ function padNumber(number, padding) {
   return new Array(Math.max(padding - String(number).length + 1, 0)).join(0) + number;
 }
 
-module.exports.enumeration = (value) => {
-  let finalValues = [];
+// We can't use arrays to avoid a huge memory fingerprints in case of huge ones.
+// So we use custom iterators:
+// https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Iterators_and_Generators
+function iterRanges(min, max, padding) {
+  let index = min;
+
+  return {
+    reset: () => { index = min; },
+    next: () => {
+      if (index <= max) {
+        let value = index;
+        if (padding) {
+          value = padNumber(index, padding);
+        }
+        index += 1;
+
+        return {
+          value,
+          done: false,
+        };
+      }
+      return { done: true };
+    },
+  };
+}
+
+
+function iterSingle(value) {
+  let index = 0;
+
+  return {
+    reset: () => { index = 0; },
+    next: () => {
+      if (index === 0) {
+        index += 1;
+
+        return {
+          value,
+          done: false,
+        };
+      }
+
+      return { done: true };
+    },
+  };
+}
+
+function iterFile(filePath) {
+  let liner = new LineByLine(filePath);
+
+  return {
+    // The "reset" method included in the library is not valid for our case
+    // because it doesn't work when the iterator has finished.
+    reset: () => { liner = new LineByLine(filePath); },
+    next: () => {
+      const line = liner.next();
+      if (line !== false) {
+        return {
+          value: line.toString(),
+          done: false,
+        };
+      }
+
+      return { done: true };
+    },
+  };
+}
+
+
+module.exports.enum = (value) => {
+  dbg('Parsing started for enumeration', value);
 
   if (value.slice(0, 6) === 'range:') {
+    dbg('Range detected');
     const slicedValue = value.slice(6);
     const splitted = slicedValue.split('-');
     const init = parseInt(splitted[0], 10);
     const last = parseInt(splitted[1], 10);
-    for (let i = init; i <= last; i += 1) {
-      finalValues.push(padNumber(i, splitted[0].length));
-    }
+    const padding = splitted[0].length;
+
+    return iterRanges(init, last, padding);
   } else if (value.slice(0, 5) === 'file:') {
-    const slicedValue = value.slice(5);
+    dbg('File detected');
+    const sliced = value.slice(5);
 
-    // TODO: Return an iterator instead to avoid huge memory fingerprints.
-    const data = fs.readFileSync(path.resolve(__dirname, '..', slicedValue));
-    if (!data) {
-      throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
-    }
-
-    finalValues = data.toString().split('\n');
-  } else {
-    finalValues = [value];
+    // // The same here, we can't use arrays if the file is too huge (as expected).
+    return iterFile(path.resolve(process.cwd(), sliced));
+    // TODO: Manage errors.
+    // if (!data) {
+    //   throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
+    // }
   }
 
-  return finalValues;
+  dbg('Single value detected');
+  // Also an iterator to keep the consistency.
+  return iterSingle(value);
 };
 
 
@@ -132,18 +204,24 @@ module.exports.sipRequest = (value) => {
   const reqTypes = sipUtils.getSipReqs();
   const trimmed = value.toLowerCase();
 
-  if (utils.includes(reqTypes, trimmed) !== -1) { return trimmed; }
+  if (value === 'random') { return utils.sample(reqTypes); }
+  if (utils.includes(reqTypes, trimmed)) { return trimmed; }
 
   throw new Error(reqTypes.toString());
 };
 
 
+module.exports.ipRandom = (value) => {
+  if (value === 'random') { return networkUtils.randomIp(); }
+
+  return ip(value);
+};
+
+
 module.exports.lport = (value) => {
-  if (value === 'real') {
-    return null;
-  } else if (value === 'random') {
-    return networkUtils.randomPort();
-  }
+  if (value === 'real') { return null; }
+
+  if (value === 'random') { return networkUtils.randomPort(); }
 
   return port(value);
 };
@@ -167,24 +245,50 @@ function isCidrMask(value, version) {
   return false;
 }
 
-function ipsCidr(value) {
+
+function iterMulti(array) {
+  let nextIndex = 0;
+
+  return {
+    reset: () => { nextIndex = 0; },
+    next: () => {
+      if (nextIndex < array.length) {
+        const value = array[nextIndex];
+        nextIndex += 1;
+        return {
+          value,
+          done: false,
+        };
+      }
+
+      return { done: true };
+    },
+  };
+}
+
+
+function iterIpCidr(value) {
   const splitValue = value.split('/');
 
-  if ((net.isIPv4(splitValue[0]) && isCidrMask(splitValue[1], 4)) ||
-      (net.isIPv6(splitValue[0]) && isCidrMask(splitValue[1], 6))) {
-    const block = new Netmask(value);
-
-    if (net.isIPv4(splitValue[0])) {
-      const finalIps = [];
-      block.forEach((ipAdd) => { finalIps.push(ipAdd); });
-
-      return finalIps;
-    }
-
+  // TODO: Not supported in ranges for now.
+  if (net.isIPv6(splitValue[0])) {
     throw new Error(errMsgs.notV6);
   }
 
-  throw new Error(errMsgs.ipsCidr);
+  if (!net.isIPv4(splitValue[0]) ||
+  (net.isIPv4(splitValue[0]) && !isCidrMask(splitValue[1], 4))) {
+    throw new Error(errMsgs.ipsCidr);
+  }
+
+  // TODO: Possible big memory fingerprint.
+  // User library: https://github.com/rs/node-netmask
+  // Implement a pure iterator or use any library which makes it for us.
+  // It should suppose a problem this fake iterator because the list should fit in memory.
+  const block = new Netmask(value);
+  const finalIps = [];
+  block.forEach(ipAdd => finalIps.push(ipAdd));
+
+  return iterMulti(finalIps);
 }
 
 function isIpBlock(value, version) {
@@ -211,153 +315,108 @@ function isIpBlock(value, version) {
   return false;
 }
 
-function ipsRange(value) {
+
+function iterIpRanges(value) {
   const splitValue = value.split('-');
-  const finalIps = [];
   let blockBase = '';
-  let radix;
-  let separator;
+  const separator = '.';
+  const radix = 10;
 
   // TODO: Not supported in ranges for now
   if (net.isIPv6(splitValue[0])) {
     throw new Error(errMsgs.notV6);
   }
-  if ((net.isIPv4(splitValue[0]) && isIpBlock(splitValue[1], 4)) ||
-      (net.isIPv6(splitValue[0]) && isIpBlock(splitValue[1], 6))) {
-    if (net.isIPv4(splitValue[0])) {
-      separator = '.';
-      radix = 10;
-    } else {
-      separator = ':';
-      radix = 16;
-    }
-
-    const splitted0 = splitValue[0].split(separator);
-    for (let i = 0; i < (splitted0.length - 1); i += 1) {
-      blockBase += splitted0[i].toString() + separator;
-    }
-    const blockMin = parseInt(splitted0[splitted0.length - 1], radix);
-    const blockMax = parseInt(splitValue[1], radix);
-    for (let i = blockMin; i <= blockMax; i += 1) {
-      finalIps.push(blockBase + parseInt(i.toString(radix), 10));
-    }
-
-    return finalIps;
+  if (!net.isIPv4(splitValue[0]) ||
+  (net.isIPv4(splitValue[0]) && !isIpBlock(splitValue[1], 4))) {
+    throw new Error(errMsgs.ipsRange);
   }
 
-  throw new Error(errMsgs.ipsRange);
+  // if (net.isIPv4(splitValue[0])) {
+  //   separator = '.';
+  //   radix = 10;
+  // } else {
+  //   separator = ':';
+  //   radix = 16;
+  // }
+
+  const splitted0 = splitValue[0].split(separator);
+
+  for (let i = 0; i < (splitted0.length - 1); i += 1) {
+    blockBase += splitted0[i].toString() + separator;
+  }
+  const blockMin = parseInt(splitted0[splitted0.length - 1], radix);
+  const blockMax = parseInt(splitValue[1], radix);
+  let nextIndex = blockMin;
+
+  return {
+    reset: () => { nextIndex = blockMin; },
+    next: () => {
+      if (nextIndex <= blockMax) {
+        const valueF = `${blockBase}${nextIndex}`;
+        nextIndex += 1;
+        return {
+          value: valueF,
+          done: false,
+        };
+      }
+      return { done: true };
+    },
+  };
 }
+
 
 module.exports.ips = (value) => {
+  dbg('IPs parsing started', value);
+
   if (value.slice(0, 5) === 'file:') {
-    const slicedValue = value.slice(5);
+    const sliced = value.slice(5);
+    dbg('IPs file detected');
 
-    const data = fs.readFileSync(path.resolve(__dirname, '..', slicedValue));
-    if (!data) {
-      throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
-    }
-
-    return data.toString().split('\n');
+    // // The same here, we can't use arrays if the file is too huge (as expected).
+    return iterFile(path.resolve(process.cwd(), sliced));
+    // TODO: Manage errors.
+    // if (!data) {
+    //   throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
+    // }
   } else if (value.split('/').length === 2) {
-    return ipsCidr(value);
+    dbg('"IPs CIDR" reached');
+
+    return iterIpCidr(value);
   } else if (value.split('-').length === 2) {
-    return ipsRange(value);
+    dbg('"IPs range" reached');
+
+    return iterIpRanges(value);
   }
 
-  return [ip(value)];
+  dbg('"IPs single" reached');
+  return iterSingle(value);
 };
 
-
-function portRange(value) {
-  const splitValue = value.split('-');
-  const finalPorts = [];
-
-  if (utils.validator.isPort(splitValue[0]) && utils.validator.isPort(splitValue[1])) {
-    for (let i = parseInt(splitValue[0], 10); i <= parseInt(splitValue[1], 10); i += 1) {
-      finalPorts.push(parseInt(i, 10));
-    }
-
-    return finalPorts;
-  }
-
-  throw new Error(errMsgs.portRange);
-}
-
-function portList(value) {
-  let finalPorts = [];
-  let split = value.split(',');
-
-  split = utils.map(split, p => p.trim());
-  dbg('"portList" reached', { split });
-
-  utils.each(split, (singlePort) => {
-    dbg('Port', { singlePort });
-    if (singlePort.split('-').length === 2) {
-      dbg('A range');
-      finalPorts = finalPorts.concat(portRange(singlePort));
-    } else {
-      dbg('Single');
-      finalPorts.push(port(singlePort));
-    }
-  });
-
-  dbg('Final:', { finalPorts });
-  return finalPorts;
-}
 
 module.exports.ports = (value) => {
   const finalValue = value.toString();
+  dbg('Ports reached', { finalValue });
 
   if (finalValue.split(',').length > 1) {
-    return portList(value);
-  } else if (finalValue.split('-').length === 2) {
-    return portRange(finalValue);
+    let split = value.split(',');
+    dbg('"ports list" reached', split);
+
+    split = utils.map(split, p => p.trim());
+
+    return iterMulti(split);
   }
 
-  return [port(finalValue)];
+  if (finalValue.split('-').length === 2) {
+    const splitValue = value.split('-');
+    dbg('"ports range" reached');
+
+    if (utils.validator.isPort(splitValue[0]) && utils.validator.isPort(splitValue[1])) {
+      return iterRanges(parseInt(splitValue[0], 10), parseInt(splitValue[1], 10));
+    }
+
+    throw new Error(errMsgs.portRange);
+  }
+
+  dbg('"port single" reached');
+  return iterSingle(finalValue);
 };
-
-
-// TODO: Move to the client
-// Get the IP address from a network interface value
-// Returns a promise (depending of the value) to get
-// an IP address.
-// TODO: Promises still not supported.
-// module.exports.srcHost = utils.Promise.method(value => {
-//   console
-//   dbg(`Entering "srcHost", parsing value "${value}"`);
-//
-//   if (value.slice(0, 6) === 'iface:') {
-//     dbg('Getting the IP from an iface ...');
-//     const ipAdd = value.slice(0, 6);
-//
-//     // "localIp" is already a promise.
-//     return localIp(ipAdd);
-//   } else if (value === 'external') {
-//     dbg('Getting the external IP ...');
-//
-//     // "request" is also a promise but we need to change the result,
-//     return new Promise(rsl => {
-//       request('http://icanhazip.com/')
-//       .then(body => {
-//         dbg(`Request finished, body: ${body}`);
-//         // Removing the ending '\n'
-//         const parsed = body.substr(0, body.length - 1);
-//         dbg(`Parsed response: ${parsed}`);
-//         rsl(parsed);
-//       });
-//     });
-//   } else if (value === 'random') {
-//     // This was the stack is going to random it.
-//     // TODO: Change this crap when we use another stack.
-//     dbg('random');
-//
-//     return null;
-//   }
-//
-//   dbg('Common ip check');
-//   // General case: a single IP.
-//   // We need to return a promise also here.
-//   return utils.Promise.method(ip(value));
-//   // return ip(value);
-// });

@@ -8,7 +8,7 @@
 
 'use strict';
 
-const brute = require('../../..').bruteCreds;
+const brute = require('../../../../').brute;
 const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
 const utils = require('../../../lib');
 
@@ -16,9 +16,14 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rport.default = 161;
 optsCopy.communities = {
   types: 'enum',
-  desc: 'Community name to test (or path to a file with multiple)',
+  desc: 'Community name to test, or path to a file with multiple',
   default: 'public',
 };
+// We reuse the brute method but it's simpler here, so we don't
+// need this options.
+delete optsCopy.users;
+delete optsCopy.passwords;
+delete optsCopy.userAsPass;
 
 
 module.exports.desc = 'SNMP communities brute force';
