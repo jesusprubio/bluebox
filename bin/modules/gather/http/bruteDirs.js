@@ -9,8 +9,6 @@
 
 // TODO: Add to the library?
 
-// TODO: This module run can't be cancelled with Ctrl+C
-
 const Writable = require('stream').Writable;
 
 const dirBuster = require('dirbuster');
@@ -51,11 +49,6 @@ module.exports.opts = {
     desc: 'How many concurrent requests',
     default: 5,
   },
-  // TODO
-  // extension: {
-  //   desc: 'Look for this specific extension',
-  //   default: '',
-  // },
 };
 
 
@@ -87,7 +80,6 @@ module.exports.impl = (opts = {}) =>
     cliOpts.outStream._write = (chunk, enc, next) => { // eslint-disable-line no-underscore-dangle
       const jsonChunk = JSON.parse(chunk.toString('utf8'));
       dbg('Chunk (JSON)', jsonChunk);
-      // TODO: Also 401 and 407?
       if (jsonChunk.statusCode && utils.includes([200, 401, 407], jsonChunk.statusCode)) {
         result.push({
           type: jsonChunk.type,

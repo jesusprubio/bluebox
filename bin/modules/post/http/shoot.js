@@ -17,7 +17,6 @@ module.exports.desc = 'Take a screenshoot of a website.';
 
 module.exports.opts = {
   url: {
-    // TODO: More strict, add a type (validator)
     types: 'url',
     desc: 'URL to explore',
     default: 'http://example.com/',
@@ -26,6 +25,7 @@ module.exports.opts = {
     desc: 'Path to store the output file (relative to from where Bluebox was launched)',
     default: '.',
   },
+  // TODO: Support this parameter in the method.
   // timeout: {
   //   types: 'natural',
   //   desc: 'Time to wait for a response, in ms.',
@@ -37,7 +37,7 @@ module.exports.opts = {
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
 
-  // TODO: File name hardcoded for now.
+  // TODO: Output file name hardcoded for now, add an option.
   if (opts.path) {
     finalOpts.path =
       path.resolve(process.cwd(), opts.path, `shoot-${new Date().toISOString()}.png`);

@@ -30,7 +30,6 @@ class Cli {
     this.modules = {};
     utils.each(Object.keys(modulesRaw), (modulePath) => {
       utils.each(Object.keys(modulesRaw[modulePath]), (subPath) => {
-        // TODO: Refactor, this has to be easier.
         // Only 3 levels allowed for now.
         // To get the ones without a subfolder.
         if (modulesRaw[modulePath][subPath].impl) {

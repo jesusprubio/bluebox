@@ -15,9 +15,6 @@ const vorpal = require('vorpal')();
 const vHn = require('vorpal-hacker-news');
 const vLess = require('vorpal-less');
 const vGrep = require('vorpal-grep');
-// TODO
-// const vRepl = require('vorpal-repl');
-// const vTour = require('vorpal-tour');
 
 const logger = require('./lib/logger');
 
@@ -214,14 +211,10 @@ vorpal
   // Persistent command history.
   .history('bluebox-ng')
   // Prompt content.
-  // TODO: Ugly effect with colors or emojis here.
-  // .delimiter(`${logger.emoji('phone')}  ${cfg.prompt}`)
   .delimiter(cfg.prompt)
   .use(vHn)
   .use(vLess)
   .use(vGrep)
-  // TODO
-  // .use(vRepl)
   // Starting the prompt.
   .show();
 

@@ -185,10 +185,6 @@ module.exports.enum = (value) => {
     }
 
     return iterFile(path.resolve(process.cwd(), filePath));
-    // TODO: Manage errors.
-    // if (!data) {
-    //   throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
-    // }
   }
 
   dbg('Single value detected');
@@ -282,7 +278,7 @@ function iterMulti(array) {
 function iterIpCidr(value) {
   const splitValue = value.split('/');
 
-  // TODO: Not supported in ranges for now.
+  // TODO: Review and implement all we need to have fuff IPv6 support.
   if (net.isIPv6(splitValue[0])) {
     throw new Error(errMsgs.notV6);
   }
@@ -314,8 +310,6 @@ function isIpBlock(value, version) {
     max = 255;
   } else {
     raddix = 16;
-    // TODO: Check this ESLint rule:
-    // http://eslint.org/docs/rules/prefer-numeric-literals
     min = parseInt('0000', 16); // eslint-disable-line prefer-numeric-literals
     max = parseInt('ffff', 16); // eslint-disable-line prefer-numeric-literals
   }
@@ -334,7 +328,6 @@ function iterIpRanges(value) {
   const separator = '.';
   const radix = 10;
 
-  // TODO: Not supported in ranges for now
   if (net.isIPv6(splitValue[0])) {
     throw new Error(errMsgs.notV6);
   }
@@ -385,10 +378,6 @@ module.exports.ips = (value) => {
     dbg('IPs file detected');
 
     return iterFile(path.resolve(process.cwd(), sliced));
-    // TODO: Manage errors.
-    // if (!data) {
-    //   throw new Error(`${errMsgs.readFile} : "${slicedValue}"`);
-    // }
   } else if (value.split('/').length === 2) {
     dbg('"IPs CIDR" reached');
 

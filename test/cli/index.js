@@ -16,8 +16,7 @@ const pkgInfo = require('../../package.json');
 const errMsgs = require('../../bin/cfg/errorMsgs');
 
 
-// TODO: Check without passing {}
-const cli = new Cli({});
+const cli = new Cli();
 
 
 test('method "version"', (assert) => {
@@ -84,6 +83,3 @@ test('method "run" with invalid param', (assert) => {
 //   .catch(err => assert.equal(err.message, expectedErr));
 // });
 // test(`"${fileName}" method "run" (Shodan command without key)`, (assert) => {
-
-
-// TODO: getShodanKey, setShodanKey

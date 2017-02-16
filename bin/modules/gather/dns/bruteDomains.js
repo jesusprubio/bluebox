@@ -30,7 +30,6 @@ module.exports.opts = {
   },
   dictionary: {
     // TODO: Support our own dics.
-    // TODO: Add a type to support this
     desc: 'Set the dictionary for bruteforcing [top_50, ...].' +
                  ' Please check the original module: https://github.com/skepticfx/subquest',
     default: 'top_100',
