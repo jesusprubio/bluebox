@@ -9,7 +9,7 @@
 
 const nami = require('nami');
 
-const post = require('../../..').post;
+const post = require('../../../..').post;
 const commonOpts = require('../../../cfg/commonOpts/ami');
 const utils = require('../../../lib');
 

@@ -15,7 +15,7 @@ const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rports.default = [22];
 
 
-module.exports.desc = 'AMI service mapper.';
+module.exports.desc = 'SSH service mapper.';
 
 
 module.exports.opts = optsCopy;
@@ -24,6 +24,6 @@ module.exports.opts = optsCopy;
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
   finalOpts.proto = 'ssh';
-
-  return map(opts.rhost, finalOpts);
+  
+  return map(opts.rhosts, finalOpts);
 };
