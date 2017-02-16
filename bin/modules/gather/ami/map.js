@@ -25,5 +25,5 @@ module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
   finalOpts.proto = 'ami';
 
-  return map(opts.rhost, finalOpts);
+  return map(opts.rhosts, finalOpts);
 };

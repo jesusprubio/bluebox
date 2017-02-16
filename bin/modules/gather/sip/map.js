@@ -30,5 +30,5 @@ module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
   finalOpts.proto = 'sip';
 
-  return map(opts.rhost, finalOpts);
+  return map(opts.rhosts, finalOpts);
 };
