@@ -2,13 +2,13 @@
 
 [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2014.svg)](https://www.blackhat.com/eu-14/arsenal.html)
 [![Continuos integration](https://api.travis-ci.org/jesusprubio/bluebox-ng.svg)](https://travis-ci.org/jesusprubio/bluebox-ng)
-[![Dependencies](https://david-dm.org/jesusprubio/bluebox-ng/status.svg)](https://david-dm.org/jesusprubio/bluebox-ng)
+[![NSP Status](https://nodesecurity.io/orgs/bluebox-ng/projects/108045b9-2ea5-45be-b4d6-0b8ca1cdb8a7/badge)](https://nodesecurity.io/orgs/bluebox-ng/projects/108045b9-2ea5-45be-b4d6-0b8ca1cdb8a7)
 
 [![npm info](https://nodei.co/npm/bluebox-ng.png?downloads=true&downloadRank=true&stars=true)](https://npmjs.org/package/bluebox-ng)
 
-<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
+Pentesting framework using Node.js powers, no external dependencies. Specially focused in VoIP/UC.
 
-VoIP pentesting framework written using Node powers. Our 2 cents to make the Node world still more awesome. ;)
+<img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
 
 ## Features
@@ -32,9 +32,7 @@ VoIP pentesting framework written using Node powers. Our 2 cents to make the Nod
 - Dumb fuzzing
 - Automatic exploit searching (Exploit DB, PacketStorm, Metasploit)
 - Automatic vulnerability searching (CVE, OSVDB, NVD)
-- VirusTotal IP, URL and domain
 - Geolocation
-- Colored output
 - Command completion
 - Cross-platform support
 
@@ -50,70 +48,101 @@ npm i -g bluebox-ng
 ```
 
 ### Kali GNU/Linux
-- `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali.sh | sudo bash -`
+- `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali2.sh | sudo bash -`
 
 
 ## Use
-- Console client: ```bluebox-ng```
-- As a library:
+
+### Framework
+A pentesting environment.
+
+#### Console
+To start the console client.
+```sh
+bluebox-ng
+```
+
+#### Programatically
+To run it from other Node code.
+
 ```javascript
-const Bluebox = require('bluebox-ng');
+const BlueboxCli = require('bluebox-ng').Cli;
 
-const bluebox = new Bluebox({});
-const moduleOptions = { target: '8.8.8.8' };
-
+const cli = new BlueboxCli();
 
 console.log('Modules info:');
-console.log(JSON.stringify(bluebox.help(), null, 2));
+console.log(JSON.stringify(cli.help(), null, 2));
 
-bluebox.runModule('geolocation', moduleOptions, (err, result) => {
-  if (err) {
-    console.log('Error:');
-    console.log(err);
-  } else {
-    console.log('Result:');
-    console.log(result);
-  }
+cli.run('geolocation', { rhost: '8.8.8.8' })
+.then(res => {
+  console.log('Result:');
+  console.log(res);
+})
+.catch(err => {
+  console.log('Error:');
+  console.log(err);
 });
 ```
 
+#### New modules
+You can add your own features to this environment following this tips:
+- Add a new module inside `bin/lib/modules`.
+- Use the most similar one as boilerplate.
+- The methods included in the next section will help you.
+- New ones can call another modules (the `run` method is always a promise).
+- Now it should appear in the pentesting environment.
 
-## Issues
-- https://github.com/jesusprubio/bluebox-ng/issues
+
+### Library
+You can also use externally the methods used in the modules as any other Node library:
+
+```javascript
+const bluebox = require('bluebox-ng');
+
+bluebox.geo('8.8.8.8')
+.then(res => {
+  console.log('Result:');
+  console.log(res);
+})
+.catch(err => {
+  console.log('Error:');
+  console.log(err);
+});
+```
+- Full API documentation [here](./doc/api.md).
 
 
 ## Developer guide
-- Start coding with one of the actual modules similar to the new one as a boilerplate.
+
 - Use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
 
-### Conventions:
- - We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
+### Tests
+We still don't have a proper Docker setup. So, for now, the test have to be run locally. Please check its code before it, they often need a valid target service.
+```
+./node_modules/.bin/tap test/wifi
+node test/wifi/*
+./node_modules/.bin/tap test/wifi/scanAps.js
+node test/wifi/scanAps.js
+```
+
+### Conventions
+- We use [ESLint](http://eslint.org/) and [Airbnb](https://github.com/airbnb/javascript) style guide.
 - Please run to be sure your code fits with it and the tests keep passing:
 ```sh
-npm run-script cont-int
+npm test
 ```
+#### Commit messages rules
+- It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
+- If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
+- It should provide enough information for a reviewer to understand the changes and their relation to the rest of the code.
+
 
 ### Debug
 We use the [visionmedia module](https://github.com/visionmedia/debug), so you have to use this environment variable:
 ```sg
 DEBUG=bluebox* npm start
+DEBUG=bluebox-ng:Cli* npm start
 ```
-
-### Commit messages rules:
- - It should be formed by a one-line subject, followed by one line of white space. Followed by one or more descriptive paragraphs, each separated by one￼￼￼￼ line of white space. All of them finished by a dot.
- - If it fixes an issue, it should include a reference to the issue ID in the first line of the commit.
- - It should provide enough information for a reviewer to understand the changes and their relation to the rest of the code.
-
-
-## Core devs
-- Jesús Pérez
- - [@jesusprubio](https://twitter.com/jesusprubio)
- - jesusprubio gmail com
- - [http://jesusprubio.name/](http://jesusprubio.name/)
-
-- Sergio García
- - [@s3rgiogr](https://twitter.com/s3rgiogr)
- - s3rgio.gr gmail com
 
 
 ## Contributors
@@ -121,19 +150,13 @@ DEBUG=bluebox* npm start
 
 
 ## Thanks to
-- Jose Luis Verdeguer ([@pepeluxx](https://twitter.com/pepeluxx)), my mate playing with VoIP security related stuff.
-- Damián Franco ([@pamojarpan](https://twitter.com/pamojarpan)), help during first steps.
+- Our mentors: [@antonroman](https://twitter.com/antonroman), [@sandrogauci](https://twitter.com/sandrogauci) (SIPVicious was our inspiration), [@pepeluxx](https://twitter.com/pepeluxx), [@markcollier46](https://twitter.com/markcollier46) (["Hacking VoIP Exposed"](http://www.hackingvoip.com/)).
 - [Quobis](http://www.quobis.com), some hours of work through personal projects program.
-- Antón Román ([@antonroman](https://twitter.com/antonroman)), my SIP mentor.
-- Sandro Gauci ([@sandrogauci](https://twitter.com/sandrogauci)), SIPVicious was my inspiration.
-- Kamailio community ([@kamailioproject](https://twitter.com/kamailioproject)), my favourite SIP Server.
-- David Endler and Mark Collier ([@markcollier46](https://twitter.com/markcollier46)), the authors of ["Hacking VoIP Exposed" book](http://www.hackingvoip.com/).
-- John Matherly ([@achillean](https://twitter.com/achillean)) for the SHODAN API and GHDB.
+- Kamailio community ([@kamailioproject](https://twitter.com/kamailioproject)), our favourite SIP Server.
 - Tom Steele ([@_tomsteele](https://twitter.com/_tomsteele)) and the rest of [exploitsearch.net](http://www.exploitsearch.net/) team.
-- [VirusTotal](https://www.virustotal.com/) friends.
 - All developers who have written the Node.js modules used in the project.
-- All VoIP, free software and security hackers that I read everyday.
-- My friend Carlos Pérez, the logo designer.
+- All VoIP, free software and security hackers that we read everyday.
+- Our friend Carlos Pérez, the logo designer.
 
 
 ## License

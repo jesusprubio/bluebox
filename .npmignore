@@ -1,5 +1,13 @@
-# Reports
+test
+bin/example
 finalReport*
+
+.dockerignore
+.eslintrc
+.gitignore
+.nsprc
+.travis.yml
+.Dockerfile
 
 *.png
 *.csv
@@ -22,5 +30,3 @@ coverage
 node_modules
 npm-debug.log
 *.lock
-.vscode
-

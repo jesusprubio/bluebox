@@ -1,0 +1,35 @@
+{
+  "rport": {
+    "types": "port",
+    "desc": "Port to scan on chosen IPs",
+    "default": 5060
+  },
+  "transport": {
+    "types": "sipTransport",
+    "desc": "Underlying protocol",
+    "default": "UDP"
+  },
+  "wsPath": {
+    "desc": "Websockets path (only when websockets)",
+    "default": ""
+  },
+  "meth": {
+    "types": "sipRequest",
+    "desc": "Type of SIP packets to do the requests ('random' supported)",
+    "default": "REGISTER"
+  },
+  "lhost": {
+    "types": "ipRandom",
+    "desc": "Source host (IP) to include in the  SIP request ('random' supported)",
+    "default": "random"
+  },
+  "lport": {
+    "types": "lport",
+    "desc": "Source port to include in the  SIP request ('real' and 'random' supported)",
+    "default": "real"
+  },
+  "domain": {
+    "desc": "Domain to explore ('ip' to use the rhost here)",
+    "default": "ip"
+  }
+}

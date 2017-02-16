@@ -1,0 +1,5 @@
+{
+  "paramReq" : "Required parameter",
+  "paramBad" : "Bad parameter",
+  "badPath": "Bad file path or not supported file type"
+}

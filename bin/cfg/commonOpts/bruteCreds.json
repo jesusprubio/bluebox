@@ -1,0 +1,42 @@
+{
+  "rhost": {
+    "types": "ip",
+    "desc": "Host to attack",
+    "default": "127.0.0.1"
+  },
+  "rport": {
+    "types": "port",
+    "desc": "Port to attack on chosen IPs",
+    "default": 22
+  },
+  "users": {
+    "types": "enum",
+    "desc": "User (ie: 'admin'), range or file with them (ie: file:./john.txt). Some built-in dics are supported ('misc/dicNames')",
+    "default": "range:000-100"
+  },
+  "passwords": {
+    "types": "enum",
+    "desc": "Passwords (or file with them, same that for 'users') to test",
+    "default": "range:000-100"
+  },
+  "userAsPass": {
+    "types": "bool",
+    "desc": "Test the same user as password for each one",
+    "default": false
+  },
+  "delay": {
+    "types": "natural",
+    "desc": "Delay between requests, in ms.",
+    "default": 0
+  },
+  "concurrency": {
+    "types": "natural",
+    "desc": "Max number of active requests.",
+    "default": 10000
+  },
+  "timeout": {
+    "types": "natural",
+    "desc": "Time to wait for a response, in ms.",
+    "default": 3000
+  }
+}
