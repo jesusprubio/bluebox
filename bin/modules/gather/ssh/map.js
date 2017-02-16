@@ -24,6 +24,6 @@ module.exports.opts = optsCopy;
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
   finalOpts.proto = 'ssh';
-  
+
   return map(opts.rhosts, finalOpts);
 };
