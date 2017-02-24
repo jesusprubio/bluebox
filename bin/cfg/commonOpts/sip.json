@@ -1,9 +1,4 @@
 {
-  "rport": {
-    "types": "port",
-    "desc": "Port to scan on chosen IPs",
-    "default": 5060
-  },
   "transport": {
     "types": "sipTransport",
     "desc": "Underlying protocol",
@@ -11,7 +6,13 @@
   },
   "wsPath": {
     "desc": "Websockets path (only when websockets)",
+    "when": { "transport": ["WS","WSS"] },
     "default": ""
+  },
+  "rport": {
+    "types": "port",
+    "desc": "Port to scan on chosen IPs",
+    "default": 5060
   },
   "meth": {
     "types": "sipRequest",

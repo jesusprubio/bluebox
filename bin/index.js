@@ -43,11 +43,6 @@ dbg('Modules details', modulesInfo);
 
 dbg('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), (moduleName) => {
-  // We need this to do a trick to include the global parameters.
-  // The Bluebox library manages the module parameters default values
-  // for us. But we need this trick to allow the global parameters.
-  const defaults = {};
-
   vorpal
     .command(moduleName)
     .description(modulesInfo[moduleName].desc)
@@ -55,31 +50,53 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
       new Promise((resolve) => {
         const expectedOpts = modulesInfo[moduleName].opts;
         const parsedOpts = [];
+
         dbg('Expected options:', { moduleName, expectedOpts });
         logger.subtitle(`\n${modulesInfo[moduleName].desc}\n`);
 
+
         // Massaging the data to make Vorpal happy.
         utils.each(utils.keys(expectedOpts), (name) => {
-          let message = `* ${name}: ${expectedOpts[name].desc}`;
+          const expectedOpt = expectedOpts[name];
+          const message = `* ${name}: ${expectedOpt.desc} `;
           let finalDefault = null;
 
+          // We need this to have into account the global parameters.
           if (globals[name]) {
             finalDefault = globals[name];
-          } else if (expectedOpts[name].default !== undefined) {
-            finalDefault = expectedOpts[name].default;
+          } else if (expectedOpt.default !== undefined) {
+            finalDefault = expectedOpt.default;
           }
-          // We need to accept falsys here (like "0" or "false")
-          if (finalDefault !== null) {
-            defaults[name] = finalDefault;
-            message += ` (${finalDefault})`;
-          }
-          message += ': ';
 
-          parsedOpts.push({
+          const toPush = {
             type: 'input',
             name,
             message,
-          });
+            // TODO: Add choices support.
+            when: (res) => {
+              if (expectedOpt.when && utils.isObject(expectedOpt.when)) {
+                const toLook = Object.keys(expectedOpt.when)[0];
+                let valids;
+
+                // We allow to pass an array or a single value here.
+                if (!utils.isArray(expectedOpt.when[toLook])) {
+                  valids = [expectedOpt.when[toLook]];
+                } else {
+                  valids = expectedOpt.when[toLook];
+                }
+                // Just in case.
+                valids = utils.map(valids, valid => valid.toLowerCase());
+
+                if (!utils.includes(valids, res[toLook].toLowerCase())) { return false; }
+              }
+
+              return true;
+            },
+          };
+          // We need to accept falsys here (like "0" or "false")
+          if (finalDefault !== null) { toPush.default = finalDefault; }
+
+          parsedOpts.push(toPush);
         });
 
         dbg('Parsed options:', parsedOpts);
@@ -88,19 +105,9 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
         // with ES6: https://github.com/dthree/vorpal/issues/14
         vorpal.activeCommand.prompt(parsedOpts)
         .then((answers) => {
-          const finalAnswers = {};
-
-          utils.each(utils.keys(answers), (key) => {
-            if (answers[key] === '') {
-              finalAnswers[key] = defaults[key];
-            } else {
-              finalAnswers[key] = answers[key];
-            }
-          });
-
           logger.infoHigh(`\n${logger.emoji('beer')}  Running the module ...\n`);
           logger.time('time');
-          cli.run(moduleName, finalAnswers)
+          cli.run(moduleName, answers)
           .then((res) => {
             logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Module run finished`);
             logger.timeEnd('time');
