@@ -10,7 +10,7 @@
 const nami = require('nami');
 
 const post = require('../../../..').post;
-const commonOpts = require('../../../cfg/commonOpts/ami');
+const commonOpts = require('../../../cfg/commonOpts/post');
 
 
 module.exports.desc = 'List users with voice mail.';

@@ -10,7 +10,7 @@
 const nami = require('nami');
 
 const post = require('../../../..').post;
-const commonOpts = require('../../../cfg/commonOpts/ami');
+const commonOpts = require('../../../cfg/commonOpts/post');
 
 
 module.exports.desc = 'Get info about the core of the server status.';

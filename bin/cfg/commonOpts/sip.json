@@ -9,11 +9,6 @@
     "when": { "transport": ["WS","WSS"] },
     "default": ""
   },
-  "rport": {
-    "types": "port",
-    "desc": "Port to scan on chosen IPs",
-    "default": 5060
-  },
   "meth": {
     "types": "sipRequest",
     "desc": "Type of SIP packets to do the requests ('random' supported)",
