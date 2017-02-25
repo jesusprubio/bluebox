@@ -56,7 +56,7 @@ module.exports.port = port;
 
 
 module.exports.natural = (value) => {
-  if (utils.validator.isInt(value.toString(), { gt: -1 })) { return value; }
+  if (utils.validator.isInt(value.toString(), { gt: -1 })) { return parseInt(value, 10); }
 
   throw new Error(errMsgs.natural);
 };
@@ -227,6 +227,8 @@ module.exports.ipRandom = (value) => {
 
 
 module.exports.lport = (value) => {
+  // The no lport is passed to the SIP fake stack it's going to
+  // use the real one (random choose among the free ones)
   if (value === 'real') { return null; }
 
   if (value === 'random') { return networkUtils.randomPort(); }
