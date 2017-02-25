@@ -13,8 +13,8 @@ const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
 
 
-// Note that SIP ones take precedence.
-const commonOpts = utils.defaults(sipComOpts, scanComOpts);
+const commonOpts = {};
+utils.defaultsDeep(commonOpts, scanComOpts, sipComOpts);
 
 const optsCopy = utils.cloneDeep(commonOpts);
 optsCopy.rports.default = [5060, 5061];

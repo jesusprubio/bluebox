@@ -13,8 +13,12 @@ const bruteComOpts = require('../../../cfg/commonOpts/bruteCreds');
 const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
 
+
+// const optsCopy = utils.cloneDeep(commonOpts);
+
 // Note that SIP ones take precedence, "rport" affected in this case.
-const commonOpts = utils.defaults(sipComOpts, bruteComOpts);
+const commonOpts = {};
+utils.defaultsDeep(commonOpts, bruteComOpts, sipComOpts);
 
 
 module.exports.desc = 'SIP credentials (extension/password) brute force.';
