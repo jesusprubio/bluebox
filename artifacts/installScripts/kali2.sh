@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Copyright   Jesus Perez <jesusprubio gmail com>
-#             Aan Wahyu <cacaddv gmail com>
+# Copyright   Jesus Perez <jesusprubio@gmail.com>
+#             Aan Wahyu <cacaddv@gmail.com>
 #
-# This code may only be used under the GPLv3 license found at
-# http://www.gnu.org/licenses/gpl-3.0.txt.
+# This code may only be used under the MIT license found at
+# https://opensource.org/licenses/MIT.
 
 
 # Script to install Bluebox-ng in Kali 2 GNU/Linux

@@ -4,7 +4,7 @@
   "description": "Pentesting framework using Node.js powers. Specially focused in VoIP/UC.",
   "author": {
     "name": "Jesus Perez <@jesusprubio>",
-    "email": "jesusprubio gmail com",
+    "email": "jesusprubio@gmail.com",
     "url": "http://jesusprubio.name"
   },
   "contributors": [
@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/jesusprubio/bluebox-ng/issues"
   },
-  "license": "GPL-3.0",
+  "license": "MIT",
   "scripts": {
     "start": "node bin",
     "test": "tap test/cli",

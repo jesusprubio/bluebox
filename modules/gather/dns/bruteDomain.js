@@ -1,9 +1,9 @@
 /*
   Copyright Jesús Pérez <jesusprubio@gmail.com>
-            Sergio Garcia <s3rgio.gr gmail com>
+            Sergio Garcia <s3rgio.gr@gmail.com>
 
-  This code may only be used under the GPLv3 license found at
-  http://www.gnu.org/licenses/gpl-3.0.txt.
+  This code may only be used under the MIT license found at
+  https://opensource.org/licenses/MIT.
 */
 
 'use strict';
