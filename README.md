@@ -53,27 +53,24 @@ npm i -g bluebox-ng
 
 ## Use
 
-### Framework
-A pentesting environment.
-
-#### Console
+### Console
 To start the console client.
 ```sh
 bluebox-ng
 ```
 
-#### Programatically
+### Programatically
 To run it from other Node code.
 
 ```javascript
-const BlueboxCli = require('bluebox-ng').Cli;
+const Bluebox = require('bluebox-ng');
 
-const cli = new BlueboxCli();
+const box = new Bluebox();
 
 console.log('Modules info:');
 console.log(JSON.stringify(cli.help(), null, 2));
 
-cli.run('geolocation', { rhost: '8.8.8.8' })
+box.run('geolocation', { rhost: '8.8.8.8' })
 .then(res => {
   console.log('Result:');
   console.log(res);
@@ -83,38 +80,19 @@ cli.run('geolocation', { rhost: '8.8.8.8' })
   console.log(err);
 });
 ```
-
-#### New modules
-You can add your own features to this environment following this tips:
-- Add a new module inside `bin/lib/modules`.
-- Use the most similar one as boilerplate.
-- The methods included in the next section will help you.
-- New ones can call another modules (the `run` method is always a promise).
-- Now it should appear in the pentesting environment.
-
-
-### Library
-You can also use externally the methods used in the modules as any other Node library:
-
-```javascript
-const bluebox = require('bluebox-ng');
-
-bluebox.geo('8.8.8.8')
-.then(res => {
-  console.log('Result:');
-  console.log(res);
-})
-.catch(err => {
-  console.log('Error:');
-  console.log(err);
-});
-```
-- Full API documentation [here](./doc/api.md).
 
 
 ## Developer guide
 
 - Use [GitHub pull requests](https://help.github.com/articles/using-pull-requests).
+
+### New modules
+You can add your own features to this environment following this tips:
+- Add a new file inside [`/modules`](./modules).
+- Use the most similar one as boilerplate.
+- The methods included in the next section will help you.
+- New ones can call another modules (the `run` method is always a promise).
+- Now it should appear in the pentesting environment.
 
 ### Tests
 We still don't have a proper Docker setup. So, for now, the test have to be run locally. Please check its code before it, they often need a valid target service.
@@ -140,8 +118,7 @@ npm test
 ### Debug
 We use the [visionmedia module](https://github.com/visionmedia/debug), so you have to use this environment variable:
 ```sg
-DEBUG=bluebox* npm start
-DEBUG=bluebox-ng:Cli* npm start
+DEBUG=bluebox-ng* npm start
 ```
 
 

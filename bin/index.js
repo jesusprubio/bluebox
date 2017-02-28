@@ -16,13 +16,13 @@ const vHn = require('vorpal-hacker-news');
 const vLess = require('vorpal-less');
 const vGrep = require('vorpal-grep');
 
-const logger = require('./lib/logger');
+const logger = require('./utils/logger');
 
 logger.infoHigh(`${logger.emoji('rocket')}  Loading modules ...`);
 
-const cfg = require('./cfg/cli');
-const BlueboxCli = require('..').Cli;
-const utils = require('./lib');
+const cfg = require('./cfg');
+const Bluebox = require('..');
+const utils = require('../lib/utils');
 
 
 const Promise = utils.Promise;
@@ -36,7 +36,7 @@ const globals = {};
 
 dbg('Starting ...');
 
-const cli = new BlueboxCli({});
+const cli = new Bluebox({});
 dbg('Getting all Bluebox modules details ...');
 const modulesInfo = cli.modules;
 dbg('Modules details', modulesInfo);
