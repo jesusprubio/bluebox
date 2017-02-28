@@ -396,9 +396,13 @@ module.exports.ips = (value) => {
 
 
 module.exports.ports = (value) => {
-  const finalValue = value.toString();
-  dbg('Ports reached', { finalValue });
+  dbg('Ports reached', { value });
 
+  if (utils.isArray(value)) {
+    return iterMulti(value);
+  }
+
+  const finalValue = value.toString();
   if (finalValue.split(',').length > 1) {
     let split = value.split(',');
     dbg('"ports list" reached', split);

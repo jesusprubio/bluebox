@@ -14,8 +14,11 @@ const utils = require('../../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);
 // Specific VoIP ports.
-optsCopy.rports.default = '21,22,23,80,69,389,443,3306,4443,4444,5038,5060,' +
-                          '5061,5062,5063,5064,5065,8080,8088,27017';
+optsCopy.rports.default = [
+  21, 22, 23, 80, 69, 389, 443, 3306, 4443, 4444,
+  5038, 5060, 5061, 5062, 5063, 5064, 5065, 8080,
+  8088, 27017,
+];
 
 
 module.exports.desc = 'Network (host/port) scanner using TCP.';

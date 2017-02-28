@@ -7,7 +7,7 @@
   "rports": {
     "types": "ports",
     "desc": "Port (or multiple sepatared with commas), or range (22-8080)",
-    "default": "80,443,8008,8080"
+    "default": [80, 443, 8008, 8080]
   },
   "delay": {
     "types": "natural",
