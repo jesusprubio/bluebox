@@ -210,7 +210,8 @@ module.exports.sipTransport = value => transport('sip', value);
 
 module.exports.sipRequest = (value) => {
   const reqTypes = sipUtils.getSipReqs();
-  const trimmed = value.toLowerCase();
+  // Just in case the user passes it in lowercase.
+  const trimmed = value.toUpperCase();
 
   if (value === 'random') { return utils.sample(reqTypes); }
   if (utils.includes(reqTypes, trimmed)) { return trimmed; }
@@ -218,6 +219,7 @@ module.exports.sipRequest = (value) => {
   throw new Error(reqTypes.toString());
 };
 
+module.exports.sipTransport = value => transport('sip', value);
 
 module.exports.ipRandom = (value) => {
   if (value === 'random') { return networkUtils.randomIp(); }

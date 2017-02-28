@@ -15,15 +15,15 @@ const utils = require('../../../lib');
 
 const commonOpts = {};
 utils.defaultsDeep(commonOpts, scanComOpts, sipComOpts);
-
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rports.default = [5060, 5061];
+commonOpts.rports.default = [5060, 5061];
+// It's better to scan with an OPTIONS request (commonly less restricted)
+commonOpts.meth.default = 'OPTIONS';
 
 
 module.exports.desc = 'SIP service mapper.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = commonOpts;
 
 
 module.exports.impl = (opts = {}) => {
