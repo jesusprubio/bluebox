@@ -8,7 +8,7 @@
 'use strict';
 
 const brute = require('../../../..').brute;
-const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
+const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);

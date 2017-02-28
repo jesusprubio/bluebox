@@ -8,14 +8,14 @@
 'use strict';
 
 const brute = require('../../../..').brute;
-const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
+const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib');
 
 const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 21;
+optsCopy.rport.default = 3306;
 
 
-module.exports.desc = 'FTP credentials brute force.';
+module.exports.desc = 'MYSQL credentials brute force.';
 
 
 module.exports.opts = optsCopy;
@@ -23,7 +23,7 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'ftp';
+  finalOpts.proto = 'mysql';
 
   return brute(opts.rhost, finalOpts);
 };

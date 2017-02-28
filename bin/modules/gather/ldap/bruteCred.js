@@ -8,20 +8,15 @@
 'use strict';
 
 const brute = require('../../../..').brute;
-const commonOpts = require('../../../cfg/commonOpts/bruteCreds');
+const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib');
 
-// We don't want to modify the original.
 const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 80;
-optsCopy.transport = {
-  types: 'httpTransport',
-  desc: 'Transport protocol to use: http/https',
-  default: 'http',
-};
+optsCopy.rport.default = 389;
+optsCopy.users.description = `${optsCopy.users.description}, ie: cn=admin,dc=quobislab,dc=com`;
 
 
-module.exports.desc = 'HTTP credentials brute force.';
+module.exports.desc = 'LDAP credentials brute force.';
 
 
 module.exports.opts = optsCopy;
@@ -29,8 +24,7 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'http';
-  finalOpts.transport = opts.transport;
+  finalOpts.proto = 'ldap';
 
   return brute(opts.rhost, finalOpts);
 };

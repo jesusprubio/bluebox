@@ -9,16 +9,15 @@
 'use strict';
 
 const brute = require('../../../..').brute;
-const bruteComOpts = require('../../../cfg/commonOpts/bruteCreds');
+const bruteComOpts = require('../../../cfg/commonOpts/bruteCred');
 const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib');
 
-
-// const optsCopy = utils.cloneDeep(commonOpts);
-
-// Note that SIP ones take precedence, "rport" affected in this case.
 const commonOpts = {};
 utils.defaultsDeep(commonOpts, bruteComOpts, sipComOpts);
+commonOpts.rport.default = 5060;
+// We have the control of this library so we can take more "risk" here
+commonOpts.meth.concurrency = 10000;
 
 
 module.exports.desc = 'SIP credentials (extension/password) brute force.';
