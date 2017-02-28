@@ -114,7 +114,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             logger.title(`\n${logger.emoji('sparkles')}  Result`);
             if (!res || (utils.isArray(res) && res.length === 0) ||
                 (utils.isObject(res) && Object.keys(res).lenght === 0)) {
-              logger.result(`${logger.emoji('poop')} Empty`);
+              logger.result(`${logger.emoji('poop')}  Empty`);
             } else {
               logger.json(res);
             }
@@ -211,7 +211,7 @@ logger.infoHigh(`${logger.emoji('computer')}  Starting the framework in interact
 logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}  ${logger.emoji('skull')}`);
 logger.info(`\t(v${cli.version})`);
 logger.subtitle(`\n${logger.emoji('eyes')}  Please run "help" or ` +
-                '"help | grep whatever" to start the game\n');
+                '"help | grep sip" to start the game\n');
 
 dbg('Starting the prompt ...');
 vorpal
