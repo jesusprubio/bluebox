@@ -7,7 +7,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruterCreds');
+const brute = require('../../../lib/protocols/ldap').bruteCreds;
 const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
@@ -22,9 +23,4 @@ module.exports.desc = 'LDAP credentials brute force.';
 module.exports.opts = optsCopy;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'ldap';
-
-  return brute(opts.rhost, finalOpts);
-};
+module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);

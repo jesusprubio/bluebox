@@ -8,7 +8,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruterCreds');
+const brute = require('../../../lib/protocols/snmp').bruteCreds;
 const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
@@ -34,9 +35,10 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'snmp';
-  // We keep the name users because is the one expected in the "brute" method.
-  finalOpts.users = opts.communities;
 
-  return brute(opts.rhost, finalOpts);
+  finalOpts.iter1 = finalOpts.communities;
+  delete finalOpts.communities;
+  finalOpts.userAsPass = false;
+
+  return bruter(opts.rhost, brute, finalOpts);
 };

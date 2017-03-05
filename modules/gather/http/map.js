@@ -7,7 +7,8 @@
 
 'use strict';
 
-const map = require('../../../lib/map');
+const mapper = require('../../../lib/mapper');
+const map = require('../../../lib/protocols/http').map;
 const commonOpts = require('../../../cfg/commonOpts/map');
 const utils = require('../../../lib/utils');
 
@@ -25,9 +26,4 @@ module.exports.desc = 'HTTP service mapper.';
 module.exports.opts = optsCopy;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'http';
-
-  return map(opts.rhosts, finalOpts);
-};
+module.exports.impl = (opts = {}) => mapper(opts.rhosts, map, opts);

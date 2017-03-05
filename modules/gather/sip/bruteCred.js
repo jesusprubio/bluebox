@@ -8,7 +8,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruterCreds');
+const brute = require('../../../lib/protocols/sip').bruteCreds;
 const bruteComOpts = require('../../../cfg/commonOpts/bruteCred');
 const sipComOpts = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib/utils');
@@ -26,9 +27,4 @@ module.exports.desc = 'SIP credentials (extension/password) brute force.';
 module.exports.opts = commonOpts;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'sip';
-
-  return brute(opts.rhost, finalOpts);
-};
+module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);

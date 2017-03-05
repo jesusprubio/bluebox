@@ -9,7 +9,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruterCreds');
+const brute = require('../../../lib/protocols/ssh').bruteCreds;
 const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 
 
@@ -20,9 +21,4 @@ module.exports.desc = 'SSH credentials brute force.';
 module.exports.opts = commonOpts;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'ssh';
-
-  return brute(opts.rhost, finalOpts);
-};
+module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);

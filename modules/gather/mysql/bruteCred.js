@@ -7,7 +7,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruterCreds');
+const brute = require('../../../lib/protocols/mysql').bruteCreds;
 const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
@@ -21,9 +22,4 @@ module.exports.desc = 'MYSQL credentials brute force.';
 module.exports.opts = optsCopy;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'mysql';
-
-  return brute(opts.rhost, finalOpts);
-};
+module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);

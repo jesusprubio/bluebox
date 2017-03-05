@@ -8,7 +8,8 @@
 
 'use strict';
 
-const map = require('../../../../lib/map');
+const mapper = require('../../../../lib/mapper');
+const map = require('../../../../lib/protocols/pingTcp').map;
 const commonOpts = require('../../../../cfg/commonOpts/map');
 const utils = require('../../../../lib/utils');
 
@@ -27,9 +28,4 @@ module.exports.desc = 'Network (host/port) scanner using TCP.';
 module.exports.opts = optsCopy;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'pingTcp';
-
-  return map(opts.rhosts, finalOpts);
-};
+module.exports.impl = (opts = {}) => mapper(opts.rhosts, map, opts);

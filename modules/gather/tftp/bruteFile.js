@@ -7,7 +7,8 @@
 
 'use strict';
 
-const brute = require('../../../lib/brute');
+const bruter = require('../../../lib/bruter');
+const brute = require('../../../lib/protocols/tftp').bruteFile;
 const commonOpts = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
@@ -22,9 +23,11 @@ delete optsCopy.userAsPass;
 
 optsCopy.names = {
   types: 'enum',
-  desc: 'Resource name to test, or path to a file with multiple.',
-  default: 'file:./bin/artifacts/dics/tftp.txt',
+  desc: 'Resource name to test, or path to a file with multiple. Some built-in' +
+        ' dics are supported ("misc/dicNames", ie: file:john)"',
+  default: 'file:tftp',
 };
+
 
 module.exports.desc = 'TFTP files brute force.';
 
@@ -34,10 +37,10 @@ module.exports.opts = optsCopy;
 
 module.exports.impl = (opts = {}) => {
   const finalOpts = opts;
-  finalOpts.proto = 'tftp';
-  // We keep the name users because is the one expected in the "brute" method.
-  finalOpts.users = finalOpts.names;
-  delete finalOpts.names;
 
-  return brute(opts.rhost, finalOpts);
+  finalOpts.iter1 = finalOpts.names;
+  delete finalOpts.names;
+  finalOpts.userAsPass = false;
+
+  return bruter(opts.rhost, brute, finalOpts);
 };

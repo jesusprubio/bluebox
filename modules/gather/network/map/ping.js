@@ -7,12 +7,12 @@
 
 'use strict';
 
-const map = require('../../../../lib/map').map;
+const mapper = require('../../../../lib/mapper');
+const map = require('../../../../lib/protocols/ping').map;
 const commonOpts = require('../../../../cfg/commonOpts/map');
 const utils = require('../../../../lib/utils');
 
 const optsCopy = utils.cloneDeep(commonOpts);
-
 // We reuse the brute method but it's simpler here, so we don't
 // need this options.
 delete optsCopy.rports;
@@ -24,9 +24,4 @@ module.exports.desc = 'Network (host) scanner using ping.';
 module.exports.opts = optsCopy;
 
 
-module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'ping';
-
-  return map(opts.rhosts, finalOpts);
-};
+module.exports.impl = (opts = {}) => mapper(opts.rhosts, map, opts);
