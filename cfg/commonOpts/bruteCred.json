@@ -11,7 +11,7 @@
   },
   "users": {
     "types": "enum",
-    "desc": "User (ie: 'admin'), range or file with them (ie: file:./john.txt). Some built-in dics are supported ('misc/dicNames')",
+    "desc": "User (ie: 'admin'), range or file with them (ie: file:../miDic.txt). Some built-in dics are supported ('misc/dicNames', ie: file:john)",
     "default": "range:1000-1010"
   },
   "passwords": {
