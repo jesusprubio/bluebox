@@ -2,7 +2,7 @@
 
 /*
   Copyright Jesús Pérez <jesusprubio@gmail.com>
-            Sergio Garcia <s3rgio.gr@gmail.com>
+            Sergio García <s3rgio.gr@gmail.com>
             Antonio Carrasco <ancahy2600@gmail.com>
 
   This code may only be used under the MIT license found at

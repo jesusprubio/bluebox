@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright   Jesus Perez <jesusprubio@gmail.com>
+# Copyright   Jesús Pérez <jesusprubio@gmail.com>
 #             Aan Wahyu <cacaddv@gmail.com>
 #
 # This code may only be used under the MIT license found at

@@ -3,7 +3,7 @@
   "version": "1.2.0-beta.0",
   "description": "Pentesting framework using Node.js powers. Specially focused in VoIP/UC.",
   "author": {
-    "name": "Jesus Perez <@jesusprubio>",
+    "name": "Jesús Pérez <@jesusprubio>",
     "email": "jesusprubio@gmail.com",
     "url": "http://jesusprubio.name"
   },
