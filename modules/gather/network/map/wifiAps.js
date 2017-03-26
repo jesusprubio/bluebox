@@ -9,10 +9,10 @@
 
 const scanner = require('node-wifiscanner');
 
-const utils = require('../../../lib/utils');
+const utils = require('../../../../lib/utils');
 
 
 module.exports.desc = 'Wifi access point scanner.';
 
 
-module.exports.impl = () => utils.Promise.promisify(scanner.scan);
+module.exports = () => utils.Promise.promisify(scanner.scan);
