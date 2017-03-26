@@ -43,6 +43,8 @@ dbg('Modules details', modulesInfo);
 
 dbg('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), (moduleName) => {
+  dbg(`Starting for ${moduleName}`);
+
   vorpal
     .command(moduleName)
     .description(modulesInfo[moduleName].desc)
