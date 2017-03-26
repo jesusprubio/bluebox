@@ -54,7 +54,7 @@ module.exports.opts = {
 
 module.exports.impl = (opts = {}) =>
   new Promise((resolve, reject) => {
-    // const finalOpts = opts;
+    // const optsParsed = opts;
     const result = [];
     const cliOpts = {
       url: opts.url,

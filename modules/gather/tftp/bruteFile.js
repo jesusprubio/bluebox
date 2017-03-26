@@ -8,20 +8,20 @@
 'use strict';
 
 const bruter = require('../../../lib/bruter');
-const brute = require('../../../lib/protocols/tftp').bruteFile;
-const commonOpts = require('../../../cfg/commonOpts/bruteCred');
+const getFile = require('../../../lib/protocols/tftp').getFile;
+const optsComm = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 69;
+const optsC = utils.cloneDeep(optsComm);
+optsC.rport.default = 69;
 
 // We reuse the brute method but it's simpler here, so we don't
 // need this options.
-delete optsCopy.users;
-delete optsCopy.passwords;
-delete optsCopy.userAsPass;
+delete optsC.users;
+delete optsC.passwords;
+delete optsC.userAsPass;
 
-optsCopy.names = {
+optsC.names = {
   types: 'enum',
   desc: 'Resource name to test, or path to a file with multiple. Some built-in' +
         ' dics are supported ("misc/dicNames", ie: file:john)"',
@@ -32,15 +32,15 @@ optsCopy.names = {
 module.exports.desc = 'TFTP files brute force.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
+  const optsParsed = opts;
 
-  finalOpts.iter1 = finalOpts.names;
-  delete finalOpts.names;
-  finalOpts.userAsPass = false;
+  optsParsed.iter1 = optsC.names;
+  delete optsParsed.names;
+  optsParsed.userAsPass = false;
 
-  return bruter(opts.rhost, brute, finalOpts);
+  return bruter(optsParsed.rhost, getFile, optsParsed);
 };

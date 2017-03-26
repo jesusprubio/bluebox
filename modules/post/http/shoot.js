@@ -41,16 +41,16 @@ module.exports.opts = {
 
 module.exports.impl = (opts = {}) =>
   new Promise((resolve, reject) => {
-    const finalOpts = opts;
+    let oPath;
 
     // TODO: Output file name hardcoded for now, add an option.
     if (opts.path) {
-      finalOpts.path =
+      oPath =
         path.resolve(process.cwd(), opts.path, `shoot-${new Date().toISOString()}.png`);
     }
     const result = {};
     const uaStr = opts.ua || defaultUa;
-    const outPath = opts.path || `${process.cwd()}shoot-${new Date().toISOString()}.png`;
+    const outPath = oPath || `${process.cwd()}shoot-${new Date().toISOString()}.png`;
 
     dbg('Inspecting the web page ...');
     phantom.create(['--ignore-ssl-errors=yes'])
@@ -93,4 +93,3 @@ module.exports.impl = (opts = {}) =>
     })
     .catch(err => reject(new Error(`phantom (create): ${err.message}`)));
   });
-

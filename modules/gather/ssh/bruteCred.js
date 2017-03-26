@@ -10,15 +10,15 @@
 'use strict';
 
 const bruter = require('../../../lib/bruterCreds');
-const brute = require('../../../lib/protocols/ssh').bruteCreds;
-const commonOpts = require('../../../cfg/commonOpts/bruteCred');
+const auth = require('../../../lib/protocols/ssh').auth;
+const optsComm = require('../../../cfg/commonOpts/bruteCred');
 
 
 module.exports.desc = 'SSH credentials brute force.';
 
 
 // To avoid to repeat them in all modules from "brute/creds".
-module.exports.opts = commonOpts;
+module.exports.opts = optsComm;
 
 
-module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);
+module.exports.impl = (opts = {}) => bruter(opts.rhost, auth, opts);

@@ -10,11 +10,11 @@
 const nami = require('nami');
 
 const post = require('../../../lib/post');
-const commonOpts = require('../../../cfg/commonOpts/post');
+const optsComm = require('../../../cfg/commonOpts/post');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.comm = {
+const optsC = utils.cloneDeep(optsComm);
+optsC.comm = {
   desc: 'Command to run (ie: sip show channels/peers/registry, ' +
         'database show, show version)',
   default: 'sip show users',
@@ -24,15 +24,15 @@ optsCopy.comm = {
 module.exports.desc = 'Run a command the server.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => {
   const action = new nami.Actions.Command();
-  const finalOpts = opts;
+  const optsParsed = opts;
 
-  finalOpts.proto = 'ami';
-  action.command = opts.comm;
+  optsParsed.proto = 'ami';
+  action.command = optsParsed.comm;
 
-  return post(opts.rhost, action, opts);
+  return post(optsParsed.rhost, action, optsParsed);
 };

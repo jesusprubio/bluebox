@@ -9,22 +9,21 @@
 'use strict';
 
 const bruter = require('../../../lib/bruterCreds');
-const brute = require('../../../lib/protocols/sip').bruteCreds;
-const bruteComOpts = require('../../../cfg/commonOpts/bruteCred');
-const sipComOpts = require('../../../cfg/commonOpts/sip');
+const proto = require('../../../lib/protocols/sip');
+const optsBrute = require('../../../cfg/commonOpts/bruteCred');
+const optsSip = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib/utils');
 
-const commonOpts = {};
-utils.defaultsDeep(commonOpts, bruteComOpts, sipComOpts);
-commonOpts.rport.default = 5060;
-// We have the control of this library so we can take more "risk" here
-commonOpts.meth.concurrency = 10000;
+const optsComm = {};
+utils.defaultsDeep(optsComm, optsBrute, optsSip);
+optsComm.rport.default = 5060;
+optsComm.concurrency.default = proto.concurrency;
 
 
 module.exports.desc = 'SIP credentials (extension/password) brute force.';
 
 
-module.exports.opts = commonOpts;
+module.exports.opts = optsComm;
 
 
-module.exports.impl = (opts = {}) => bruter(opts.rhost, brute, opts);
+module.exports.impl = (opts = {}) => bruter(opts.rhost, proto.auth, opts);

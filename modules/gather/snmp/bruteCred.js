@@ -9,36 +9,36 @@
 'use strict';
 
 const bruter = require('../../../lib/bruterCreds');
-const brute = require('../../../lib/protocols/snmp').bruteCreds;
-const commonOpts = require('../../../cfg/commonOpts/bruteCred');
+const auth = require('../../../lib/protocols/snmp').auth;
+const optsComm = require('../../../cfg/commonOpts/bruteCred');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.rport.default = 161;
-optsCopy.communities = {
+const optsC = utils.cloneDeep(optsComm);
+optsC.rport.default = 161;
+optsC.communities = {
   types: 'enum',
   desc: 'Community name to test, or path to a file with multiple',
   default: 'public',
 };
 // We reuse the brute method but it's simpler here, so we don't
 // need this options.
-delete optsCopy.users;
-delete optsCopy.passwords;
-delete optsCopy.userAsPass;
+delete optsC.users;
+delete optsC.passwords;
+delete optsC.userAsPass;
 
 
 module.exports.desc = 'SNMP communities brute force.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
+  const optsParsed = opts;
 
-  finalOpts.iter1 = finalOpts.communities;
-  delete finalOpts.communities;
-  finalOpts.userAsPass = false;
+  optsParsed.iter1 = optsParsed.communities;
+  delete optsParsed.communities;
+  optsParsed.userAsPass = false;
 
-  return bruter(opts.rhost, brute, finalOpts);
+  return bruter(optsParsed.rhost, auth, optsParsed);
 };

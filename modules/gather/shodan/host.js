@@ -32,10 +32,10 @@ module.exports.opts = {
 
 
 module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
+  const optsParsed = opts;
 
   // We prefer to get all the records SHODAN have about this host.
-  finalOpts.history = true;
+  optsParsed.history = true;
 
-  return search(opts.rhost, opts.keyS, finalOpts);
+  return search(optsParsed.rhost, opts.keyS, optsParsed);
 };

@@ -9,8 +9,7 @@
 'use strict';
 
 const utils = require('../../lib/utils');
-
-const dorksJson = require('../../artifacts/voipDorks');
+const dorks = require('../../artifacts/voipDorks');
 
 
 module.exports.desc = 'Find potential VoIP targets using a Google dork.';
@@ -18,4 +17,4 @@ module.exports.desc = 'Find potential VoIP targets using a Google dork.';
 
 // TODO: Allow Make the request and parse the response
 // -> generic module for dorks (add it also in the library)
-module.exports.impl = () => utils.Promise.resolve(dorksJson);
+module.exports = () => utils.Promise.resolve(dorks);

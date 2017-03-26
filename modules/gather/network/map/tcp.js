@@ -10,12 +10,12 @@
 
 const mapper = require('../../../../lib/mapper');
 const map = require('../../../../lib/protocols/pingTcp').map;
-const commonOpts = require('../../../../cfg/commonOpts/map');
+const optsComm = require('../../../../cfg/commonOpts/map');
 const utils = require('../../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
+const optsC = utils.cloneDeep(optsComm);
 // Specific VoIP ports.
-optsCopy.rports.default = [
+optsC.rports.default = [
   21, 22, 23, 80, 69, 389, 443, 3306, 4443, 4444,
   5038, 5060, 5061, 5062, 5063, 5064, 5065, 8080,
   8088, 27017,
@@ -25,7 +25,7 @@ optsCopy.rports.default = [
 module.exports.desc = 'Network (host/port) scanner using TCP.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => mapper(opts.rhosts, map, opts);

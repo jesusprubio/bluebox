@@ -9,10 +9,10 @@
 'use strict';
 
 const utils = require('../../lib/utils');
-const credsJson = require('../../artifacts/voipCreds');
+const creds = require('../../artifacts/voipCreds');
 
 
 module.exports.desc = 'Show common VoIP system default credentials.';
 
 
-module.exports.impl = () => utils.Promise.resolve(credsJson);
+module.exports = () => utils.Promise.resolve(creds);

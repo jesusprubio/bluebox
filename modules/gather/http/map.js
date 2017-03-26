@@ -9,11 +9,11 @@
 
 const mapper = require('../../../lib/mapper');
 const map = require('../../../lib/protocols/http').map;
-const commonOpts = require('../../../cfg/commonOpts/map');
+const optsComm = require('../../../cfg/commonOpts/map');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.transport = {
+const optsC = utils.cloneDeep(optsComm);
+optsC.transport = {
   types: 'httpTransport',
   desc: 'Transport protocol to use: http/https',
   default: 'http',
@@ -23,7 +23,7 @@ optsCopy.transport = {
 module.exports.desc = 'HTTP service mapper.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => mapper(opts.rhosts, map, opts);

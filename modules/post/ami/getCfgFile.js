@@ -10,11 +10,11 @@
 const nami = require('nami');
 
 const post = require('../../../lib/post');
-const commonOpts = require('../../../cfg/commonOpts/post');
+const optsComm = require('../../../cfg/commonOpts/post');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.filename = {
+const optsC = utils.cloneDeep(optsComm);
+optsC.filename = {
   desc: 'Name of the config file to get',
   default: 'manager.conf',
 };
@@ -23,15 +23,15 @@ optsCopy.filename = {
 module.exports.desc = 'Get a config file of the server.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => {
   const action = new nami.Actions.GetConfigJson();
-  const finalOpts = opts;
+  const optsParsed = opts;
 
-  finalOpts.proto = 'ami';
-  action.filename = opts.filename;
+  optsParsed.proto = 'ami';
+  action.filename = optsParsed.filename;
 
-  return post(opts.rhost, action, opts);
+  return post(optsParsed.rhost, action, optsParsed);
 };

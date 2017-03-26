@@ -10,19 +10,19 @@
 const nami = require('nami');
 
 const post = require('../../../lib/post');
-const commonOpts = require('../../../cfg/commonOpts/post');
+const optsComm = require('../../../cfg/commonOpts/post');
 
 
 module.exports.desc = 'Get info about the channels of the servers\'s core.';
 
 
-module.exports.opts = commonOpts;
+module.exports.opts = optsComm;
 
 
 module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
-  finalOpts.proto = 'ami';
+  const optsParsed = opts;
+  optsParsed.proto = 'ami';
   const action = new nami.Actions.CoreShowChannels();
 
-  return post(opts.rhost, action, opts);
+  return post(optsParsed.rhost, action, optsParsed);
 };

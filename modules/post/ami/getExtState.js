@@ -10,15 +10,15 @@
 const nami = require('nami');
 
 const post = require('../../../lib/post');
-const commonOpts = require('../../../cfg/commonOpts/post');
+const optsComm = require('../../../cfg/commonOpts/post');
 const utils = require('../../../lib/utils');
 
-const optsCopy = utils.cloneDeep(commonOpts);
-optsCopy.context = {
+const optsC = utils.cloneDeep(optsComm);
+optsC.context = {
   desc: 'Context to use in the request',
   default: 'default',
 };
-optsCopy.extension = {
+optsC.extension = {
   desc: 'Extension to use in the request',
   default: '100',
 };
@@ -27,16 +27,16 @@ optsCopy.extension = {
 module.exports.desc = 'Get actual status of an extension.';
 
 
-module.exports.opts = optsCopy;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => {
-  const finalOpts = opts;
+  const optsParsed = opts;
   const action = new nami.Actions.ExtensionState();
 
-  finalOpts.proto = 'ami';
+  optsParsed.proto = 'ami';
   action.context = opts.context;
   action.exten = opts.extension;
 
-  return post(opts.rhost, action, opts);
+  return post(optsParsed.rhost, action, optsParsed);
 };
