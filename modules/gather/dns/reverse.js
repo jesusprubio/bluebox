@@ -12,7 +12,7 @@ const dns = require('dns');
 
 const utils = require('../../../lib/utils');
 
-const reverse = utils.Promise.promisify(dns.reverse);
+const reverse = utils.promisify(dns.reverse);
 
 
 module.exports.desc = 'DNS inverse resolution.';

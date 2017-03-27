@@ -16,7 +16,6 @@ const proto = require('../../../lib/protocols/sip');
 
 const dbg = utils.dbg(__filename);
 
-const Promise = utils.Promise;
 const optsComm = {};
 utils.defaultsDeep(optsComm, optsBrute, optsSip);
 optsComm.rport.default = 5060;

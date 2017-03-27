@@ -9,7 +9,7 @@
 'use strict';
 
 const utils = require('../../../lib/utils');
-const lookup = utils.Promise.promisify(require('whois').lookup);
+const lookup = utils.promisify(require('whois').lookup);
 
 
 module.exports.desc = 'WHOIS protocol client.';

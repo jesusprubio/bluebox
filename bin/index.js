@@ -25,7 +25,6 @@ const Bluebox = require('..');
 const utils = require('../lib/utils');
 
 
-const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
 // Global paramameters to avoid the user having to rewrite them
 // in each module run. They are proposed as the default value.

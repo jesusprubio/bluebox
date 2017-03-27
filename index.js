@@ -13,7 +13,6 @@ const parseOpts = require('./lib/parseOpts');
 const parsers = require('./lib/parsers');
 const errMsgs = require('./cfg/errorMsgs').index;
 
-const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
 
 

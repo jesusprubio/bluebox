@@ -15,7 +15,6 @@ const dirBuster = require('dirbuster');
 
 const utils = require('../../../lib/utils');
 
-const Promise = utils.Promise;
 const dbg = utils.dbg(__filename);
 
 

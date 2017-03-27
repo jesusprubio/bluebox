@@ -12,8 +12,7 @@ const dns = require('dns');
 
 const utils = require('../../../lib/utils');
 
-const Promise = utils.Promise;
-const resolveDns = Promise.promisify(dns.resolve);
+const resolveDns = utils.promisify(dns.resolve);
 const recordTypes = [
   'A', 'AAAA', 'MX', 'TXT', 'SRV', 'PTR', 'NS',
   'CNAME', 'SOA', 'NAPTR',
@@ -71,6 +70,6 @@ module.exports.impl = (opts = {}) =>
         .catch(() => resolve2());
       });
 
-    Promise.map(finalTypes, request, { concurrency: 10 })
+    utils.pMap(finalTypes, request, { concurrency: 10 })
     .then(() => resolve(result));
   });

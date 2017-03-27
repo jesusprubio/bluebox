@@ -11,7 +11,7 @@
 
 const utils = require('../../../lib/utils');
 
-const axfr = utils.Promise.promisify(require('dns-axfr').resolveAxfr);
+const axfr = utils.promisify(require('dns-axfr').resolveAxfr);
 
 
 module.exports.desc = 'DNS zone transfer.';
