@@ -4,13 +4,10 @@
     "desc": "Host to attack",
     "default": "127.0.0.1"
   },
-  "user": {
-    "desc": "Valid username",
-    "default": "admin"
-  },
-  "password": {
-    "desc": "Valid password",
-    "default": "admin"
+  "rport": {
+    "types": "port",
+    "desc": "Port to attack on chosen IPs",
+    "default": 22
   },
   "timeout": {
     "types": "natural",

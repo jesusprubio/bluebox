@@ -1,0 +1,12 @@
+{
+  "delay": {
+    "types": "natural",
+    "desc": "Delay between requests, in ms.",
+    "default": 0
+  },
+  "concurrency": {
+    "types": "natural",
+    "desc": "Max number of active requests.",
+    "default": 100
+  }
+}
