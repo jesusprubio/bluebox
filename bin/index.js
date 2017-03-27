@@ -126,13 +126,13 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             logger.timeEnd('time');
             // We always resolve (instead reject) because we don't
             // want to print the error with vorpal (doesn't allow colors).
-            logger.error('\nRunning the module:');
+            logger.error('\nRunning the module', err);
             logger.info(err.stack);
             resolve();
           });
         })
         .catch((err) => {
-          logger.error(`Getting the options : ${err.message}`);
+          logger.error('Getting the options', err);
           resolve();
         });
       }));
@@ -202,7 +202,7 @@ vorpal
         resolve();
       })
       .catch((err) => {
-        logger.error(`Getting the key : ${err.message}`);
+        logger.error('Getting the key', err);
         resolve();
       });
     }));
