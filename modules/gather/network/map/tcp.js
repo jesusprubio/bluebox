@@ -9,7 +9,7 @@
 'use strict';
 
 const mapper = require('../../../../lib/mapper');
-const map = require('../../../../lib/protocols/pingTcp').map;
+const map = require('../../../../lib/protocols/tcp').map;
 const optsComm = require('../../../../cfg/commonOpts/map');
 const utils = require('../../../../lib/utils');
 
@@ -20,6 +20,11 @@ optsC.rports.default = [
   5038, 5060, 5061, 5062, 5063, 5064, 5065, 8080,
   8088, 27017,
 ];
+optsC.banner = {
+  types: 'bool',
+  desc: 'Try to capture the server banner (slower).',
+  default: false,
+};
 
 
 module.exports.desc = 'Network (host/port) scanner using TCP.';
