@@ -7,12 +7,10 @@
 
 'use strict';
 
-const scanner = require('node-wifiscanner');
-
-const utils = require('../../../../lib/utils');
+const wifiName = require('wifi-name');
 
 
 module.exports.desc = 'Wifi access point scanner.';
 
 
-module.exports = () => utils.Promise.promisify(scanner.scan);
+module.exports.impl = wifiName;
