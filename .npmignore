@@ -1,5 +1,5 @@
 test
-finalReport*
+report*
 
 .dockerignore
 .eslintrc
