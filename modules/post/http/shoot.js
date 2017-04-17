@@ -21,6 +21,7 @@ module.exports.desc = 'Take a screenshoot of a website.';
 
 
 module.exports.opts = {
+  // TODO: Integrate in the report.
   url: {
     types: 'url',
     desc: 'URL to explore',
@@ -66,7 +67,7 @@ module.exports.impl = (opts = {}) =>
 
         page.open(opts.url)
         .then(() => {
-          dbg(`Page opened, shooting ..., url: "${opts.url}"`);
+          dbg(`Page opened, shooting ..., url: "${opts.rhost}"`);
           page.render(outPath)
           .then(() => {
             // Phantom not needed anymore
@@ -78,12 +79,12 @@ module.exports.impl = (opts = {}) =>
           })
           .catch((err) => {
             phInstance.exit();
-            reject(new Error(`Taking the screenshoot: ${opts.url}: ${err.message}`));
+            reject(new Error(`Taking the screenshoot: ${opts.rhost}: ${err.message}`));
           });
         })
         .catch((err) => {
           phInstance.exit();
-          reject(new Error(`Opening the website: ${opts.url}: ${err.message}`));
+          reject(new Error(`Opening the website: ${opts.rhost}: ${err.message}`));
         });
       })
       .catch((err) => {
