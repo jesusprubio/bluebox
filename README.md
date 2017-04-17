@@ -6,7 +6,7 @@
 
 [![npm info](https://nodei.co/npm/bluebox-ng.png?downloads=true&downloadRank=true&stars=true)](https://npmjs.org/package/bluebox-ng)
 
-Pentesting framework using Node.js powers, no external dependencies. Specially focused in VoIP/UC.
+Pentesting framework using Node.js powers. Focused in VoIP.
 
 <img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
