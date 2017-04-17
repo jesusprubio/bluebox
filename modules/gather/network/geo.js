@@ -9,6 +9,7 @@
 
 const getLoc = require('geoip-lite').lookup;
 
+const utils = require('../../../lib/utils');
 
 module.exports.desc = 'Geolocate a host.';
 
@@ -24,6 +25,12 @@ module.exports.opts = {
 
 module.exports.impl = (opts = {}) =>
   new Promise((resolve, reject) => {
+    if (utils.validator.isPrivateIp(opts.rhost)) {
+      resolve('Private IP');
+
+      return;
+    }
+
     try {
       resolve(getLoc(opts.rhost));
     } catch (err) {
