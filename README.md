@@ -67,10 +67,7 @@ const Bluebox = require('bluebox-ng');
 
 const box = new Bluebox();
 
-console.log('Modules info:');
-console.log(JSON.stringify(cli.help(), null, 2));
-
-box.run('geolocation', { rhost: '8.8.8.8' })
+box.run('gather/network/geo', { rhost: '8.8.8.8' })
 .then(res => {
   console.log('Result:');
   console.log(res);
