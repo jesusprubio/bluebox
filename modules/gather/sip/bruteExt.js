@@ -11,7 +11,6 @@ const bruter = require('../../../lib/bruter');
 const optsBrute = require('../../../cfg/commonOpts/bruteCred');
 const optsSip = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib/utils');
-const logger = require('../../../bin/utils/logger');
 const proto = require('../../../lib/protocols/sip');
 
 const dbg = utils.dbg(__filename);
@@ -55,12 +54,9 @@ module.exports.impl = (opts = {}) =>
       dbg('Response received', { nonExistentExt, code: res.code });
 
       if (res && res.code && utils.includes(['401', '407', '200'], res.code)) {
-        let toPrint = `Host not vulnerable (${opts.meth})`;
         if (res.code === '200') {
-          toPrint = `${toPrint} (no auth)`;
           result.auth = false;
         }
-        logger.info(toPrint);
         resolve(result);
         return;
       }
@@ -70,10 +66,9 @@ module.exports.impl = (opts = {}) =>
         dbg(`Default code: ${res.code}`);
       }
 
-      if (opts.onlyCheck) {
-        logger.info('Host vulnerable', { meth: opts.method, codeBase: result.codeBase });
-        result.vulnerable = true;
+      result.vulnerable = true;
 
+      if (opts.onlyCheck) {
         resolve(result);
         return;
       }
@@ -81,7 +76,7 @@ module.exports.impl = (opts = {}) =>
       const optsParsed = utils.cloneDeep(opts);
       optsParsed.iter1 = optsParsed.users;
       delete optsParsed.users;
-      // We need it in the "bruteExt" method.
+      // We need it in the "proto.enum" method.
       optsParsed.codeBase = result.codeBase;
 
       bruter(optsParsed.rhost, proto.enum, optsParsed)

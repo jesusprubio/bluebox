@@ -11,7 +11,6 @@
 const optsBrute = require('../../../cfg/commonOpts/bruteCred');
 const optsSip = require('../../../cfg/commonOpts/sip');
 const utils = require('../../../lib/utils');
-const logger = require('../../../bin/utils/logger');
 const proto = require('../../../lib/protocols/sip');
 
 // TODO: Add more
@@ -104,7 +103,7 @@ module.exports.impl = (opts = {}) => {
       const cfg = {};
       utils.defaultsDeep(cfg, tortureCfg, optsSip);
 
-      logger.info(`${tortureCfg.name} test ...`);
+      opts.events.emit('info', { pair: [tortureCfg.name] });
 
       proto.map(cfg.rhost, cfg)
       .then((res) => {

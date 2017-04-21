@@ -48,10 +48,27 @@ function addResult(hostName, modName, modRes) {
 
 dbg('Starting ...');
 
-const cli = new Bluebox({});
+const box = new Bluebox({});
 dbg('Getting all Bluebox modules details ...');
-const modulesInfo = cli.modules;
+const modulesInfo = box.modules;
 dbg('Modules details', modulesInfo);
+
+
+// TODO: Keep this during the run of the actual command. In case
+// it fails we could save these partial results.
+box.events.on('info', (info) => {
+  dbg('Event with extra info');
+
+  let toPrint = info.pair[0];
+  // In some cases we don't have second member.
+  if (info.pair[1]) { toPrint = `${toPrint}  :  ${info.pair[1]}`; }
+
+  if (info.valid) {
+    logger.result(`${toPrint} ${logger.emoji('ok_hand')}`);
+  } else {
+    logger.info(toPrint);
+  }
+});
 
 dbg('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), (moduleName) => {
@@ -129,7 +146,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
           if (answers.domain) { actualTarget = answers.domain; }
           if (answers.url) { actualTarget = answers.url; }
           logger.time('time');
-          cli.run(moduleName, answers)
+          box.run(moduleName, answers)
           .then((res) => {
             logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Module run finished`);
             logger.timeEnd('time');
@@ -238,7 +255,7 @@ vorpal
           }
 
           logger.regular('File correctly imported');
-          logger.json(hosts);
+
           resolve();
         })
         .catch((err) => {
@@ -326,7 +343,7 @@ vorpal
           const reportHtml = template({
             report: JSON.stringify(hosts),
             date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-            version: cli.version,
+            version: box.version,
           });
           utils.writeFile(
             path.resolve(process.cwd(), answers.path),
@@ -381,7 +398,7 @@ vorpal
   .command('misc/dicNames')
   .description('Get built-in dictionaries names to use in another modules.')
   .action(() => {
-    logger.json(cli.dics);
+    logger.json(box.dics);
 
     return Promise.resolve();
   });
@@ -425,7 +442,7 @@ vorpal
 
 logger.infoHigh(`${logger.emoji('computer')}  Starting the framework in interactive mode ...\n`);
 logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}  ${logger.emoji('skull')}`);
-logger.info(`\t(v${cli.version})`);
+logger.info(`\t(v${box.version})`);
 logger.subtitle(`\n${logger.emoji('eyes')}  Please run "help" or ` +
                 '"help | grep sip" to start the game\n');
 
