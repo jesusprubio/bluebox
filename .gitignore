@@ -21,6 +21,5 @@ report*
 coverage
 node_modules
 npm-debug.log
-*.lock
 .vscode
 
