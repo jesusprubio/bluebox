@@ -67,7 +67,7 @@
     "nodejs-traceroute": "^1.1.0",
     "p-map": "^1.1.1",
     "phantom": "^4.0.0",
-    "ping": "^0.2.1",
+    "ping": "danielzzz/node-ping#master",
     "prettyjson": "^1.1.0",
     "request-promise": "^4.1.1",
     "require-directory": "^2.1.0",
