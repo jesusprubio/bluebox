@@ -19,11 +19,11 @@ const box = new Bluebox();
 box.run('gather/network/geo', { rhost: '8.8.8.8' })
 .then((res) => {
   /* eslint-disable no-console */
-  console.log('Result: (geo)');
+  console.log('Result:');
   console.log(res);
 })
 .catch((err) => {
-  console.log('Error: (geo)');
+  console.log('Error:');
   console.log(err);
   /* eslint-enable no-console */
 });
