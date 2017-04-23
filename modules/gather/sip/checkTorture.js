@@ -103,7 +103,7 @@ module.exports.impl = (opts = {}) => {
       const cfg = {};
       utils.defaultsDeep(cfg, tortureCfg, optsSip);
 
-      opts.events.emit('info', { pair: [tortureCfg.name] });
+      opts.events.emit('info', { module: utils.pathToTag(__filename), pair: [tortureCfg.name] });
 
       proto.map(cfg.rhost, cfg)
       .then((res) => {
