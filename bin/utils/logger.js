@@ -24,8 +24,8 @@ module.exports.result = str => console.log(clc.xterm(46)(str));
 module.exports.json = json => console.log(prettyjson.render(json));
 
 module.exports.error = (str, err) => {
-  console.log(clc.red(`Error: ${str}`));
-  console.log(clc.red(err));
+  console.log(clc.red(str));
+  console.log(clc.red(err.stack));
 };
 
 // module.exports.clear = () => process.stdout.write(clc.reset());

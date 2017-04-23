@@ -175,7 +175,6 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
             // We always resolve (instead reject) because we don't
             // want to print the error with vorpal (doesn't allow colors).
             logger.error('\nRunning the module', err);
-            logger.info(err.stack);
             resolve();
           });
         })
