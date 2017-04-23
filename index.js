@@ -64,7 +64,7 @@ class Cli {
 
 
   // Should always return a promise.
-  run(moduleName, passedOpts) {
+  run(moduleName, passedOpts = {}) {
     dbg('Running module:', { name: moduleName, passedOpts });
 
     if (!this.modules[moduleName]) {
