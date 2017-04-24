@@ -1,6 +1,4 @@
-# Reports
-report*
-
+*.html
 *.png
 *.csv
 *.dat
