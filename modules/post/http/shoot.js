@@ -21,17 +21,16 @@ module.exports.desc = 'Take a screenshoot of a website.';
 
 
 module.exports.opts = {
-  // TODO: Integrate in the report.
   url: {
     types: 'url',
     desc: 'URL to explore',
-    default: 'http://example.com/',
+    default: 'http://debian.org',
   },
   path: {
     desc: 'Path to store the output file (relative to from where Bluebox was launched)',
     default: '.',
   },
-  // TODO: Support this parameter in the method.
+  // TODO: Support this parameter.
   // timeout: {
   //   types: 'natural',
   //   desc: 'Time to wait for a response, in ms.',

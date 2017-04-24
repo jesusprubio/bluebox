@@ -7,7 +7,7 @@
 
 'use strict';
 
-const search = require('shodan-client').exploits.search;
+const search = require('shodan-client').search;
 
 
 module.exports.desc = 'Find potential targets in SHODAN computer search engine.';

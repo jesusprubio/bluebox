@@ -13,7 +13,11 @@ const optsComm = require('../../../cfg/commonOpts/map');
 const utils = require('../../../lib/utils');
 
 const optsC = utils.cloneDeep(optsComm);
+// Different than mapper defaults.
 optsC.rports.default = [22];
+// The SSH protocol is slow.
+// https://github.com/mscdex/ssh2/issues/142
+optsC.timeout.default = 20000;
 
 
 module.exports.desc = 'SSH service mapper.';

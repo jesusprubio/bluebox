@@ -12,13 +12,20 @@
 const bruter = require('../../../lib/bruterCreds');
 const auth = require('../../../lib/protocols/ssh').auth;
 const optsComm = require('../../../cfg/commonOpts/bruteCred');
+const utils = require('../../../lib/utils');
+
+
+const optsC = utils.cloneDeep(optsComm);
+// The SSH protocol is slow.
+// https://github.com/mscdex/ssh2/issues/142
+optsC.timeout.default = 20000;
 
 
 module.exports.desc = 'SSH credentials brute force.';
 
 
 // To avoid to repeat them in all modules from "brute/creds".
-module.exports.opts = optsComm;
+module.exports.opts = optsC;
 
 
 module.exports.impl = (opts = {}) => bruter(opts.rhost, auth, opts);
