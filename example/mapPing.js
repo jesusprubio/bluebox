@@ -21,8 +21,7 @@ box.events.on('info', (info) => {
   console.log(info);
 });
 
-// box.run('gather/network/map/ping', { rhosts: '192.168.0.0/24' })
-box.run('gather/network/map/ping', { rhosts: '192.168.0.1-10' })
+box.run('gather/network/map/ping', { rhosts: '192.168.0.0/24' })
 .then((res) => {
   console.log('Result:');
   console.log(res);
@@ -32,4 +31,3 @@ box.run('gather/network/map/ping', { rhosts: '192.168.0.1-10' })
   console.log(err);
   /* eslint-enable no-console */
 });
-
