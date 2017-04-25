@@ -12,9 +12,6 @@ Pentesting framework using Node.js powers. Focused in VoIP.
 
 DISCLAIMER: Pointing this tool at other people's servers is illegal in most countries.
 
-
-## Features
-
 - Auto VoIP/UC penetration test
 - Report generation
 - Performance
@@ -39,8 +36,7 @@ DISCLAIMER: Pointing this tool at other people's servers is illegal in most coun
 - Command completion
 - Cross-platform support
 
-
-## Install
+## Install
 
 - Install Node.js: https://nodejs.org/download
 
@@ -48,12 +44,12 @@ DISCLAIMER: Pointing this tool at other people's servers is illegal in most coun
 npm i -g bluebox-ng
 ```
 
-### Kali GNU/Linux
+### Kali GNU/Linux
 
 - `curl -sL https://raw.githubusercontent.com/jesusprubio/bluebox-ng/master/artifacts/installScripts/kali2.sh | sudo bash -`
 
 
-## Use
+## Use
 
 ### Console
 
@@ -113,7 +109,7 @@ You can add your own features to this environment following this tips:
 - Add a new file inside [`/modules`](./modules) and it should appear in the pentesting environment.
 - Use the most similar among the actual ones as boilerplate.
 
-### Tests
+### Tests
 
 We still don't have a proper Docker setup. So, for now, the test have to be run locally. Please check its code before it, they often need a valid target service.
 
@@ -130,7 +126,7 @@ node test/wifi/scanAps.js
 - Please run to be sure your code fits with it and the tests keep passing:
 
 ```sh
-npm test
+npm run posttest
 ```
 
 #### Commit messages rules
@@ -145,7 +141,7 @@ npm test
 - https://github.com/jesusprubio/bluebox-ng/graphs/contributors
 
 
-## Thanks to
+## Thanks to
 
 - Our mentors: [@antonroman](https://twitter.com/antonroman), [@sandrogauci](https://twitter.com/sandrogauci) (SIPVicious was our inspiration), [@pepeluxx](https://twitter.com/pepeluxx), [@markcollier46](https://twitter.com/markcollier46) (["Hacking VoIP Exposed"](http://www.hackingvoip.com/)).
 - [Quobis](http://www.quobis.com), some hours of work through personal projects program.
