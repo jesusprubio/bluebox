@@ -25,7 +25,7 @@ module.exports.json = json => console.log(prettyjson.render(json));
 
 module.exports.error = (str, err) => {
   console.log(clc.red(str));
-  console.log(clc.red(err.stack));
+  if (err && err.stack) { console.log(clc.red(err.stack)); }
 };
 
 // module.exports.clear = () => process.stdout.write(clc.reset());
