@@ -13,7 +13,7 @@
 
 const path = require('path');
 const moment = require('moment');
-
+// const program = require('commander');
 const vorpal = require('vorpal')();
 const vHn = require('vorpal-hacker-news');
 const vLess = require('vorpal-less');
@@ -21,12 +21,11 @@ const vGrep = require('vorpal-grep');
 const hbs = require('handlebars');
 
 const logger = require('./utils/logger');
+const cfg = require('./cfg');
+const utils = require('../lib/utils');
 
 logger.infoHigh(`${logger.emoji('rocket')}  Loading modules ...`);
-
-const cfg = require('./cfg');
 const Bluebox = require('..');
-const utils = require('../lib/utils');
 
 const dbg = utils.dbg(__filename);
 // Global paramameters to avoid the user having to rewrite them
@@ -60,6 +59,46 @@ box.events.on('info', (info) => {
     logger.info(toPrint);
   }
 });
+
+
+dbg('Checking the command arguments ...', process.argv);
+// if (process.argv.length > 2) {
+//   logger.infoHigh(`${logger.emoji('rocket')}  Loading scripts ...`);
+//   const scripts = utils.requireDir(module, './scripts');
+//   const scriptNames = Object.keys(scripts);
+//   const scriptName = process.argv[2];
+
+//   logger.infoHigh(`${logger.emoji('pizza')}  Script invoked: ${scriptName}`);
+
+//   if (!utils.includes(scriptNames, scriptName)) {
+//     logger.error('\nScript not found');
+//     process.exit(1);
+//   }
+
+//   logger.time('time');
+//   scripts[scriptName](process.argv)
+//   .then((res) => {
+//     logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Script run finished`);
+//     logger.timeEnd('time');
+//     logger.title(`\n${logger.emoji('sparkles')}  Result`);
+//     if (!res || (utils.isArray(res) && utils.isEmpty(res)) ||
+//         (utils.isObject(res) && utils.isEmpty(Object.keys(res)))) {
+//       logger.result(`${logger.emoji('poop')}  Empty\n`);
+
+//       process.exit(0);
+//     }
+
+//     logger.json(res);
+//     logger.regular('\n');
+
+//     process.exit(0);
+//   })
+//   .catch((err) => {
+//     logger.timeEnd('time');
+//     logger.error('\nRunning the script', err);
+//     process.exit(1);
+//   });
+// }
 
 dbg('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), (moduleName) => {
