@@ -91,7 +91,7 @@ box.run('gather/network/geo', { rhost: '8.8.8.8' })
 ```sh
 git clone https://github.com/jesusprubio/bluebox-ng
 cd bluebox-ng
-npm i # or useyarn
+npm i # or use yarn
 ```
 
 ### Debug
