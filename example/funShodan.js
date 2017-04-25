@@ -10,6 +10,8 @@
 
 'use strict';
 
+const util = require('util');
+
 const Bluebox = require('../');
 const utils = require('../lib/utils');
 
@@ -34,7 +36,6 @@ box.run('gather/shodan/search', {
 })
 .then((res) => {
   console.log(Object.keys(res));
-  const result = {};
   // eslint-disable-next-line arrow-body-style
   let hostsClean = utils.map(res.matches, (host) => {
     return {
@@ -57,10 +58,11 @@ box.run('gather/shodan/search', {
   //  - 12960248/100*5 = 648012.4
 
   // NOTE: Comment the next line to run the full example.
-  process.exit();
+  // process.exit();
 
   // Trick to get the demo finished on a reasonable time.
-  hostsClean = hostsClean.slice(0, 25);
+  // hostsClean = hostsClean.slice(0, 25);
+  hostsClean = hostsClean.slice(0, 5);
 
   console.log('Brute-forcing them ...');
   const bruteHost = host => new Promise((resolve) => {
@@ -79,7 +81,6 @@ box.run('gather/shodan/search', {
       console.log(`\nSSH brute done for ${host.ip}`);
 
       if (creds.length > 0) {
-        result[`${host.ip}:${host.port}`].credentials = creds;
         console.log('Credentials found', creds);
       }
       resolve();
@@ -94,7 +95,10 @@ box.run('gather/shodan/search', {
   // Concurrency to one because this example is used in the demos
   // and we want to see something.
   utils.pMap(hostsClean, bruteHost, { concurrency: 1 })
-  .then(() => console.log('\n\nHost explore finished, result', result))
+  .then(() => {
+    console.log('\nDone, result:');
+    console.log(util.inspect(box.hosts, false, null));
+  })
   .catch(err => console.error('Error, exploring the hosts', err));
 })
 .catch(err => console.error('Error, mapping the network:', err));

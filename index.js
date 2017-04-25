@@ -30,6 +30,8 @@ class Cli {
     this.dics = parsers.dics;
     // Events with extra info.
     this.events = new EventEmitter();
+    // To keep the gathered info.
+    this.hosts = {};
     // this.token;
     // this.wsServer;
 
@@ -63,28 +65,59 @@ class Cli {
   }
 
 
+  addResult(hostName, modName, modRes) {
+    if (!this.hosts[hostName]) { this.hosts[hostName] = {}; }
+    if (!this.hosts[hostName].modName) { this.hosts[hostName][modName] = []; }
+    // Adding to the hosts and printing.
+    this.hosts[hostName][modName].push({ timestamp: new Date(), result: modRes });
+  }
+
   // Should always return a promise.
   run(moduleName, passedOpts = {}) {
-    dbg('Running module:', { name: moduleName, passedOpts });
+    return new Promise((resolve, reject) => {
+      dbg('Running module:', { name: moduleName, passedOpts });
 
-    if (!this.modules[moduleName]) {
-      return Promise.reject(new Error(errMsgs.notFound));
-    }
+      if (!this.modules[moduleName]) {
+        reject(new Error(errMsgs.notFound));
+        return;
+      }
 
-    const blueModule = this.modules[moduleName];
+      const blueModule = this.modules[moduleName];
 
-    // Parsing the paremeters passed by the client.
-    let opts;
-    try {
-      opts = parseOpts(passedOpts, blueModule.opts);
-    } catch (err) {
-      return Promise.reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
-    }
-    // We needs to emit inside some modules.
-    opts.events = this.events;
+      // Parsing the paremeters passed by the client.
+      let opts;
+      try {
+        opts = parseOpts(passedOpts, blueModule.opts);
+      } catch (err) {
+        reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
+        return;
+      }
+      // We needs to emit inside some modules.
+      opts.events = this.events;
 
-    return blueModule.impl(opts);
+      // Needed to add the result (if correct) to the report.
+      let actualTarget;
+      if (opts.rhost) { actualTarget = opts.rhost; }
+      // TOOD: Resolve to a IP and use it as key.
+      if (opts.domain) { actualTarget = opts.domain; }
+      if (opts.url) { actualTarget = opts.url; }
+
+      blueModule.impl(opts)
+      .then((res) => {
+        if (actualTarget) {
+          this.addResult(actualTarget, moduleName, res);
+        } else if (opts.rhosts) {
+          utils.each(res, singleRes => this.addResult(singleRes.ip, moduleName, singleRes.data));
+        }
+
+        resolve(res);
+      })
+      .catch(err => reject(err));
+    });
   }
+}
+
+module.exports = Cli;
 
 
   // TODO
@@ -286,7 +319,4 @@ class Cli {
   //     reject(err);
   //   }
   // }
-}
-
-
-module.exports = Cli;
+// }

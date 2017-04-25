@@ -35,13 +35,6 @@ box.run('gather/network/map/tcp', {
 .then((hosts) => {
   console.log('\nFound hosts', hosts);
 
-  const result = {};
-  utils.each(hosts, (host) => {
-    const initRes = {};
-    if (host.data) { initRes.data = host.data; }
-    result[`${host.ip}:${host.port}`] = initRes;
-  });
-
   console.log('\nInspecting them ...');
   const exploreHost = host => new Promise((resolve) => {
     console.log(`\nExploring host: ${host.ip}: ${host.port} ...`);
@@ -61,7 +54,6 @@ box.run('gather/network/map/tcp', {
       const tag = `${host.ip}:${host.port}`;
 
       if (creds.length > 0) {
-        result[tag].credentials = creds;
         console.log(`creds found (${service.toUpperCase()})`, creds);
       }
 
@@ -75,13 +67,10 @@ box.run('gather/network/map/tcp', {
       box.run('post/http/shoot', { url })
       .then((resShoot) => {
         console.log(`Shoot correctly taken, path: ${resShoot.path}`);
-
-        result[`${host.ip}:${host.port}`].shoot = resShoot.path;
-
         resolve();
       })
       .catch((err) => {
-        console.error('Error, brute forcing the hosts', err);
+        console.error('Error, taking the shoot', err);
         resolve();
       });
     })
@@ -94,11 +83,9 @@ box.run('gather/network/map/tcp', {
   utils.pMap(hosts, exploreHost, { concurrency: 5 })
   .then(() => {
     console.log('\nDone, result:');
-
-    console.log(util.inspect(result, false, null));
+    console.log(util.inspect(box.hosts, false, null));
   })
   .catch(err => console.error('Error, exploring the hosts', err));
 })
 .catch(err => console.error('Error, mapping the network:', err));
 /* eslint-enable no-console */
-
