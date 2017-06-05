@@ -1,5 +1,5 @@
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
             Sergio García <s3rgio.gr@gmail.com>
 
   This code may only be used under the MIT license found at

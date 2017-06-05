@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
@@ -12,16 +12,16 @@
 
 const Bluebox = require('../');
 
-const box = new Bluebox();
+const bBox = new Bluebox();
 
 
-box.events.on('info', (info) => {
+bBox.events.on('info', (info) => {
   /* eslint-disable no-console */
   console.log('Event with extra info:');
   console.log(info);
 });
 
-box.run('gather/network/map/ping', { rhosts: '192.168.0.0/24' })
+bBox.run('gather/network/map/ping', { rhosts: '192.168.0.0/24' })
 .then((res) => {
   console.log('Result:');
   console.log(res);

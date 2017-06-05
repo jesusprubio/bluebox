@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
             Sergio García <s3rgio.gr@gmail.com>
             Antonio Carrasco <ancahy2600@gmail.com>
 

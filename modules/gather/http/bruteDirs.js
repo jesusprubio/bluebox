@@ -1,5 +1,5 @@
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
@@ -25,7 +25,7 @@ module.exports.opts = {
   url: {
     types: 'url',
     desc: 'URL to explore',
-    default: 'http://example.com/',
+    default: 'http://example.com',
   },
   paths: {
     desc: 'Path of the file with the paths (relative to from where Bluebox was launched)',

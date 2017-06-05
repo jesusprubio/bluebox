@@ -10,7 +10,7 @@ Pentesting framework using Node.js powers. Focused in VoIP.
 
 <img src="http://jesusprubio.name/images/projects/bbng-logo.png" height="150" width="150" ><img src="http://jesusprubio.name/images/projects/bluebox.gif" height="150">
 
-DISCLAIMER: Pointing this tool at other people's servers is illegal in most countries.
+DISCLAIMER: Pointing this tool at other people's servers is **NOT** legal in most countries.
 
 - Auto VoIP/UC penetration test
 - Report generation

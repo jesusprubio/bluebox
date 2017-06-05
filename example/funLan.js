@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
@@ -15,10 +15,10 @@ const util = require('util');
 const Bluebox = require('../');
 const utils = require('../lib/utils');
 
-const box = new Bluebox();
+const bBox = new Bluebox();
 
 
-box.events.on('info', (info) => {
+bBox.events.on('info', (info) => {
   let toAdd = ':(';
   if (info.valid) { toAdd = ':)'; }
 
@@ -27,7 +27,7 @@ box.events.on('info', (info) => {
 });
 
 console.log('Starting the mapping ...');
-box.run('gather/network/map/tcp', {
+bBox.run('gather/network/map/tcp', {
   rhosts: '192.168.0.0/24',
   rports: [21, 22, 80, 443, 8080],
   concurrency: 1000,
@@ -43,7 +43,7 @@ box.run('gather/network/map/tcp', {
     if (host.port === 22) { service = 'ssh'; }
 
     console.log(`Possible ${service.toUpperCase()} server found, brute forcing it ...`);
-    box.run(`gather/${service}/bruteCred`, {
+    bBox.run(`gather/${service}/bruteCred`, {
       rhost: host.ip,
       rport: host.port,
       users: 'demo',
@@ -64,7 +64,7 @@ box.run('gather/network/map/tcp', {
 
       const url = `http://${tag}`;
       console.log(`\nTaking a shoot of ${url} ...`);
-      box.run('post/http/shoot', { url })
+      bBox.run('post/http/shoot', { url })
       .then((resShoot) => {
         console.log(`Shoot correctly taken, path: ${resShoot.path}`);
         resolve();
@@ -83,7 +83,7 @@ box.run('gather/network/map/tcp', {
   utils.pMap(hosts, exploreHost, { concurrency: 5 })
   .then(() => {
     console.log('\nDone, result:');
-    console.log(util.inspect(box.hosts, false, null));
+    console.log(util.inspect(bBox.hosts, false, null));
   })
   .catch(err => console.error('Error, exploring the hosts', err));
 })

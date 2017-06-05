@@ -25,7 +25,7 @@
     "default": "real"
   },
   "domain": {
-    "desc": "Domain to explore ('ip' to use the rhost here)",
-    "default": "ip"
+    "desc": "Domain to explore ('' to use the rhost here)",
+    "default": ""
   }
 }

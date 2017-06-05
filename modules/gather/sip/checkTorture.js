@@ -1,6 +1,6 @@
 /*
   Copyright Sergio García <s3rgio.gr@gmail.com>
-            Jesús Pérez <jesusprubio@gmail.com>
+            Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
