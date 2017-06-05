@@ -1,5 +1,5 @@
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
 
   This code may only be used under the MIT license found at
   https://opensource.org/licenses/MIT.
@@ -7,7 +7,7 @@
 
 'use strict';
 
-const utils = require('../../lib/utils');
+const utils = require('../../../lib/utils');
 
 const baseUrl = 'https://www.robtex.com/';
 
