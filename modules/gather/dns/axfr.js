@@ -18,14 +18,26 @@ module.exports.desc = 'DNS zone transfer.';
 
 
 module.exports.opts = {
-  server: {
-    desc: 'Specify the DNS resolver',
-  },
   domain: {
     types: 'domain',
     desc: 'Domain to explore',
   },
+  server: {
+    desc: 'Specify the DNS resolver',
+  },
 };
 
 
-module.exports.impl = (opts = {}) => axfr(opts.server, opts.domain);
+module.exports.impl = (opts = {}) =>
+  new Promise((resolve, reject) => {
+    axfr(opts.server, opts.domain)
+    .then(res => resolve(res.answers))
+    .catch((err) => {
+      // Expected result, not vulnerable.
+      if (err === -3) {
+        resolve('null');
+      } else {
+        reject(err);
+      }
+    });
+  });

@@ -24,7 +24,16 @@ module.exports.opts = {
     desc: 'Host to explore',
     default: '8.8.8.8',
   },
+  server: {
+    types: 'ip',
+    desc: 'DNS server to make the request on',
+    default: '198.101.242.72',
+  },
 };
 
 
-module.exports.impl = (opts = {}) => reverse(opts.rhost);
+module.exports.impl = (opts = {}) => {
+  dns.setServers([opts.server]);
+
+  return reverse(opts.rhost);
+};

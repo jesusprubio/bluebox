@@ -1,5 +1,5 @@
 /*
-  Copyright Jesús Pérez <jesusprubio@gmail.com>
+  Copyright Jesús Pérez <jesusprubio@fsf.org>
             Sergio García <s3rgio.gr@gmail.com>
 
   This code may only be used under the MIT license found at
@@ -15,13 +15,13 @@ module.exports.desc = 'DNS subdomain brute force.';
 
 
 module.exports.opts = {
-  server: {
-    types: 'ip',
-    desc: 'Specify your custom DNS resolver',
-  },
   domain: {
     types: 'domain',
     desc: 'Domain to explore',
+  },
+  server: {
+    types: 'ip',
+    desc: 'Specify your custom DNS resolver',
   },
   rateLimit: {
     types: 'natural',
@@ -34,6 +34,11 @@ module.exports.opts = {
                  ' Please check the original module: https://github.com/skepticfx/subquest',
     default: 'top_100',
   },
+  bing: {
+    types: 'bool',
+    describe: 'Use Bing search to list all possible subdomains',
+    default: true,
+  },
 };
 
 
@@ -42,8 +47,9 @@ module.exports.impl = (opts = {}) =>
     subquest.getSubDomains({
       host: opts.domain,
       dnsServer: opts.server,
-      rateLimit: opts.rateLimit || 10,
-      dictionary: opts.dictionary || 'top_100',
+      rateLimit: opts.rateLimit,
+      dictionary: opts.dictionary,
+      bingSearch: opts.bing,
     })
     .on('end', arr => resolve(arr))
     .on('error', err => reject(err));

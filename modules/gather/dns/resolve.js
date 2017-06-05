@@ -28,12 +28,16 @@ module.exports.opts = {
     desc: 'domain to explore',
     default: 'google.com',
   },
-  // TODO: Still not implemented in the lib.
-  // server: {
-  //   types: 'ip',
-  //   desc: 'DNS server to make the request on',
-  //   default: '87.216.170.85',
-  // },
+  server: {
+    types: 'ip',
+    desc: 'DNS server to make the request on',
+    default: '198.101.242.72',
+  },
+  rtype: {
+    // TODO: Add a validator.
+    describe: 'Type of DNS records to resolve',
+    default: 'ANY',
+  },
   // timeout: {
   //   types: 'natural',
   //   desc: 'Time to wait for a response (ms.)',
@@ -46,12 +50,13 @@ module.exports.opts = {
 module.exports.impl = (opts = {}) =>
   new Promise((resolve) => {
     let finalTypes;
-    // Single record type support.
-    if (opts.rtype && opts.rtype !== 'ANY') {
+    if (opts.rtype !== 'ANY') {
       finalTypes = [opts.rtype];
     } else {
       finalTypes = recordTypes;
     }
+
+    dns.setServers([opts.server]);
 
     // We need to return an object from a ".map" generated promise.
     const result = {};
