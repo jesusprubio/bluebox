@@ -9,24 +9,27 @@
   https://opensource.org/licenses/MIT.
 */
 
+// Framework environment.
+
 'use strict';
 
+// const util = require('util');
 const path = require('path');
 const moment = require('moment');
-// const program = require('commander');
 const vorpal = require('vorpal')();
 const vHn = require('vorpal-hacker-news');
 const vLess = require('vorpal-less');
 const vGrep = require('vorpal-grep');
 const hbs = require('handlebars');
 
+const Bluebox = require('..');
 const logger = require('./utils/logger');
 const cfg = require('./cfg');
 const utils = require('../lib/utils');
+const auto = require('./auto');
 
-logger.infoHigh(`${logger.emoji('rocket')}  Loading modules ...`);
-const Bluebox = require('..');
 
+const bBox = new Bluebox();
 const dbg = utils.dbg(__filename);
 // Global paramameters to avoid the user having to rewrite them
 // in each module run. They are proposed as the default value.
@@ -36,69 +39,31 @@ const globals = {};
 const templatePath = '../artifacts/reportTemplates/default.hbs';
 
 
-dbg('Starting ...');
-
-const box = new Bluebox({});
-dbg('Getting all Bluebox modules details ...');
-const modulesInfo = box.modules;
-dbg('Modules details', modulesInfo);
-
-
 // TODO: Keep this during the run of the actual command. In case
 // it fails we could save these partial results.
-box.events.on('info', (info) => {
+let lastValid = false;
+bBox.events.on('info', (info) => {
   dbg('Event with extra info');
 
   let toPrint = info.pair[0];
   // In some cases we don't have second member.
-  if (info.pair[1]) { toPrint = `${toPrint}  :  ${info.pair[1]}`; }
+  if (info.pair[1]) { toPrint = `${toPrint} : ${info.pair[1]}`; }
+
+  if (!lastValid) { logger.moveUp(); }
 
   if (info.valid) {
+    lastValid = true;
     logger.result(`${toPrint} ${logger.emoji('ok_hand')}`);
   } else {
+    lastValid = false;
     logger.info(toPrint);
   }
 });
 
 
-dbg('Checking the command arguments ...', process.argv);
-// if (process.argv.length > 2) {
-//   logger.infoHigh(`${logger.emoji('rocket')}  Loading scripts ...`);
-//   const scripts = utils.requireDir(module, './scripts');
-//   const scriptNames = Object.keys(scripts);
-//   const scriptName = process.argv[2];
-
-//   logger.infoHigh(`${logger.emoji('pizza')}  Script invoked: ${scriptName}`);
-
-//   if (!utils.includes(scriptNames, scriptName)) {
-//     logger.error('\nScript not found');
-//     process.exit(1);
-//   }
-
-//   logger.time('time');
-//   scripts[scriptName](process.argv)
-//   .then((res) => {
-//     logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Script run finished`);
-//     logger.timeEnd('time');
-//     logger.title(`\n${logger.emoji('sparkles')}  Result`);
-//     if (!res || (utils.isArray(res) && utils.isEmpty(res)) ||
-//         (utils.isObject(res) && utils.isEmpty(Object.keys(res)))) {
-//       logger.result(`${logger.emoji('poop')}  Empty\n`);
-
-//       process.exit(0);
-//     }
-
-//     logger.json(res);
-//     logger.regular('\n');
-
-//     process.exit(0);
-//   })
-//   .catch((err) => {
-//     logger.timeEnd('time');
-//     logger.error('\nRunning the script', err);
-//     process.exit(1);
-//   });
-// }
+dbg('Getting all modules details ...');
+const modulesInfo = bBox.modules;
+dbg('Modules details', modulesInfo);
 
 dbg('Defining the commands for the Bluebox modules ...');
 utils.each(utils.keys(modulesInfo), (moduleName) => {
@@ -113,8 +78,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
         const parsedOpts = [];
 
         dbg('Expected options:', { moduleName, expectedOpts });
-        logger.subtitle(`\n${modulesInfo[moduleName].desc}\n`);
-
+        logger.bold(`\n${modulesInfo[moduleName].desc}\n`);
 
         // Massaging the data to make Vorpal happy.
         utils.each(utils.keys(expectedOpts), (name) => {
@@ -169,7 +133,7 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
           logger.infoHigh(`\n${logger.emoji('beer')}  Running the module ...\n`);
 
           logger.time('time');
-          box.run(moduleName, answers)
+          bBox.run(moduleName, answers)
           .then((res) => {
             logger.infoHigh(`\n${logger.emoji('airplane_arriving')}  Module run finished`);
             logger.timeEnd('time');
@@ -182,10 +146,13 @@ utils.each(utils.keys(modulesInfo), (moduleName) => {
               return;
             }
 
-            logger.json(res);
-            logger.regular('\n');
-
-            resolve();
+            if (!utils.isArray(res) || !utils.includes(cfg.toChunk, moduleName)) {
+              logger.json(res);
+              logger.regular('\n');
+              resolve();
+            } else {
+              logger.chunks(res, 1, resolve);
+            }
           })
           .catch((err) => {
             logger.timeEnd('time');
@@ -220,9 +187,9 @@ vorpal
         let toPrint;
 
         if (answers.id) {
-          toPrint = box.hosts[answers.id];
+          toPrint = bBox.hosts[answers.id];
         } else {
-          toPrint = box.hosts;
+          toPrint = bBox.hosts;
         }
 
         logger.json(toPrint);
@@ -263,8 +230,8 @@ vorpal
         .then((content) => {
           try {
             // TODO: Add a mark in the file and check here that is
-            // a JSON generated by Bluebox.
-            box.hosts = JSON.parse(content);
+            // a JSON generated by BluebBox.
+            bBox.hosts = JSON.parse(content);
           } catch (err) {
             logger.error('Parsing the file', err);
             resolve();
@@ -309,7 +276,7 @@ vorpal
 
         utils.writeFile(
           path.resolve(process.cwd(), answers.path),
-          JSON.stringify(box.hosts)
+          JSON.stringify(bBox.hosts)
         )
         .then(() => {
           logger.regular('File correctly exported');
@@ -356,9 +323,9 @@ vorpal
 
           const template = hbs.compile(templateFile);
           const reportHtml = template({
-            report: JSON.stringify(box.hosts),
+            report: JSON.stringify(bBox.hosts),
             date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-            version: box.version,
+            version: bBox.version,
           });
           utils.writeFile(
             path.resolve(process.cwd(), answers.path),
@@ -393,7 +360,7 @@ vorpal
   .alias('quit')
   .description('Quit the app.')
   .action(() => {
-    logger.subtitle(`\n${logger.emoji('wave')}  See you!\n`);
+    logger.bold(`\n${logger.emoji('wave')}  See you!\n`);
     process.exit(0);
   });
 
@@ -409,10 +376,20 @@ vorpal
 
 
 vorpal
+  .command('clear')
+  .description('Clean the screen.')
+  .action(() => {
+    logger.clear();
+
+    return Promise.resolve();
+  });
+
+
+vorpal
   .command('misc/dicNames')
   .description('Get built-in dictionaries names to use in another modules.')
   .action(() => {
-    logger.json(box.dics);
+    logger.json(bBox.dics);
 
     return Promise.resolve();
   });
@@ -454,10 +431,38 @@ vorpal
     }));
 
 
-logger.infoHigh(`${logger.emoji('computer')}  Starting the framework in interactive mode ...\n`);
-logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}  ${logger.emoji('skull')}`);
-logger.info(`\t(v${box.version})`);
-logger.subtitle(`\n${logger.emoji('eyes')}  Please run "help" or ` +
+vorpal
+  .command('auto')
+  .description('Auto VoIP vulnerability scanner.')
+  .action(() =>
+    new Promise((resolve) => {
+      vorpal.activeCommand.prompt([
+        {
+          type: 'input',
+          name: 'rhosts',
+          message: 'Host to inspect (IP), range (ie: "192.168.0.1-256") ' +
+                    'of a file with them (file:./whatever/galicianIps.txt)',
+          default: '192.168.0.0/24',
+        },
+        {
+          type: 'input',
+          name: 'profile',
+          message: 'Type of scanning ("quick", "regular", "slow") or custom ' +
+                   '(pass a file path here in this case)',
+          default: 'regular',
+        },
+      ])
+      .then(answers => auto(bBox, answers.rhosts, answers.profile, resolve))
+      .catch((err) => {
+        logger.error('Parsing the options (auto)', err);
+        resolve();
+      });
+    }));
+
+
+logger.title(`\n\tBluebox-ng ${logger.emoji('phone')}`);
+logger.info(`\t(v${bBox.version})`);
+logger.bold(`\n${logger.emoji('eyes')}  Please run "help" or ` +
                 '"help | grep sip" to start the game\n');
 
 dbg('Starting the prompt ...');
@@ -487,3 +492,4 @@ process.on('unhandledRejection', (reason) => {
 
   vorpal.show();
 });
+

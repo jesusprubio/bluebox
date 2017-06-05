@@ -1,0 +1,60 @@
+{
+  "map": {
+    "ping": true,
+    "types": ["OPTIONS", "REGISTER", "INVITE", "MESSAGE", "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
+    "typesTrick" : ["CANCEL", "ACK", "Trying", "Ringing", "OK"],
+    "services": [["5060", "UDP"],["5060", "TCP"],["5061", "TLS"],["80", "WS"],["443", "WSS"]],
+    "wsPath": "ws",
+    "delay": 3000,
+    "common": [21, 22, 23, 69, 80, 389, 443, 3306, 5038, 8088, 27017]
+  },
+  "timeout": 10000,
+  "lHost": "random",
+  "lPort": "real",
+  "domain": "",
+  "checks": {
+    "rateLimit": {
+      "dos":  {
+        "types": ["OPTIONS","INVITE","REGISTER"],
+        "nReq": 100
+      },
+      "brute": {
+        "delay": 5000,
+        "exts": {
+          "types": ["INVITE","REGISTER"],
+          "extensions": "range:0000-0025"
+        },
+        "call": {
+          "fromExt": "range:0000-0010",
+          "toExt": "range:0000-00010"
+        },
+        "creds": {
+          "types": ["OPTIONS","INVITE","REGISTER"],
+          "extensions": "range:0000-0010",
+          "passwords": "guest"
+        }
+      }
+    },
+    "crafted": {
+      "sqli": true,
+      "torture": true
+    }
+  },
+  "brute": {
+    "delay": 0,
+    "exts": {
+      "types": ["INVITE", "REGISTER"],
+      "extensions": "range:0000-0999"
+    },
+    "call": {
+      "fromExt": "range:0000-0999",
+      "toExt": "range:0000-0999"
+    },
+    "creds": {
+      "types": ["OPTIONS","INVITE","REGISTER"],
+      "extensions": "range:0000-0999",
+      "passwords": "john",
+      "userAsPass": true
+    }
+  }
+}

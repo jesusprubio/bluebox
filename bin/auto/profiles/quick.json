@@ -1,0 +1,41 @@
+{
+  "map": {
+    "ping": false,
+    "types": ["OPTIONS", "REGISTER", "INVITE"],
+    "typesTrick" : ["OK"],
+    "wsPath": null
+  },
+  "timeout": 5000,
+  "checks": {
+    "rateLimit": {
+      "dos":  {
+        "types": ["OPTIONS"],
+        "nReq": 50
+      },
+      "brute": {
+        "delay": 2000,
+        "exts": {
+          "types": ["REGISTER"]
+        },
+        "creds": {
+          "types": ["REGISTER"]
+        }
+      }
+    }
+  },
+  "brute": {
+    "exts": {
+      "types": ["REGISTER"],
+      "extensions": "range:0000-0100"
+    },
+    "call": {
+      "fromExt": "range:0000-0050",
+      "toExt": "range:0000-0050"
+    },
+    "creds": {
+      "types": ["REGISTER"],
+      "extensions": "range:0000-0100",
+      "passwords": "guest"
+    }
+  }
+}

@@ -65,11 +65,11 @@ class Cli {
   }
 
 
-  addResult(hostName, modName, modRes) {
+  addResult(hostName, modName, modRes, options) {
     if (!this.hosts[hostName]) { this.hosts[hostName] = {}; }
     if (!this.hosts[hostName].modName) { this.hosts[hostName][modName] = []; }
     // Adding to the hosts and printing.
-    this.hosts[hostName][modName].push({ timestamp: new Date(), result: modRes });
+    this.hosts[hostName][modName].push({ timestamp: new Date(), result: modRes, options });
   }
 
   // Should always return a promise.
@@ -85,13 +85,15 @@ class Cli {
       const blueModule = this.modules[moduleName];
 
       // Parsing the paremeters passed by the client.
-      let opts;
+      let opts = passedOpts;
+
       try {
         opts = parseOpts(passedOpts, blueModule.opts);
       } catch (err) {
         reject(new Error(`${errMsgs.parseOpts} : ${err.message}`));
         return;
       }
+
       // We needs to emit inside some modules.
       opts.events = this.events;
 
@@ -105,9 +107,12 @@ class Cli {
       blueModule.impl(opts)
       .then((res) => {
         if (actualTarget) {
-          this.addResult(actualTarget, moduleName, res);
+          this.addResult(actualTarget, moduleName, res, passedOpts);
         } else if (opts.rhosts) {
-          utils.each(res, singleRes => this.addResult(singleRes.ip, moduleName, singleRes.data));
+          utils.each(
+            res,
+            singleRes => this.addResult(singleRes.ip, moduleName, singleRes.data, passedOpts)
+          );
         }
 
         resolve(res);

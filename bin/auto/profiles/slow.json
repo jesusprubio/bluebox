@@ -1,0 +1,31 @@
+{
+  "map": {
+    "services": [["5060", "UDP"],["5060", "TCP"],["5061", "TLS"],["80", "WS"],["8080", "WS"],["443", "WSS"],["4443", "WSS"]]
+  },
+  "checks": {
+    "rateLimit": {
+      "dos":  {
+        "types": ["OPTIONS", "REGISTER", "INVITE", "MESSAGE", "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE", "CANCEL", "ACK", "Trying", "Ringing", "OK"]
+      },
+      "brute": {
+        "exts": {
+          "types": ["OPTIONS", "REGISTER", "INVITE", "MESSAGE", "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"]
+        }
+      }
+    }
+  },
+  "brute": {
+    "exts": {
+      "types": ["OPTIONS", "REGISTER", "INVITE", "MESSAGE", "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
+      "extensions": "range:0000-9999"
+    },
+    "call": {
+      "fromExt": "range:0000-9999",
+      "toExt": "range:0000-9999"
+    },
+    "creds": {
+      "types": ["OPTIONS", "REGISTER", "INVITE", "MESSAGE", "BYE", "NOTIFY", "PUBLISH", "SUBSCRIBE"],
+      "extensions": "range:0000-9999"
+    }
+  }
+}

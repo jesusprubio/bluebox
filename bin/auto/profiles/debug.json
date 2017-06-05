@@ -1,0 +1,48 @@
+{
+  "map": {
+    "types": ["OPTIONS"],
+    "typesTrick" : ["OK"],
+    "services": [["5060", "UDP"]],
+    "common": [80]
+  },
+  "timeout": 5000,
+  "checks": {
+    "rateLimit": {
+      "dos":  {
+        "types": ["OPTIONS"],
+        "nReq": 10
+      },
+      "brute": {
+        "delay": 1000,
+        "exts": {
+          "types": ["INVITE"],
+          "extensions": "100"
+        },
+        "call": {
+          "fromExt": "100",
+          "toExt": "100"
+        },
+        "creds": {
+          "types": ["REGISTER"],
+          "extensions": "100",
+          "passwords": "guest"
+        }
+      }
+    }
+  },
+  "brute": {
+    "exts": {
+      "types": ["REGISTER"],
+      "extensions": "100"
+    },
+    "call": {
+      "fromExt": "100",
+      "toExt": "100"
+    },
+    "creds": {
+      "types": ["REGISTER"],
+      "extensions": "100",
+      "passwords": "guest"
+    }
+  }
+}
