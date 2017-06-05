@@ -1,10 +1,10 @@
 {
   "name": "bluebox-ng",
-  "version": "1.2.0-beta.0",
+  "version": "1.2.0",
   "description": "Pentesting framework using Node.js powers. Specially focused in VoIP/UC.",
   "author": {
     "name": "Jesús Pérez <@jesusprubio>",
-    "email": "jesusprubio@gmail.com",
+    "email": "jesusprubio@fsf.org",
     "url": "http://jesusprubio.name"
   },
   "contributors": [
@@ -19,13 +19,15 @@
     "url": "https://github.com/jesusprubio/bluebox-ng/bluebox-ng.git"
   },
   "keywords": [
-    "Node",
     "security",
     "tool",
-    "Pentesting",
-    "Exploiting",
-    "VoIP",
-    "SIP"
+    "pentest",
+    "pentestint",
+    "exploit",
+    "exploiting",
+    "voip",
+    "sip",
+    "ami"
   ],
   "homepage": "https://github.com/jesusprubio/bluebox-ng",
   "bugs": {
@@ -43,7 +45,8 @@
     "release": "npm run cont-int && release-it"
   },
   "dependencies": {
-    "cli-color": "^1.1.0",
+    "address": "^1.0.2",
+    "cli-color": "^1.2.0",
     "debug": "^2.2.0",
     "dirbuster": "^0.4.0",
     "dns-axfr": "^0.1.5",
@@ -54,6 +57,7 @@
     "icanhazip": "^1.0.3",
     "is-local-ip": "^1.0.1",
     "jsftp": "github:jesusprubio/jsftp",
+    "keypress": "^0.2.1",
     "ldapjs": "^1.0.1",
     "lodash": "^4.14.1",
     "moment": "^2.18.1",
