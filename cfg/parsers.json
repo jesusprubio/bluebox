@@ -1,7 +1,0 @@
-{
-  "transports": {
-    "sip": ["udp", "tcp", "tls", "ws", "wss"],
-    "http": ["http", "https"]
-  },
-  "sipBruteExt": [ "100", "404"]
-}

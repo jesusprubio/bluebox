@@ -1,0 +1,51 @@
+version: "3"
+
+tasks:
+  default:
+    deps: [test]
+
+  build:
+    summary: "Build application"
+    cmd: go build -o dist/up .
+
+  clean:
+    summary: "Clean the project"
+    cmd: go clean
+
+  dep:
+    summary: "Install dev dependencies"
+    cmds:
+      # Linters.
+      - go install honnef.co/go/tools/cmd/staticcheck@latest
+      - go install github.com/securego/gosec/v2/cmd/gosec@latest
+      # Formatters.
+      - go install github.com/segmentio/golines@latest
+
+  fmt:
+    summary: "Format the code"
+    # Already runs `go fmt` before finishing.
+    cmd: golines -m 80 --shorten-comments -w .
+
+  vet:
+    summary: "Run linters"
+    cmds:
+      - go vet ./...
+      - staticcheck ./...
+      - gosec -fmt=golint -tests -quiet -exclude-generated ./...
+      - golines -m 80 --shorten-comments -w -l .
+
+  test:
+    summary: "Run tests"
+    cmd: go test ./...
+
+  vendor:
+    summary: "Re-vendor dependencies"
+    cmds:
+      - go mod tidy
+      - go mod download
+      - go mod vendor
+
+  docker:
+    summary: "Run Docker Compose"
+    cmds:
+      - docker compose up

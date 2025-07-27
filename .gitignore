@@ -1,24 +1,16 @@
-*.html
-*.png
-*.csv
-*.dat
-*.iml
-*.log
-*.out
-*.pid
-*.seed
-*.sublime-*
-*.swo
-*.swp
-*.tgz
-*.xml
+# Mac OS X Finder files.
 .DS_Store
-.idea
-.project
-.strong-pm
-coverage
-node_modules
-npm-debug.log
-.vscode
-
-report.*
+# Test binary, built with `go test -c`
+*.test
+# Go coverage tool
+*.out
+# Dependencies
+vendor/
+# Go workspace file
+go.work
+# Vendoring
+vendor/
+# Taskfile (remote)
+.task/
+# VS Code
+.vscode/

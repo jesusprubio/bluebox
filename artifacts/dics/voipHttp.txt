@@ -1,6 +1,0 @@
-admin
-:8088
-:8088/admin
-maint
-opensips-cp
-siremis
