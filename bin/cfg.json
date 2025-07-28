@@ -1,9 +1,0 @@
-{
-  "prompt": "bluebox-ng> ",
-  "toChunk": [
-    "exploit/search/exploitSearch",
-    "exploit/search/shodan",
-    "gather/shodan/search",
-    "gather/shodan/host"
-  ]
-}

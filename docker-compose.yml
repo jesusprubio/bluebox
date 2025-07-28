@@ -1,0 +1,15 @@
+name: bluebox
+
+services:
+  asterisk:
+    image: mlan/asterisk
+    network_mode: bridge # For testing
+    cap_add:
+      - sys_ptrace # For testing
+    ports:
+      - "5060:5060/udp" # SIP UDP
+      - "5060:5060" # SIP TCP
+      - "5061:5061" # SIP TLS
+      - "10000-10099:10000-10099/udp" # RTP
+    environment:
+      - HOSTNAME=asterisk.${DOMAIN-docker.localhost}
