@@ -6,6 +6,8 @@ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkp
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/emiago/sipgo v0.33.0 h1:UxPKCoPREffSjrRE6oesG/RPz5/ZSp8tA8Jc6YvYUsk=
 github.com/emiago/sipgo v0.33.0/go.mod h1:gbOLw/kZHZ3wS/5PIa9qVjpdil/IKLdigbZFIYFpHTs=
+github.com/emiago/sipgo v1.1.2 h1:JvLqEvqNSQm2mBX40qZ7O0WC3Ee67Z0UrfmBI7y6Beo=
+github.com/emiago/sipgo v1.1.2/go.mod h1:DuwAxBZhKMqIzQFPGZb1MVAGU6Wuxj64oTOhd5dx/FY=
 github.com/gobwas/httphead v0.1.0 h1:exrUm0f4YX0L7EBwZHuCF4GDp8aJfVeBrlLQrs6NqWU=
 github.com/gobwas/httphead v0.1.0/go.mod h1:O/RXo79gxV8G+RqlR/otEwx4Q36zl9rqC5u12GKvMCM=
 github.com/gobwas/pool v0.2.1 h1:xfeeEhW7pwmX8nuLVlqbzVc7udMDrwetjEv+TZIz1og=
