@@ -7,7 +7,7 @@ replace github.com/vulncheck-oss/go-exploit v1.46.0 => ../go-exploit
 require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/emiago/sipgo v0.33.0
-	github.com/icholy/digest v1.1.0
+	github.com/icholy/digest v1.2.0
 	github.com/vulncheck-oss/go-exploit v1.46.0
 )
 
